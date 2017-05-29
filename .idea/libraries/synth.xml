@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="synth">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/synth.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
