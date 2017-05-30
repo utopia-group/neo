@@ -6,6 +6,7 @@ import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Model;
 import org.genesys.language.Grammar;
 import org.genesys.language.Production;
+import org.genesys.utils.LibUtils;
 import org.genesys.utils.Node;
 import org.genesys.utils.Trio;
 import org.genesys.utils.Z3Utils;
@@ -81,11 +82,11 @@ public class DefaultSynthesizer implements Synthesizer {
 
                 Production prod = ctrlVarMap.get(fd.getName().toString());
                 models.add(fd.getName().toString());
-                System.out.println(fd.getName() + " :" + prod.source + " " + prod);
+//                System.out.println(fd.getName() + " :" + prod.source + " " + prod);
             }
         }
 
-        System.out.println(models + "program: " + astRoot.traverseModel(models));
+        System.out.println("program: " + astRoot.traverseModel(models));
         return astRoot;
     }
 
@@ -97,7 +98,7 @@ public class DefaultSynthesizer implements Synthesizer {
 
         List<Production<T>> prods = grammar.productionsFor(s);
         List<BoolExpr> exactList = new ArrayList<>();
-        List<BoolExpr> implyList = new ArrayList<>();
+        List<BoolExpr> conjoinList = new ArrayList<>();
         List<BoolExpr> varList = new ArrayList<>();
         String parentVar = parent.toString();
 
@@ -110,32 +111,35 @@ public class DefaultSynthesizer implements Synthesizer {
             parentNode.addChild(node);
             ctrlVarAstMap.put(var.toString(), node);
             node.setCtrlVar(var.toString());
-            System.out.println(var + " mapsto: " + prod);
+//            System.out.println(var + " mapsto: " + prod);
             varList.add(var);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, List<BoolExpr>> subResult = generate(grammar, child, var, len);
                 if (subResult == null) continue;
 
-                BoolExpr subExpr = subResult.t1;
                 for (BoolExpr subVar : subResult.t2) {
-                    implyList.add(z3Utils.imply(subVar, var));
+                    /* if child happens, that implies parent also happens. */
+                    conjoinList.add(z3Utils.imply(subVar, var));
                 }
-                implyList.add(subExpr);
+                /* Conjoin children's constraints. */
+                BoolExpr subExpr = subResult.t1;
+                conjoinList.add(subExpr);
             }
             exactList.add(var);
         }
-        BoolExpr[] exactArray = new BoolExpr[exactList.size()];
-        exactArray = exactList.toArray(exactArray);
 
-        BoolExpr[] implyArray = new BoolExpr[implyList.size()];
-        implyArray = implyList.toArray(implyArray);
+        /* Only one production can happen. */
+        BoolExpr[] exactArray = LibUtils.listToArray(exactList);
+
+        /* conjoin current constraints with the children. */
+        BoolExpr[] conjoinArray = LibUtils.listToArray(conjoinList);
 
         BoolExpr exactExpr = z3Utils.exactOne(exactArray);
         exactExpr = z3Utils.imply(parent, exactExpr);
-        BoolExpr implyExpr = z3Utils.conjoin(implyArray);
+        BoolExpr conjoinExpr = z3Utils.conjoin(conjoinArray);
 
-        Trio<Integer, BoolExpr, List<BoolExpr>> result = new Trio<>(len, z3Utils.conjoin(exactExpr, implyExpr), varList);
+        Trio<Integer, BoolExpr, List<BoolExpr>> result = new Trio<>(len, z3Utils.conjoin(exactExpr, conjoinExpr), varList);
         return result;
     }
 }

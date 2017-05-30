@@ -1,7 +1,13 @@
 <project default="build">
   <target name="build">
     <mkdir dir="classes"/>
-    <javac srcdir="src" destdir="classes" debug="on"/>
+    <javac srcdir="src" destdir="classes" debug="on">
+     <classpath>
+		<pathelement location="lib/com.microsoft.z3.jar"/>
+		<pathelement location="lib/gson-2.3.1.jar"/>
+	  </classpath>
+    </javac>
+
     <jar destfile="synth.jar" basedir="classes">
       <manifest>
         <attribute name="Main-Class" value="synth.main.Main"/>
