@@ -7,8 +7,8 @@ import com.microsoft.z3.Model;
 import org.genesys.language.Grammar;
 import org.genesys.language.Production;
 import org.genesys.utils.LibUtils;
-import org.genesys.utils.Node;
-import org.genesys.utils.Trio;
+import org.genesys.models.Node;
+import org.genesys.models.Trio;
 import org.genesys.utils.Z3Utils;
 
 import java.util.*;

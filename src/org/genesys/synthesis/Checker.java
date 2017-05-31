@@ -1,6 +1,6 @@
 package org.genesys.synthesis;
 
-import org.genesys.utils.Node;
+import org.genesys.models.Node;
 
 /**
  * Created by yufeng on 5/28/17.

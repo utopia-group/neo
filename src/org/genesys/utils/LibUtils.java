@@ -12,6 +12,7 @@ public class LibUtils {
     /**
      * Convert list to array.
      * FIXME:How to implement the generic version?
+     *
      * @param list
      * @param <T>
      * @return array
@@ -20,5 +21,14 @@ public class LibUtils {
         BoolExpr[] array = new BoolExpr[list.size()];
         array = list.toArray(array);
         return array;
+    }
+
+    public static double computeTime(long start, long end) {
+        double diff = end - start;
+        return (diff / 1e6);
+    }
+
+    public static long tick() {
+        return System.currentTimeMillis();
     }
 }

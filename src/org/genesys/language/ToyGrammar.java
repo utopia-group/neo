@@ -1,6 +1,6 @@
 package org.genesys.language;
 
-import org.genesys.utils.MultivalueMap;
+import org.genesys.models.MultivalueMap;
 
 import java.util.List;
 

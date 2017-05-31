@@ -1,4 +1,4 @@
-package org.genesys.utils;
+package org.genesys.models;
 
 import java.util.ArrayList;
 import java.util.List;
