@@ -1,8 +1,8 @@
-package org.genesys.Interpreter;
+package org.genesys.interpreter;
 
-import org.genesys.Type.AbstractList;
-import org.genesys.Type.Cons;
-import org.genesys.Type.Maybe;
+import org.genesys.type.AbstractList;
+import org.genesys.type.Cons;
+import org.genesys.type.Maybe;
 import synth.instance.list.ListInstance;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interpreter for L2 tool. Can be used in Deepcoder
+ * interpreter for L2 tool. Can be used in Deepcoder
  * Created by yufeng on 5/31/17.
  */
 public class L2Interpreter implements Interpreter {

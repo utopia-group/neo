@@ -1,8 +1,4 @@
-package org.genesys.Interpreter;
-
-import synth.utils.Utils;
-
-import java.util.List;
+package org.genesys.interpreter;
 
 /**
  * Created by yufeng on 5/30/17.

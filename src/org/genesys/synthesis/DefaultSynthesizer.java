@@ -4,6 +4,9 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Model;
+import org.genesys.decide.Decider;
+import org.genesys.decide.SATDecider;
+import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
 import org.genesys.language.Production;
 import org.genesys.utils.LibUtils;
@@ -30,12 +33,15 @@ public class DefaultSynthesizer implements Synthesizer {
 
     private Node astRoot;
 
+    private Decider decider;
+
     public DefaultSynthesizer() {
         z3Utils = Z3Utils.getInstance();
+        decider = new SATDecider();
     }
 
     @Override
-    public <T, S> Node synthesize(Grammar<T> grammar, S problem, Checker<S> checker) {
+    public <T, S> Node synthesize(Grammar<T> grammar, S problem, Checker<S> checker, Interpreter... interpreter) {
         grammar_ = grammar;
         T start = grammar.start();
         astRoot = new Node("root");

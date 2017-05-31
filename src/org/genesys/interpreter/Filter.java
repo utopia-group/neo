@@ -1,8 +1,8 @@
-package org.genesys.Interpreter;
+package org.genesys.interpreter;
 
-import org.genesys.Type.AbstractList;
-import org.genesys.Type.Cons;
-import org.genesys.Type.EmptyList;
+import org.genesys.type.AbstractList;
+import org.genesys.type.Cons;
+import org.genesys.type.EmptyList;
 
 /**
  * Created by yufeng on 5/31/17.

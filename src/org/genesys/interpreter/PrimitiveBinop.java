@@ -1,4 +1,4 @@
-package org.genesys.Interpreter;
+package org.genesys.interpreter;
 
 /**
  * Created by yufeng on 5/31/17.

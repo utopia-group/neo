@@ -1,6 +1,6 @@
-package org.genesys.Interpreter;
+package org.genesys.interpreter;
 
-import org.genesys.Type.Maybe;
+import org.genesys.type.Maybe;
 
 import java.util.List;
 

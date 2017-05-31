@@ -1,4 +1,4 @@
-package org.genesys.Type;
+package org.genesys.type;
 
 
 /**

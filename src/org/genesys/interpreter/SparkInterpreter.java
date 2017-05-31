@@ -1,4 +1,4 @@
-package org.genesys.Interpreter;
+package org.genesys.interpreter;
 
 /**
  * Can be used in BigLambda, Morpheus, and SQL.

@@ -1,4 +1,4 @@
-package org.genesys.Type;
+package org.genesys.type;
 
 /**
  * FIXME: Should Cons be a component instead of a type?
