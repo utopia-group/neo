@@ -5,12 +5,10 @@ import org.genesys.language.Grammar;
 /**
  * Created by yufeng on 5/31/17.
  */
-public class SATDecider<C, T> implements Decider<C, T> {
+public class BaselineDecider<C, T> implements Decider<C, T> {
 
-    private Optimizer optimizer;
+    public BaselineDecider() {
 
-    public SATDecider() {
-        optimizer = new MLOptimizer();
     }
 
     @Override
