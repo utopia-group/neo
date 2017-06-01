@@ -18,7 +18,7 @@ public class DummyMain {
         ToyGrammar toyGrammar = gson.fromJson(new FileReader("./grammar/Toy.json"), ToyGrammar.class);
         System.out.println("baseline synthesizer...");
         toyGrammar.init();
-        Synthesizer synth = new DefaultSynthesizer();
+        Synthesizer synth = new DefaultSynthesizer(toyGrammar);
         synth.synthesize(toyGrammar, null, null);
         synth.nextSolution();
     }

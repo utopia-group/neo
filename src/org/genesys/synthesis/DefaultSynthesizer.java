@@ -4,8 +4,8 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Model;
-import org.genesys.decide.Decider;
-import org.genesys.decide.SATDecider;
+import org.genesys.decide.ISolver;
+import org.genesys.decide.SATSolver;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
 import org.genesys.language.Production;
@@ -33,11 +33,11 @@ public class DefaultSynthesizer implements Synthesizer {
 
     private Node astRoot;
 
-    private Decider decider;
+    private ISolver decider;
 
-    public DefaultSynthesizer() {
+    public DefaultSynthesizer(Grammar grammar) {
         z3Utils = Z3Utils.getInstance();
-        decider = new SATDecider();
+        decider = new SATSolver(grammar);
     }
 
     @Override
