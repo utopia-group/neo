@@ -33,11 +33,6 @@ public class BaselineSolver implements ISolver<BoolExpr, Node> {
     public BaselineSolver(Grammar g) {
         z3Utils = Z3Utils.getInstance();
         grammar_ = g;
-    }
-
-    @Override
-    public Node getModel(BoolExpr core) {
-
         Object start = grammar_.start();
         astRoot = new Node("root");
         astRoot.setCtrlVar("true");
@@ -45,6 +40,10 @@ public class BaselineSolver implements ISolver<BoolExpr, Node> {
         Trio<Integer, BoolExpr, List<BoolExpr>> formula = generate(grammar_, start, z3Utils.trueExpr(), maxLen_);
         System.out.println("Big formula: " + formula.t1);
         z3Utils.init(formula.t1);
+    }
+
+    @Override
+    public Node getModel(BoolExpr core) {
         Model m = z3Utils.getModel();
         Node ast = translate(m);
         return ast;
