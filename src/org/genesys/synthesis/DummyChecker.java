@@ -1,14 +1,15 @@
 package org.genesys.synthesis;
 
 import com.microsoft.z3.BoolExpr;
+import org.genesys.models.Example;
 import org.genesys.models.Node;
 
 /**
- * Created by yufeng on 5/28/17.
+ * Created by yufeng on 6/3/17.
  */
-public class Deductor<S, BoolExpr> implements Checker<S, BoolExpr> {
+public class DummyChecker implements Checker<Example, BoolExpr> {
     @Override
-    public boolean check(S specification, Node node) {
+    public boolean check(Example specification, Node node) {
         return true;
     }
 
