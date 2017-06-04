@@ -2,7 +2,9 @@ package org.genesys.clients;
 
 import com.google.gson.Gson;
 import org.genesys.language.*;
+import org.genesys.synthesis.Checker;
 import org.genesys.synthesis.DefaultSynthesizer;
+import org.genesys.synthesis.DummyChecker;
 import org.genesys.synthesis.Synthesizer;
 
 import java.io.FileNotFoundException;
@@ -18,8 +20,8 @@ public class DummyMain {
         ToyGrammar toyGrammar = gson.fromJson(new FileReader("./grammar/Toy.json"), ToyGrammar.class);
         System.out.println("baseline synthesizer...");
         toyGrammar.init();
-        Synthesizer synth = new DefaultSynthesizer(toyGrammar);
-        synth.synthesize(toyGrammar, null, null);
-        synth.nextSolution();
+        Checker checker = new DummyChecker();
+        Synthesizer synth = new DefaultSynthesizer(toyGrammar, null, checker, null);
+        synth.synthesize();
     }
 }
