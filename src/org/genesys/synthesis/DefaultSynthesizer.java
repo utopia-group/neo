@@ -1,29 +1,19 @@
 package org.genesys.synthesis;
 
 import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Expr;
-import com.microsoft.z3.FuncDecl;
-import com.microsoft.z3.Model;
 import org.genesys.decide.BaselineSolver;
-import org.genesys.decide.ISolver;
-import org.genesys.decide.SATSolver;
+import org.genesys.decide.AbstractSolver;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
-import org.genesys.language.Production;
 import org.genesys.models.Example;
-import org.genesys.utils.LibUtils;
 import org.genesys.models.Node;
-import org.genesys.models.Trio;
-import org.genesys.utils.Z3Utils;
-
-import java.util.*;
 
 /**
  * Created by yufeng on 5/28/17.
  */
 public class DefaultSynthesizer implements Synthesizer {
 
-    private ISolver<BoolExpr, Node> solver_;
+    private AbstractSolver<BoolExpr, Node> solver_;
 
     private Checker checker_;
 

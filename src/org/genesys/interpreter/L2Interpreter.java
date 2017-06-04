@@ -1,8 +1,10 @@
 package org.genesys.interpreter;
 
+import org.genesys.models.Pair;
 import org.genesys.type.AbstractList;
 import org.genesys.type.Cons;
 import org.genesys.type.Maybe;
+import org.genesys.type.PairType;
 import synth.instance.list.ListInstance;
 
 import java.util.HashMap;
@@ -45,9 +47,9 @@ public class L2Interpreter implements Interpreter {
         executors.put("cons", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new Cons(objects.get(0), (AbstractList)objects.get(1))); }});
-//        executors.put("pair", new Executor() {
-//            public Maybe<Object> execute(List<Object> objects, Object input) {
-//                return new Maybe<Object>(new Pair(objects.get(0), objects.get(1))); }});
+        executors.put("pair", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new Pair(objects.get(0), objects.get(1))); }});
         executors.put("map", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new MapList((Unop)objects.get(0))); }});
@@ -60,18 +62,18 @@ public class L2Interpreter implements Interpreter {
         executors.put("foldRight", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new FoldRight((Binop)objects.get(0), objects.get(1))); }});
-//        executors.put("l(a,x).(cons a x)", new Executor() {
-//            public Maybe<Object> execute(List<Object> objects, Object input) {
-//                return new Maybe<Object>(new ConsBinop()); }});
-//        executors.put("l(x,a).(cons a x)", new Executor() {
-//            public Maybe<Object> execute(List<Object> objects, Object input) {
-//                return new Maybe<Object>(new ConsRevBinop()); }});
-//        executors.put("l(a).(cons a x)", new Executor() {
-//            public Maybe<Object> execute(List<Object> objects, Object input) {
-//                return new Maybe<Object>(new ConsFirstUnop((AbstractList)objects.get(0))); }});
-//        executors.put("l(x).(cons a x)", new Executor() {
-//            public Maybe<Object> execute(List<Object> objects, Object input) {
-//                return new Maybe<Object>(new ConsSecondUnop(objects.get(0))); }});
+        executors.put("l(a,x).(cons a x)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new ConsBinop()); }});
+        executors.put("l(x,a).(cons a x)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new ConsRevBinop()); }});
+        executors.put("l(a).(cons a x)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new ConsFirstUnop((AbstractList)objects.get(0))); }});
+        executors.put("l(x).(cons a x)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new ConsSecondUnop(objects.get(0))); }});
         executors.put("l(a,b).(+ a b)", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new PrimitiveBinop("+")); }});

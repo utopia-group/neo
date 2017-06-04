@@ -101,6 +101,7 @@ public class Z3Utils {
             model_ = m;
         } else {
             model_ = null;
+            System.out.println("UNSAT_core:" + solver_.getUnsatCore().length);
         }
         return model_;
     }

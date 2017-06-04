@@ -7,17 +7,17 @@ import java.util.List;
 /**
  * Created by yufeng on 5/26/17.
  */
-public class ToyGrammar<T> implements Grammar<T> {
+public class ToyGrammar implements Grammar<String> {
 
-    private final T start;
+    private final String start;
 
     private String name;
 
-    private List<Production<T>> productions;
+    private List<Production<String>> productions;
 
-    private MultivalueMap<T, Production<T>> productionsBySymbol;
+    private MultivalueMap<String, Production<String>> productionsBySymbol;
 
-    public ToyGrammar(T start, MultivalueMap<T, Production<T>> prods) {
+    public ToyGrammar(String start, MultivalueMap<String, Production<String>> prods) {
         this.start = start;
         this.productionsBySymbol = prods;
     }
@@ -25,10 +25,10 @@ public class ToyGrammar<T> implements Grammar<T> {
     public void init() {
         productionsBySymbol = new MultivalueMap<>();
 
-        for (Production prod : productions) {
+        for (Production<String> prod : productions) {
             String func = prod.function;
             String src = prod.source;
-            productionsBySymbol.add((T) src, prod);
+            productionsBySymbol.add(src, prod);
         }
     }
 
@@ -38,17 +38,17 @@ public class ToyGrammar<T> implements Grammar<T> {
     }
 
     @Override
-    public List<Production<T>> getProductions() {
+    public List<Production<String>> getProductions() {
         return productions;
     }
 
     @Override
-    public T start() {
+    public String start() {
         return this.start;
     }
 
     @Override
-    public List<Production<T>> productionsFor(T symbol) {
+    public List<Production<String>> productionsFor(String symbol) {
         System.out.println(this.productionsBySymbol + " " + symbol);
         return this.productionsBySymbol.get(symbol);
     }

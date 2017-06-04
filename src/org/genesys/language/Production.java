@@ -2,6 +2,7 @@ package org.genesys.language;
 
 /**
  * Created by yufeng on 5/26/17.
+ * Production: src -> (function) inputs
  */
 public class Production <T> {
 
@@ -9,12 +10,12 @@ public class Production <T> {
 
     public final T[] inputs;
 
-    public final String source;
+    public final T source;
 
     public String[] spec;
 
     @SafeVarargs
-    public Production(String src, String function, T ... inputs) {
+    public Production(T src, String function, T ... inputs) {
         this.source = src;
         this.function = function;
         this.inputs = inputs;
