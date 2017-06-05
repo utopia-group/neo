@@ -78,12 +78,13 @@ public class Z3Utils {
 
         for (int i = 0; i < (exprs.length - 1); i++) {
             BoolExpr fst = exprs[i];
-            for (int j = 1; j < (exprs.length); j++) {
+            for (int j = (i + 1); j < (exprs.length); j++) {
                 BoolExpr snd = exprs[j];
-                BoolExpr exactOne = ctx_.mkXor(fst, snd);
+                BoolExpr exactOne = ctx_.mkNot(ctx_.mkAnd(fst, snd));
                 list.add(exactOne);
             }
         }
+        list.add(disjoin(exprs));
         BoolExpr[] array = new BoolExpr[list.size()];
         array = list.toArray(array);
 
@@ -101,6 +102,7 @@ public class Z3Utils {
             model_ = m;
         } else {
             model_ = null;
+            System.out.println("UNSAT_core:" + solver_.getUnsatCore().length);
         }
         return model_;
     }

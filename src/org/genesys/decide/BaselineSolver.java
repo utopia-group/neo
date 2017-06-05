@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Created by yufeng on 5/31/17.
  */
-public class BaselineSolver implements ISolver<BoolExpr, Node> {
+public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Z3Utils z3Utils;
 
@@ -34,6 +34,7 @@ public class BaselineSolver implements ISolver<BoolExpr, Node> {
         z3Utils = Z3Utils.getInstance();
         grammar_ = g;
         Object start = grammar_.start();
+        System.out.println("start symbol:" + start);
         astRoot = new Node("root");
         astRoot.setCtrlVar("true");
         ctrlVarAstMap.put("true", astRoot);
@@ -45,6 +46,7 @@ public class BaselineSolver implements ISolver<BoolExpr, Node> {
     @Override
     public Node getModel(BoolExpr core) {
         Model m = z3Utils.getModel();
+        System.out.println("Current model:" + m);
         Node ast = translate(m);
         return ast;
     }
@@ -71,12 +73,13 @@ public class BaselineSolver implements ISolver<BoolExpr, Node> {
             parentNode.addChild(node);
             ctrlVarAstMap.put(var.toString(), node);
             node.setCtrlVar(var.toString());
-//            System.out.println(var + " mapsto: " + prod);
+            System.out.println(var + " mapsto: " + prod);
             varList.add(var);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, List<BoolExpr>> subResult = generate(grammar, child, var, len);
                 if (subResult == null) continue;
+                System.out.println("Parent: " + var + " Child------------" + subResult.t2);
 
                 for (BoolExpr subVar : subResult.t2) {
                     /* if child happens, that implies parent also happens. */

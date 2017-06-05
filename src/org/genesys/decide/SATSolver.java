@@ -5,7 +5,7 @@ import org.genesys.language.Grammar;
 /**
  * Created by yufeng on 5/31/17.
  */
-public class SATSolver<C, T> implements ISolver<C, T> {
+public class SATSolver<C, T> implements AbstractSolver<C, T> {
 
     private Decider optimizer;
 
