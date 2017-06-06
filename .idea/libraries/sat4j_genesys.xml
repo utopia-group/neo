@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sat4j-genesys">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/sat4j-genesys.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
