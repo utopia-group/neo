@@ -40,34 +40,13 @@ public class DefaultSynthesizer implements Synthesizer {
         while (!checker_.check(problem_, ast)) {
             ast = solver_.getModel(null);
         }
-        Node ast2 = solver_.getModel(null);
-        Node ast3 = solver_.getModel(null);
-        Node ast4 = solver_.getModel(null);
-        Node ast5 = solver_.getModel(null);
-        Node ast6 = solver_.getModel(null);
-        Node ast7 = solver_.getModel(null);
-        Node ast8 = solver_.getModel(null);
-        Node ast9 = solver_.getModel(null);
-        Node ast10 = solver_.getModel(null);
-
-        System.out.println("ast" + ast);
-        System.out.println("ast2" + ast2);
-        System.out.println("ast3" + ast3);
-        System.out.println("ast4" + ast4);
-        System.out.println("ast5" + ast5);
-        System.out.println("ast6" + ast6);
-        System.out.println("ast7" + ast7);
-        System.out.println("ast8" + ast8);
-        System.out.println("ast9" + ast9);
-        System.out.println("ast10" + ast10);
 
         /* check input-output using the interpreter */
         AbstractList list = new Cons(0, new Cons(1, new Cons(2, new EmptyList())));
-        Node actualAst = ast3.children.get(0);
+        Node actualAst = ast.children.get(0);
         System.out.println("PROGRAM: " + actualAst);
         System.out.println("INPUT: " + list);
         System.out.println("OUTPUT: " + interpreter_.execute(actualAst, list).get());
-
 
         return ast;
     }

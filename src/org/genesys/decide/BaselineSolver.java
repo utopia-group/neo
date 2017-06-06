@@ -88,9 +88,14 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
                 if (subResult == null) continue;
 //                System.out.println("Parent: " + var + " Child------------" + subResult.t2);
 
+//                System.out.println("prods.size= " + prods.size() + " prod= " + prod.toString());
+
                 for (BoolExpr subVar : subResult.t2) {
                     /* if child happens, that implies parent also happens. */
                     conjoinList.add(z3Utils.imply(subVar, var));
+//                    if (prods.size() == 1)
+//                        conjoinList.add(z3Utils.imply(var, subVar));
+
                 }
                 /* Conjoin children's constraints. */
                 BoolExpr subExpr = subResult.t1;
