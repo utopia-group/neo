@@ -1,5 +1,8 @@
 package org.genesys.interpreter;
 
+import org.genesys.models.Node;
+import org.genesys.type.Maybe;
+
 /**
  * Created by yufeng on 5/30/17.
  */
@@ -13,7 +16,7 @@ public class DefaultInterpreter implements Interpreter {
     }
 
     @Override
-    public <T> Object execute(T node) {
-        return null;
+    public Maybe execute(Object node, Object input) {
+        throw new UnsupportedOperationException("Unsupported interpreter: Default.");
     }
 }

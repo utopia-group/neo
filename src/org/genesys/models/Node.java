@@ -8,9 +8,25 @@ import java.util.Set;
  * Created by yufeng on 5/26/17.
  */
 public class Node {
+
     public String function;
+
     public List<Node> children = new ArrayList<>();
+
     private String ctrlVar;
+
+    public Node(String function, List<Node> children) {
+        this.function = function;
+        this.children = children;
+    }
+
+    public Node(Node other) {
+        this.function = other.function;
+    }
+
+    public void addChild(Node node) {
+        children.add(node);
+    }
 
     public String getCtrlVar() {
         return ctrlVar;
@@ -22,15 +38,6 @@ public class Node {
 
     public Node(String function) {
         this.function = function;
-    }
-
-    public Node(String function, List<Node> children) {
-        this.function = function;
-        this.children = children;
-    }
-
-    public void addChild(Node node) {
-        children.add(node);
     }
 
     @Override
@@ -57,6 +64,7 @@ public class Node {
         if (this.children.size() > 0) {
             sb.append("(");
         }
+
         sb.append(this.function).append(" ");
         for (Node child : this.children) {
             sb.append(child.traverseModel(models)).append(" ");
@@ -67,4 +75,5 @@ public class Node {
         }
         return sb.toString();
     }
+
 }

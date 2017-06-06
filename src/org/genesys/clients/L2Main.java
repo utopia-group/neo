@@ -1,5 +1,7 @@
 package org.genesys.clients;
 
+import org.genesys.interpreter.Interpreter;
+import org.genesys.interpreter.L2Interpreter;
 import org.genesys.language.L2Grammar;
 import org.genesys.synthesis.Checker;
 import org.genesys.synthesis.DefaultSynthesizer;
@@ -18,7 +20,8 @@ public class L2Main {
 
         L2Grammar l2Grammar = new L2Grammar(new ListType(new IntType()), new ListType(new IntType()));
         Checker checker = new DummyChecker();
-        Synthesizer synth = new DefaultSynthesizer(l2Grammar, null, checker, null);
+        Interpreter interpreter = new L2Interpreter();
+        Synthesizer synth = new DefaultSynthesizer(l2Grammar, null, checker, interpreter);
         synth.synthesize();
     }
 }
