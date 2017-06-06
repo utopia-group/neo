@@ -1,8 +1,10 @@
 package org.genesys.interpreter;
 
+import org.genesys.type.Maybe;
+
 /**
  * Created by yufeng on 5/30/17.
  */
-public interface Interpreter {
-    <T> Object execute(T node);
+public interface Interpreter<T, I> {
+    Maybe<I> execute(T node, I input);
 }

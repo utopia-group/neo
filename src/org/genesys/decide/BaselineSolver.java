@@ -7,6 +7,7 @@ import com.microsoft.z3.Model;
 import org.genesys.language.Grammar;
 import org.genesys.language.Production;
 import org.genesys.models.Node;
+import org.genesys.models.Pair;
 import org.genesys.models.Trio;
 import org.genesys.utils.LibUtils;
 import org.genesys.utils.Z3Utils;
@@ -30,6 +31,8 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Node astRoot;
 
+    private Model model_;
+
     public BaselineSolver(Grammar g) {
         z3Utils = Z3Utils.getInstance();
         grammar_ = g;
@@ -45,9 +48,13 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     @Override
     public Node getModel(BoolExpr core) {
-        Model m = z3Utils.getModel();
-        System.out.println("Current model:" + m);
-        Node ast = translate(m);
+        if (model_ != null) {
+            boolean hasNext = z3Utils.blockSolution();
+            if (!hasNext) return null;
+        }
+        model_ = z3Utils.getModel();
+//        System.out.println("Current model:" + model_);
+        Node ast = translate(model_);
         return ast;
     }
 
@@ -73,13 +80,13 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             parentNode.addChild(node);
             ctrlVarAstMap.put(var.toString(), node);
             node.setCtrlVar(var.toString());
-            System.out.println(var + " mapsto: " + prod);
+//            System.out.println(var + " mapsto: " + prod);
             varList.add(var);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, List<BoolExpr>> subResult = generate(grammar, child, var, len);
                 if (subResult == null) continue;
-                System.out.println("Parent: " + var + " Child------------" + subResult.t2);
+//                System.out.println("Parent: " + var + " Child------------" + subResult.t2);
 
                 for (BoolExpr subVar : subResult.t2) {
                     /* if child happens, that implies parent also happens. */
@@ -106,19 +113,6 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         return result;
     }
 
-
-    public Node nextSolution() {
-        /* block current model */
-        boolean hasNext = z3Utils.blockSolution();
-        if (hasNext) {
-            Model nextModel = z3Utils.getModel();
-            Node ast = translate(nextModel);
-            return ast;
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Translate Z3 model into a concrete AST node.
      *
@@ -141,8 +135,31 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
 
-        System.out.println("program: " + astRoot.traverseModel(models));
-        return astRoot;
+//        System.out.println("program: " + astRoot.traverseModel(models));
+        Node sol = extractAst(models);
+        return sol;
+    }
+
+    private Node extractAst(Set<String> models) {
+        Queue<Pair<Node, Node>> worklist = new LinkedList<>();
+        Node rootCopy = new Node(astRoot);
+        Pair<Node, Node> rootPair = new Pair<>(astRoot, rootCopy);
+        worklist.add(rootPair);
+        while (!worklist.isEmpty()) {
+            Pair<Node, Node> workerPair = worklist.remove();
+            Node org = workerPair.t0;
+            Node copy = workerPair.t1;
+
+            for (Node child : org.children) {
+                if (models.contains(child.getCtrlVar())) {
+                    Node childCopy = new Node(child);
+                    worklist.add(new Pair<>(child, childCopy));
+                    copy.addChild(childCopy);
+                }
+            }
+        }
+
+        return rootCopy;
     }
 
 }
