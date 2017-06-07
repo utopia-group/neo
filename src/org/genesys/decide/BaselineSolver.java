@@ -40,10 +40,10 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         z3Utils = Z3Utils.getInstance();
         grammar_ = g;
         Object start = grammar_.start();
-        System.out.println("start symbol:" + start);
+//        System.out.println("start symbol:" + start);
         Trio<Integer, BoolExpr, BoolExpr> formula = generate(grammar_, start, maxLen_);
         BoolExpr formulaConjoin = z3Utils.conjoin(formula.t1, z3Utils.getVarById("bool_0"));
-        System.out.println("Big formula: " + formulaConjoin);
+//        System.out.println("Big formula: " + formulaConjoin);
         z3Utils.init(formulaConjoin);
     }
 
