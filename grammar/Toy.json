@@ -49,7 +49,6 @@
       "function": "zero",
       "source": "var",
       "inputs": [
-        "0"
       ],
       "spec": [
         "(declare-const CO_SPEC Int)(declare-const CI_SPEC Int)(declare-const RO_SPEC Int)(declare-const RI_SPEC Int)(assert true)"
@@ -59,7 +58,6 @@
       "function": "one",
       "source": "var",
       "inputs": [
-        "1"
       ],
       "spec": [
         "(declare-const CO_SPEC Int)(declare-const CI_SPEC Int)(declare-const RO_SPEC Int)(declare-const RI_SPEC Int)(assert true)"

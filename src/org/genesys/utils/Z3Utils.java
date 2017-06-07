@@ -51,6 +51,10 @@ public class Z3Utils {
         return pa;
     }
 
+    public BoolExpr getVarById(String id) {
+        return stringBoolExprMap.get(id);
+    }
+
     public BoolExpr conjoin(BoolExpr... exprs) {
         if (exprs.length == 0) return this.trueExpr();
         BoolExpr pa = ctx_.mkAnd(exprs);
@@ -67,6 +71,7 @@ public class Z3Utils {
     }
 
     public BoolExpr disjoin(BoolExpr... exprs) {
+        if(exprs.length == 1) return exprs[0];
         BoolExpr pa = ctx_.mkOr(exprs);
         return pa;
     }

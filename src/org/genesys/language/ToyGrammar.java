@@ -49,7 +49,7 @@ public class ToyGrammar implements Grammar<String> {
 
     @Override
     public List<Production<String>> productionsFor(String symbol) {
-        System.out.println(this.productionsBySymbol + " " + symbol);
+//        System.out.println(this.productionsBySymbol + " " + symbol);
         return this.productionsBySymbol.get(symbol);
     }
 

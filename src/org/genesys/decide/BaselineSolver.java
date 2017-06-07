@@ -23,13 +23,15 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Grammar grammar_;
 
-    private int maxLen_ = 3;
+    private int maxLen_ = 4;
 
-    private final Map<String, Production> ctrlVarMap = new HashMap<>();
+    /* Control variables for productions */
+    private final Map<String, Production> prodCtrlMap = new HashMap<>();
 
-    private final Map<String, Node> ctrlVarAstMap = new HashMap<>();
+    private final Map<Production, Set<String>> prodCtrlInvMap = new HashMap<>();
 
-    private Node astRoot;
+    /* Control variables for symbols */
+    private final Map<BoolExpr, String> symCtrlMap = new HashMap<>();
 
     private Model model_;
 
@@ -38,12 +40,10 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         grammar_ = g;
         Object start = grammar_.start();
         System.out.println("start symbol:" + start);
-        astRoot = new Node("root");
-        astRoot.setCtrlVar("true");
-        ctrlVarAstMap.put("true", astRoot);
-        Trio<Integer, BoolExpr, List<BoolExpr>> formula = generate(grammar_, start, z3Utils.trueExpr(), maxLen_);
-        System.out.println("Big formula: " + formula.t1);
-        z3Utils.init(formula.t1);
+        Trio<Integer, BoolExpr, BoolExpr> formula = generate(grammar_, start, maxLen_);
+        BoolExpr formulaConjoin = z3Utils.conjoin(formula.t1, z3Utils.getVarById("bool_0"));
+        System.out.println("Big formula: " + formulaConjoin);
+        z3Utils.init(formulaConjoin);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
 
-    private <T> Trio<Integer, BoolExpr, List<BoolExpr>> generate(Grammar grammar, T s, BoolExpr parent, int len) {
+    private <T> Trio<Integer, BoolExpr, BoolExpr> generate(Grammar grammar, T s, int len) {
         if ((len == 0)) {
             return null;
         }
@@ -68,40 +68,41 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         List<Production<T>> prods = grammar.productionsFor(s);
         List<BoolExpr> exactList = new ArrayList<>();
         List<BoolExpr> conjoinList = new ArrayList<>();
-        List<BoolExpr> varList = new ArrayList<>();
-        String parentVar = parent.toString();
+        /* Control variable for current symbol. */
+        BoolExpr parentVar = z3Utils.getFreshBoolVar();
+        symCtrlMap.put(parentVar, s.toString());
 
         for (Production<T> prod : prods) {
-            BoolExpr var = z3Utils.getFreshBoolVar();
-            ctrlVarMap.put(var.toString(), prod);
-            Node node = new Node(prod.function);
-            assert (ctrlVarAstMap.containsKey(parentVar));
-            Node parentNode = ctrlVarAstMap.get(parentVar);
-            parentNode.addChild(node);
-            ctrlVarAstMap.put(var.toString(), node);
-            node.setCtrlVar(var.toString());
-//            System.out.println(var + " mapsto: " + prod);
-            varList.add(var);
+            BoolExpr prodVar = z3Utils.getFreshBoolVar();
+            prodCtrlMap.put(prodVar.toString(), prod);
+            if (prodCtrlInvMap.containsKey(prod)) {
+                Set<String> ctrlKeys = prodCtrlInvMap.get(prod);
+                ctrlKeys.add(prodVar.toString());
+            } else {
+                Set<String> ctrlKeys = new HashSet<>();
+                ctrlKeys.add(prodVar.toString());
+                prodCtrlInvMap.put(prod, ctrlKeys);
+            }
+
+            System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
-                Trio<Integer, BoolExpr, List<BoolExpr>> subResult = generate(grammar, child, var, len);
-                if (subResult == null) continue;
-//                System.out.println("Parent: " + var + " Child------------" + subResult.t2);
-
-//                System.out.println("prods.size= " + prods.size() + " prod= " + prod.toString());
-
-                for (BoolExpr subVar : subResult.t2) {
-                    /* if child happens, that implies parent also happens. */
-                    conjoinList.add(z3Utils.imply(subVar, var));
-//                    if (prods.size() == 1)
-//                        conjoinList.add(z3Utils.imply(var, subVar));
-
+                Trio<Integer, BoolExpr, BoolExpr> subResult = generate(grammar, child, len);
+                if (subResult == null) {
+                    continue;
                 }
+
+                BoolExpr childSymVar = subResult.t2;
+                symCtrlMap.put(childSymVar, child.toString());
+                /* AND edge: if production 'prod' happen, it's equivalent to say all its children symbols also happen. */
+                conjoinList.add(z3Utils.imply(prodVar, childSymVar));
+                conjoinList.add(z3Utils.imply(childSymVar, prodVar));
+
                 /* Conjoin children's constraints. */
                 BoolExpr subExpr = subResult.t1;
                 conjoinList.add(subExpr);
             }
-            exactList.add(var);
+            exactList.add(prodVar);
         }
 
         /* Only one production can happen. */
@@ -110,11 +111,17 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         /* conjoin current constraints with the children. */
         BoolExpr[] conjoinArray = LibUtils.listToArray(conjoinList);
 
+        BoolExpr childToParent = z3Utils.imply(z3Utils.disjoin(exactArray), parentVar);
+
         BoolExpr exactExpr = z3Utils.exactOne(exactArray);
-        exactExpr = z3Utils.imply(parent, exactExpr);
+        /* Current symbol implies that exact one production can happen */
+        exactExpr = z3Utils.imply(parentVar, exactExpr);
         BoolExpr conjoinExpr = z3Utils.conjoin(conjoinArray);
 
-        Trio<Integer, BoolExpr, List<BoolExpr>> result = new Trio<>(len, z3Utils.conjoin(exactExpr, conjoinExpr), varList);
+        if (exactArray.length > 0)
+            conjoinExpr = z3Utils.conjoin(conjoinExpr, childToParent);
+
+        Trio<Integer, BoolExpr, BoolExpr> result = new Trio<>(len, z3Utils.conjoin(exactExpr, conjoinExpr), parentVar);
         return result;
     }
 
@@ -127,44 +134,58 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     private Node translate(Model m) {
         if (m == null) return null;
 
-        System.out.println("begin to translate: ");
-        Set<String> models = new HashSet<>();
-        models.add("true");
+//        System.out.println("begin to translate: " + m);
+        LinkedList<String> models = new LinkedList<>();
         for (FuncDecl fd : m.getConstDecls()) {
             Expr val = m.getConstInterp(fd);
             if (val.equals(z3Utils.trueExpr())) {
-
-                Production prod = ctrlVarMap.get(fd.getName().toString());
-                models.add(fd.getName().toString());
-//                System.out.println(fd.getName() + " :" + prod.source + " " + prod);
+                String prodId = fd.getName().toString();
+                if (prodCtrlMap.containsKey(prodId))
+                    models.add(fd.getName().toString());
             }
         }
 
-//        System.out.println("program: " + astRoot.traverseModel(models));
         Node sol = extractAst(models);
         return sol;
     }
 
-    private Node extractAst(Set<String> models) {
-        Queue<Pair<Node, Node>> worklist = new LinkedList<>();
-        Node rootCopy = new Node(astRoot);
-        Pair<Node, Node> rootPair = new Pair<>(astRoot, rootCopy);
+    private Node extractAst(LinkedList<String> models) {
+        Collections.sort(models);
+//        System.out.println("current model:" + models);
+        Queue<Pair<Object, Node>> worklist = new LinkedList<>();
+        Object startNode = grammar_.start();
+        Node root = new Node();
+        root.setSymbol(startNode);
+        Pair<Object, Node> rootPair = new Pair<>(startNode, root);
         worklist.add(rootPair);
         while (!worklist.isEmpty()) {
-            Pair<Node, Node> workerPair = worklist.remove();
-            Node org = workerPair.t0;
-            Node copy = workerPair.t1;
+            Pair<Object, Node> workerPair = worklist.remove();
+            Object workerSym = workerPair.t0;
+            Node workerNode = workerPair.t1;
 
-            for (Node child : org.children) {
-                if (models.contains(child.getCtrlVar())) {
-                    Node childCopy = new Node(child);
-                    worklist.add(new Pair<>(child, childCopy));
-                    copy.addChild(childCopy);
+            for (Object o : grammar_.productionsFor(workerSym)) {
+
+                Production prod = (Production) o;
+                assert prodCtrlInvMap.containsKey(prod) : prod;
+                Set<String> ctrlKeys = prodCtrlInvMap.get(prod);
+
+                if (!models.isEmpty() && ctrlKeys.contains(models.getFirst())) {
+                    models.removeFirst();
+                    workerNode.function = prod.function;
+
+                    for (Object childSym : prod.inputs) {
+                        Node childNode = new Node();
+                        childNode.setSymbol(childSym);
+                        workerNode.addChild(childNode);
+                        worklist.add(new Pair<>(childSym, childNode));
+                    }
+                    break;
                 }
             }
         }
 
-        return rootCopy;
+        System.out.println("Current AST:" + root + " models:" + models);
+        return root;
     }
 
 }

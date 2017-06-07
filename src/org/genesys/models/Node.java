@@ -9,35 +9,34 @@ import java.util.Set;
  */
 public class Node {
 
+    private Object symbol;
+
     public String function;
 
     public List<Node> children = new ArrayList<>();
 
-    private String ctrlVar;
+    public Node() {
+    }
 
     public Node(String function, List<Node> children) {
         this.function = function;
         this.children = children;
     }
 
-    public Node(Node other) {
-        this.function = other.function;
-    }
-
     public void addChild(Node node) {
         children.add(node);
     }
 
-    public String getCtrlVar() {
-        return ctrlVar;
-    }
-
-    public void setCtrlVar(String ctrlVar) {
-        this.ctrlVar = ctrlVar;
-    }
-
     public Node(String function) {
         this.function = function;
+    }
+
+    public Object getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(Object symbol) {
+        this.symbol = symbol;
     }
 
     @Override
@@ -49,25 +48,6 @@ public class Node {
         sb.append(this.function).append(" ");
         for (Node child : this.children) {
             sb.append(child.toString()).append(" ");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        if (this.children.size() > 0) {
-            sb.append(")");
-        }
-        return sb.toString();
-    }
-
-    public String traverseModel(Set<String> models) {
-        if (!models.contains(ctrlVar)) return "";
-
-        StringBuilder sb = new StringBuilder();
-        if (this.children.size() > 0) {
-            sb.append("(");
-        }
-
-        sb.append(this.function).append(" ");
-        for (Node child : this.children) {
-            sb.append(child.traverseModel(models)).append(" ");
         }
         sb.deleteCharAt(sb.length() - 1);
         if (this.children.size() > 0) {

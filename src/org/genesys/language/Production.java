@@ -22,6 +22,21 @@ public class Production <T> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Production<?> that = (Production<?>) o;
+
+        return function != null ? function.equals(that.function) : that.function == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return function != null ? function.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.function);
