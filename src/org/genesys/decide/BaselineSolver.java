@@ -6,6 +6,7 @@ import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Model;
 import org.genesys.language.Grammar;
 import org.genesys.language.Production;
+import org.genesys.models.MultivalueMap;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.models.Trio;
@@ -28,7 +29,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     /* Control variables for productions */
     private final Map<String, Production> prodCtrlMap = new HashMap<>();
 
-    private final Map<Production, Set<String>> prodCtrlInvMap = new HashMap<>();
+    private final MultivalueMap<Production, String> prodCtrlInvMap = new MultivalueMap<>();
 
     /* Control variables for symbols */
     private final Map<BoolExpr, String> symCtrlMap = new HashMap<>();
@@ -76,15 +77,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         for (Production<T> prod : prods) {
             BoolExpr prodVar = z3Utils.getFreshBoolVar();
             prodCtrlMap.put(prodVar.toString(), prod);
-            if (prodCtrlInvMap.containsKey(prod)) {
-                Set<String> ctrlKeys = prodCtrlInvMap.get(prod);
-                ctrlKeys.add(prodVar.toString());
-            } else {
-                Set<String> ctrlKeys = new HashSet<>();
-                ctrlKeys.add(prodVar.toString());
-                prodCtrlInvMap.put(prod, ctrlKeys);
-            }
-
+            prodCtrlInvMap.add(prod, prodVar.toString());
 //            System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
@@ -172,7 +165,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
                 Production prod = (Production) o;
                 assert prodCtrlInvMap.containsKey(prod) : prod;
-                Set<String> ctrlKeys = prodCtrlInvMap.get(prod);
+                List<String> ctrlKeys = prodCtrlInvMap.get(prod);
 
                 if (!models.isEmpty() && ctrlKeys.contains(models.getFirst())) {
                     models.removeFirst();
