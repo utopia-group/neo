@@ -59,20 +59,20 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         return ast;
     }
 
-
     private <T> Trio<Integer, BoolExpr, BoolExpr> generate(Grammar grammar, T s, int len) {
-//        System.out.println("debugging constant****************: " + s + "--------->" + grammar.productionsFor(s));
-        if ((len == 0)) {
-            return null;
-        }
-        len--;
-
         List<Production<T>> prods = grammar.productionsFor(s);
         List<BoolExpr> exactList = new ArrayList<>();
         List<BoolExpr> conjoinList = new ArrayList<>();
         /* Control variable for current symbol. */
         BoolExpr parentVar = z3Utils.getFreshBoolVar();
         symCtrlMap.put(parentVar, s.toString());
+        if (len == 0) {
+            if (prods.isEmpty())//terminal can be the leaf.
+                return new Trio<>(len, z3Utils.trueExpr(), parentVar);
+            else //non-terminal cant be the leaf
+                return new Trio<>(len, z3Utils.neg(parentVar), parentVar);
+        }
+        len--;
 
         for (Production<T> prod : prods) {
             BoolExpr prodVar = z3Utils.getFreshBoolVar();
@@ -82,10 +82,6 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, BoolExpr> subResult = generate(grammar, child, len);
-                if (subResult == null) {
-                    continue;
-                }
-
                 BoolExpr childSymVar = subResult.t2;
                 symCtrlMap.put(childSymVar, child.toString());
                 /* AND edge: if production 'prod' happen, it's equivalent to say all its children symbols also happen. */
@@ -144,12 +140,15 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     private Node extractAst(LinkedList<String> models) {
-        Collections.sort(models);
-//        System.out.println("current model--------------------------:" + models);
-//        for (String m : models
-//             ) {
-//            System.out.println(m + "---->" + prodCtrlMap.get(m));
-//        }
+        /* Important invariant: need to traverse the control variable s in ascending order! */
+        Collections.sort(models, (lhs, rhs) -> {
+            assert lhs.contains("_") && rhs.contains("_");
+            /* compare the id of two control variables. */
+            int lhsIdx = Integer.parseInt(lhs.split("_")[1]);
+            int rhsIdx = Integer.parseInt(rhs.split("_")[1]);
+            return (lhsIdx - rhsIdx);
+        });
+
         Queue<Pair<Object, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();
         Node root = new Node();

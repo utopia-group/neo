@@ -61,6 +61,10 @@ public class Z3Utils {
         return pa;
     }
 
+    public BoolExpr neg(BoolExpr expr) {
+        return ctx_.mkNot(expr);
+    }
+
     public BoolExpr imply(BoolExpr a, BoolExpr b) {
         BoolExpr pa = ctx_.mkImplies(a, b);
         return pa;
@@ -71,7 +75,7 @@ public class Z3Utils {
     }
 
     public BoolExpr disjoin(BoolExpr... exprs) {
-        if(exprs.length == 1) return exprs[0];
+        if (exprs.length == 1) return exprs[0];
         BoolExpr pa = ctx_.mkOr(exprs);
         return pa;
     }

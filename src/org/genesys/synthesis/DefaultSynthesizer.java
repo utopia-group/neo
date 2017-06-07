@@ -42,24 +42,19 @@ public class DefaultSynthesizer implements Synthesizer {
         }
 
         /* check input-output using the interpreter */
+        /* FIXME: Examples should be read from the json file. */
         AbstractList listIn = new Cons(1, new Cons(2, new Cons(3, new EmptyList())));
         AbstractList listOut = new Cons(3, new Cons(2, new Cons(1, new EmptyList())));
 
-//        AbstractList listOut = new Cons(5, new Cons(2, new EmptyList()));
-
         while (ast != null) {
-//            Node actualAst = ast;
-            if (!ast.toString().contains("null")) {
-                System.out.println("PROGRAM: " + ast);
-                Object tgt = interpreter_.execute(ast, listIn).get();
-                System.out.println("OUTPUT: " + interpreter_.execute(ast, listIn).get());
-                if (tgt.toString().equals(listOut.toString())) {
-                    System.out.println("GOT IT.");
-                    break;
-                }
+            System.out.println("PROGRAM: " + ast);
+            Object tgt = interpreter_.execute(ast, listIn).get();
+            System.out.println("OUTPUT: " + interpreter_.execute(ast, listIn).get());
+            if (tgt.toString().equals(listOut.toString())) {
+                System.out.println("GOT IT.");
+                break;
             }
             ast = solver_.getModel(null);
-            //        System.out.println("INPUT: " + list);
         }
 
         return ast;
