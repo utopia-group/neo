@@ -60,6 +60,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
 
     private <T> Trio<Integer, BoolExpr, BoolExpr> generate(Grammar grammar, T s, int len) {
+//        System.out.println("debugging constant****************: " + s + "--------->" + grammar.productionsFor(s));
         if ((len == 0)) {
             return null;
         }
@@ -84,7 +85,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
                 prodCtrlInvMap.put(prod, ctrlKeys);
             }
 
-            System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
+//            System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, BoolExpr> subResult = generate(grammar, child, len);
@@ -151,7 +152,11 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Node extractAst(LinkedList<String> models) {
         Collections.sort(models);
-//        System.out.println("current model:" + models);
+//        System.out.println("current model--------------------------:" + models);
+//        for (String m : models
+//             ) {
+//            System.out.println(m + "---->" + prodCtrlMap.get(m));
+//        }
         Queue<Pair<Object, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();
         Node root = new Node();
@@ -184,7 +189,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
 
-        System.out.println("Current AST:" + root + " models:" + models);
+//        System.out.println("Current AST:" + root + " models:" + models);
         return root;
     }
 
