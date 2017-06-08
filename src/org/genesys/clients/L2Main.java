@@ -21,8 +21,10 @@ import java.io.FileReader;
 public class L2Main {
 
     public static void main(String[] args) throws FileNotFoundException {
+        String json = "./problem/L2/reverse.json";
+        if (args.length != 0) json = args[0];
         Gson gson = new Gson();
-        Problem l2Problem = gson.fromJson(new FileReader("./problem/L2/reverse.json"), Problem.class);
+        Problem l2Problem = gson.fromJson(new FileReader(json), Problem.class);
         System.out.println("Run L2 main..." + l2Problem);
 
         L2Grammar l2Grammar = new L2Grammar(new ListType(new IntType()), new ListType(new IntType()));
