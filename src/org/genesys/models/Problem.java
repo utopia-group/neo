@@ -25,4 +25,12 @@ public class Problem {
     public void setExamples(List<Example> examples) {
         this.examples = examples;
     }
+
+    @Override
+    public String toString() {
+        return "Problem{" +
+                "name='" + name + '\'' +
+                ", examples=" + examples +
+                '}';
+    }
 }

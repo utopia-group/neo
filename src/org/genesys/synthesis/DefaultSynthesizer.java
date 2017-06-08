@@ -7,9 +7,12 @@ import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
 import org.genesys.models.Example;
 import org.genesys.models.Node;
+import org.genesys.models.Problem;
 import org.genesys.type.AbstractList;
-import org.genesys.type.Cons;
-import org.genesys.type.EmptyList;
+import org.genesys.type.Maybe;
+import org.genesys.utils.LibUtils;
+
+import java.util.List;
 
 /**
  * Created by yufeng on 5/28/17.
@@ -22,9 +25,9 @@ public class DefaultSynthesizer implements Synthesizer {
 
     private Interpreter interpreter_;
 
-    private Example problem_;
+    private Problem problem_;
 
-    public DefaultSynthesizer(Grammar grammar, Example problem, Checker checker, Interpreter interpreter) {
+    public DefaultSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter) {
         solver_ = new BaselineSolver(grammar);
         checker_ = checker;
         interpreter_ = interpreter;
@@ -41,22 +44,34 @@ public class DefaultSynthesizer implements Synthesizer {
             ast = solver_.getModel(null);
         }
 
-        /* check input-output using the interpreter */
-        /* FIXME: Examples should be read from the json file. */
-        AbstractList listIn = new Cons(1, new Cons(2, new Cons(3, new EmptyList())));
-        AbstractList listOut = new Cons(3, new Cons(2, new Cons(1, new EmptyList())));
-
         while (ast != null) {
-            System.out.println("PROGRAM: " + ast);
-            Object tgt = interpreter_.execute(ast, listIn).get();
-            System.out.println("OUTPUT: " + interpreter_.execute(ast, listIn).get());
-            if (tgt.toString().equals(listOut.toString())) {
-                System.out.println("GOT IT.");
+            /* check input-output using the interpreter */
+            if (verify(ast)) {
+                System.out.println("Synthesized PROGRAM: " + ast);
                 break;
             }
             ast = solver_.getModel(null);
         }
 
         return ast;
+    }
+
+    /* Verify the program using I-O examples. */
+    private boolean verify(Node program) {
+        boolean passed = true;
+        for (Example example : problem_.getExamples()) {
+            //FIXME:lets assume we only have one input table for now.
+            Object input = ((List) example.getInput()).get(0);
+            AbstractList absInput = LibUtils.getAbsList((List) input);
+            // Always one output table
+            Object output = example.getOutput();
+            AbstractList absOutput = LibUtils.getAbsList((List) output);
+            Maybe<Object> tgt = interpreter_.execute(program, absInput);
+            if (!(tgt.has() && tgt.get().toString().equals(absOutput.toString()))) {
+                passed = false;
+                break;
+            }
+        }
+        return passed;
     }
 }

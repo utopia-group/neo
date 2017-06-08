@@ -1,26 +1,37 @@
 package org.genesys.models;
 
+import java.util.List;
+
 /**
  * Created by yufeng on 5/31/17.
  */
-public class Example {
-    private Object input;
+public class Example<T> {
 
-    private Object output;
+    private List<T> input;
 
-    public Object getInput() {
+    private T output;
+
+    public List<T> getInput() {
         return input;
     }
 
-    public void setInput(Object input) {
-        this.input = input;
-    }
-
-    public Object getOutput() {
+    public T getOutput() {
         return output;
     }
 
-    public void setOutput(Object output) {
+    public void setInput(List<T> input) {
+        this.input = input;
+    }
+
+    public void setOutput(T output) {
         this.output = output;
+    }
+
+    @Override
+    public String toString() {
+        return "Example{" +
+                "input=" + input +
+                ", output=" + output +
+                '}';
     }
 }

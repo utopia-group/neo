@@ -1,7 +1,11 @@
 package org.genesys.utils;
 
 import com.microsoft.z3.BoolExpr;
+import org.genesys.type.AbstractList;
+import org.genesys.type.Cons;
+import org.genesys.type.EmptyList;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -30,5 +34,24 @@ public class LibUtils {
 
     public static long tick() {
         return System.currentTimeMillis();
+    }
+
+    public static AbstractList getAbsList(List arg) {
+        LinkedList myList = new LinkedList(arg);
+        AbstractList abstractList = construct(myList);
+//        System.out.println("convert: " + abstractList);
+        return abstractList;
+    }
+
+    /* recursively construct cons */
+    private static AbstractList construct(LinkedList arg) {
+        if (arg.isEmpty())
+            return new EmptyList();
+        else {
+            Object fst = arg.pollFirst();
+            //FIXME: The stupid bug in Gson.
+            if (fst instanceof Double) fst = ((Double) fst).intValue();
+            return new Cons(fst, construct(arg));
+        }
     }
 }
