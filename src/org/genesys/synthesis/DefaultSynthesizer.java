@@ -59,13 +59,19 @@ public class DefaultSynthesizer implements Synthesizer {
     /* Verify the program using I-O examples. */
     private boolean verify(Node program) {
         boolean passed = true;
+        System.out.println("Program: " + program);
         for (Example example : problem_.getExamples()) {
             //FIXME:lets assume we only have one input table for now.
             Object input = ((List) example.getInput()).get(0);
             AbstractList absInput = LibUtils.getAbsList((List) input);
             // Always one output table
             Object output = example.getOutput();
-            AbstractList absOutput = LibUtils.getAbsList((List) output);
+            Object absOutput;
+            if (output instanceof List)
+                absOutput = LibUtils.getAbsList((List) output);
+            else {
+                absOutput = ((Double) output).intValue();
+            }
             Maybe<Object> tgt = interpreter_.execute(program, absInput);
             if (!(tgt.has() && tgt.get().toString().equals(absOutput.toString()))) {
                 passed = false;

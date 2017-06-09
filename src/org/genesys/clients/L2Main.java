@@ -21,13 +21,13 @@ import java.io.FileReader;
 public class L2Main {
 
     public static void main(String[] args) throws FileNotFoundException {
-        String json = "./problem/L2/reverse.json";
+        String json = "./problem/L2/last.json";
         if (args.length != 0) json = args[0];
         Gson gson = new Gson();
         Problem l2Problem = gson.fromJson(new FileReader(json), Problem.class);
         System.out.println("Run L2 main..." + l2Problem);
 
-        L2Grammar l2Grammar = new L2Grammar(new ListType(new IntType()), new ListType(new IntType()));
+        L2Grammar l2Grammar = new L2Grammar(new ListType(new IntType()), new IntType());
         Checker checker = new DummyChecker();
         Interpreter interpreter = new L2Interpreter();
         Synthesizer synth = new DefaultSynthesizer(l2Grammar, l2Problem, checker, interpreter);

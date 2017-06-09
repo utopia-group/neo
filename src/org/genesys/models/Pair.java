@@ -29,4 +29,12 @@ public class Pair<T0, T1> {
         result = 31 * result + t1.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "t0=" + t0 +
+                ", t1=" + t1 +
+                '}';
+    }
 }
