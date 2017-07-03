@@ -12,10 +12,10 @@ import java.util.Optional;
 public class MaximumUnop implements Unop {
 
     public Object apply(Object obj) {
-        assert obj instanceof List;
+        assert obj instanceof List : obj;
         List<Integer> list = LibUtils.cast(obj);
         Optional<Integer> max = list.stream().reduce(Integer::max);
-        return max;
+        return max.get();
     }
 
     public String toString() {

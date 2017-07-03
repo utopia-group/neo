@@ -5,7 +5,9 @@ import org.genesys.type.AbstractList;
 import org.genesys.type.Cons;
 import org.genesys.type.EmptyList;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by yufeng on 5/31/17.
@@ -18,11 +20,11 @@ public class FilterLList implements Unop {
     }
 
     public Object apply(Object obj) {
-        LinkedList list = (LinkedList)  obj;
+        List list = (List)  obj;
         if (list.isEmpty()) {
             return list;
         } else {
-            LinkedList targetList = new LinkedList();
+            List targetList = new ArrayList<>();
             for (Object elem : list) {
                 if ((boolean) this.unop.apply(elem)) {
                     targetList.add(elem);
