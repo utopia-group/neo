@@ -61,6 +61,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private <T> Trio<Integer, BoolExpr, BoolExpr> generate(Grammar grammar, T s, int len) {
         List<Production<T>> prods = grammar.productionsFor(s);
+//        System.out.println(s + "--->" + prods);
         List<BoolExpr> exactList = new ArrayList<>();
         List<BoolExpr> conjoinList = new ArrayList<>();
         /* Control variable for current symbol. */
@@ -78,7 +79,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             BoolExpr prodVar = z3Utils.getFreshBoolVar();
             prodCtrlMap.put(prodVar.toString(), prod);
             prodCtrlInvMap.add(prod, prodVar.toString());
-//            System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
+            //System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, BoolExpr> subResult = generate(grammar, child, len);
@@ -148,6 +149,9 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             int rhsIdx = Integer.parseInt(rhs.split("_")[1]);
             return (lhsIdx - rhsIdx);
         });
+        for (String m: models) {
+            assert !m.contains("filter");
+        }
 
         Queue<Pair<Object, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();

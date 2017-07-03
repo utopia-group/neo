@@ -7,15 +7,15 @@ import java.util.List;
 
 /**
  * Created by yufeng on 5/31/17.
- * Directly use the grammar from Osbert.
+ * Grammar for deepCoder.
  */
-public class L2Grammar implements Grammar<AbstractType> {
+public class DeepCoderGrammar implements Grammar<AbstractType> {
 
     private AbstractType inputType;
 
     private AbstractType outputType;
 
-    public L2Grammar(AbstractType inputType, AbstractType outputType) {
+    public DeepCoderGrammar(AbstractType inputType, AbstractType outputType) {
         this.inputType = inputType;
         this.outputType = outputType;
     }
@@ -27,7 +27,7 @@ public class L2Grammar implements Grammar<AbstractType> {
 
     @Override
     public String getName() {
-        return "L2Grammar";
+        return "DeepCoderGrammar";
     }
 
     @Override
@@ -48,7 +48,10 @@ public class L2Grammar implements Grammar<AbstractType> {
             productions.add(new Production<>(symbol, "0"));
             productions.add(new Production<>(symbol, "1"));
             productions.add(new Production<>(symbol, "+1", symbol));
-            productions.add(new Production<>(symbol, "-", new IntType()));
+            productions.add(new Production<>(symbol, "-1", symbol));
+            productions.add(new Production<>(symbol, "*3", symbol));
+            productions.add(new Production<>(symbol, "maximum", new ListType(new IntType())));
+
         } else if (symbol instanceof ListType) {
             ListType type = (ListType) symbol;
             productions.add(new Production<>(symbol, "emp"));
@@ -70,39 +73,15 @@ public class L2Grammar implements Grammar<AbstractType> {
                 AbstractType T = ((ListType) type.inputType).type;
                 productions.add(new Production<>(symbol, "filter", new FunctionType(T, new BoolType())));
             }
-            // fold ((I, O) -> O, O) ::= (List<I> -> O)
-            if (type.inputType instanceof ListType) {
-                AbstractType I = ((ListType) type.inputType).type;
-                AbstractType O = type.outputType;
-                productions.add(new Production<>(symbol, "foldLeft", new FunctionType(new PairType(I, O), O), O));
-                productions.add(new Production<>(symbol, "foldRight", new FunctionType(new PairType(I, O), O), O));
-            }
-            // l(a,x).(cons a x) ::= ((T, List<T>) -> List<T>)
-            if (type.inputType instanceof PairType && ((PairType) type.inputType).secondType instanceof ListType
-                    && type.outputType instanceof ListType) {
-                AbstractType T = ((ListType) ((PairType) type.inputType).secondType).type;
-                if (T.equals(((PairType) type.inputType).firstType) && T.equals(((ListType) type.outputType).type)) {
-                    productions.add(new Production<>(symbol, "l(a,x).(cons a x)"));
-                }
-            }
-            // l(x,a).(cons a x) ::= ((List<T>, T) -> List<T>)
+            // zipWith (List<T> -> List<T> -> int -> int -> int -> List<T>)
             if (type.inputType instanceof PairType && ((PairType) type.inputType).firstType instanceof ListType
+                    && ((PairType) type.inputType).secondType instanceof ListType
                     && type.outputType instanceof ListType) {
-                AbstractType T = ((ListType) ((PairType) type.inputType).firstType).type;
-                if (T.equals(((PairType) type.inputType).secondType) && T.equals(((ListType) type.outputType).type)) {
-                    productions.add(new Production<>(symbol, "l(x,a).(cons a x)"));
-                }
-            }
-            // l(a).(cons a x) (List<T>) ::= (T -> List<T>)
-            if (type.outputType instanceof ListType && type.inputType.equals(((ListType) type.outputType).type)) {
-                AbstractType T = type.outputType;
-                productions.add(new Production<>(symbol, "l(a).(cons a x)", T));
-            }
-            // l(x).(cons a x) (T) ::= (List<T> -> List<T>)
-            if (type.inputType instanceof ListType && type.outputType instanceof ListType
-                    && type.inputType.equals(type.outputType)) {
-                AbstractType T = ((ListType) type.inputType).type;
-                productions.add(new Production<>(symbol, "l(x).(cons a x)", T));
+                AbstractType input1 = ((PairType) type.inputType).firstType;
+                assert input1 instanceof ListType;
+                AbstractType I = ((ListType) input1).type;
+                AbstractType O = ((ListType) type.outputType).type;
+                productions.add(new Production<>(symbol, "zipWith", new FunctionType(new PairType(I, O), O)));
             }
             // l(a,b).(+ a b) ::= ((Integer, Integer) -> Integer)
             // l(a,b).(* a b) ::= ((Integer, Integer) -> Integer)
@@ -120,8 +99,6 @@ public class L2Grammar implements Grammar<AbstractType> {
                     && ((PairType) type.inputType).secondType instanceof IntType && type.outputType instanceof BoolType) {
                 productions.add(new Production<>(symbol, "l(a,b).(> a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(< a b)"));
-                productions.add(new Production<>(symbol, "l(a,b).(>= a b)"));
-                productions.add(new Production<>(symbol, "l(a,b).(<= a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(== a b)"));
             }
             // l(a,b).(|| a b) ::= ((Boolean, Boolean) -> Boolean)
@@ -140,13 +117,9 @@ public class L2Grammar implements Grammar<AbstractType> {
             }
             // l(a).(> a b) (Integer) ::= (Integer -> Boolean)
             // l(a).(< a b) (Integer) ::= (Integer -> Boolean)
-            // l(a).(>= a b) (Integer) ::= (Integer -> Boolean)
-            // l(a).(<= a b) (Integer) ::= (Integer -> Boolean)
             if (type.inputType instanceof IntType && type.outputType instanceof BoolType) {
                 productions.add(new Production<>(symbol, "l(a).(> a b)", new IntType()));
                 productions.add(new Production<>(symbol, "l(a).(< a b)", new IntType()));
-                productions.add(new Production<>(symbol, "l(a).(>= a b)", new IntType()));
-                productions.add(new Production<>(symbol, "l(a).(<= a b)", new IntType()));
                 productions.add(new Production<>(symbol, "l(a).(== a b)", new IntType()));
             }
             // l(a).(|| a b) (Integer) ::= (Boolean -> Boolean)
@@ -159,10 +132,6 @@ public class L2Grammar implements Grammar<AbstractType> {
             // l(a).(- a) ::= (Integer -> Integer)
             if (type.inputType instanceof IntType && type.outputType instanceof IntType) {
                 productions.add(new Production<>(symbol, "l(a).(- a)"));
-            }
-            // l(a).(~ a) ::= (Boolean -> Boolean)
-            if (type.inputType instanceof BoolType && type.outputType instanceof BoolType) {
-                productions.add(new Production<>(symbol, "l(a).(~ a)"));
             }
         }
         return productions;

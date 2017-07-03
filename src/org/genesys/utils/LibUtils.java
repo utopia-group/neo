@@ -1,10 +1,12 @@
 package org.genesys.utils;
 
 import com.microsoft.z3.BoolExpr;
+import javafx.beans.binding.ObjectExpression;
 import org.genesys.type.AbstractList;
 import org.genesys.type.Cons;
 import org.genesys.type.EmptyList;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,6 +45,37 @@ public class LibUtils {
         return abstractList;
     }
 
+    public static Object fixGsonBug(Object data) {
+        if (data instanceof List) {
+            List dataList = (List) data;
+            List tgtList = new ArrayList();
+            for (Object l : dataList) {
+                List innerList = new ArrayList();
+                if (l instanceof ArrayList) {
+                    for (Object elem : (List) l) {
+                        if (elem instanceof Double) {
+                            innerList.add(((Double) elem).intValue());
+                        } else {
+                            innerList.add(elem);
+                        }
+                    }
+                    tgtList.add(innerList);
+                } else {
+                    if (l instanceof Double) {
+                        tgtList.add(((Double) l).intValue());
+                    } else {
+                        tgtList.add(l);
+                    }
+                }
+            }
+            return tgtList;
+        } else if (data instanceof Double) {
+            return ((Double) data).intValue();
+        } else {
+            return data;
+        }
+    }
+
     /* recursively construct cons */
     private static AbstractList construct(LinkedList arg) {
         if (arg.isEmpty())
@@ -53,5 +86,10 @@ public class LibUtils {
             if (fst instanceof Double) fst = ((Double) fst).intValue();
             return new Cons(fst, construct(arg));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends List<?>> T cast(Object obj) {
+        return (T) obj;
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by yufeng on 5/28/17.
+ * Default synthesizer for DeepCoder.
  */
 public class DefaultSynthesizer implements Synthesizer {
 
@@ -61,19 +62,12 @@ public class DefaultSynthesizer implements Synthesizer {
         boolean passed = true;
         System.out.println("Program: " + program);
         for (Example example : problem_.getExamples()) {
-            //FIXME:lets assume we only have one input table for now.
-            Object input = ((List) example.getInput()).get(0);
-            AbstractList absInput = LibUtils.getAbsList((List) input);
+            //FIXME:lets assume we only have at most two input tables for now.
+            Object input = LibUtils.fixGsonBug(example.getInput());
             // Always one output table
-            Object output = example.getOutput();
-            Object absOutput;
-            if (output instanceof List)
-                absOutput = LibUtils.getAbsList((List) output);
-            else {
-                absOutput = ((Double) output).intValue();
-            }
-            Maybe<Object> tgt = interpreter_.execute(program, absInput);
-            if (!(tgt.has() && tgt.get().toString().equals(absOutput.toString()))) {
+            Object output = LibUtils.fixGsonBug(example.getOutput());
+            Maybe<Object> tgt = interpreter_.execute(program, input);
+            if (!tgt.get().equals(output)) {
                 passed = false;
                 break;
             }
