@@ -24,7 +24,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Grammar grammar_;
 
-    private int maxLen_ = 4;
+    private int maxLen_ = 5;
 
     /* Control variables for productions */
     private final Map<String, Production> prodCtrlMap = new HashMap<>();
@@ -149,18 +149,15 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             int rhsIdx = Integer.parseInt(rhs.split("_")[1]);
             return (lhsIdx - rhsIdx);
         });
-        for (String m: models) {
-            assert !m.contains("filter");
-        }
 
-        Queue<Pair<Object, Node>> worklist = new LinkedList<>();
+        LinkedList<Pair<Object, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();
         Node root = new Node();
         root.setSymbol(startNode);
         Pair<Object, Node> rootPair = new Pair<>(startNode, root);
         worklist.add(rootPair);
         while (!worklist.isEmpty()) {
-            Pair<Object, Node> workerPair = worklist.remove();
+            Pair<Object, Node> workerPair = worklist.pollFirst();
             Object workerSym = workerPair.t0;
             Node workerNode = workerPair.t1;
 
@@ -174,17 +171,26 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
                     models.removeFirst();
                     workerNode.function = prod.function;
 
+                    List<Pair<Object, Node>> childList = new ArrayList();
                     for (Object childSym : prod.inputs) {
                         Node childNode = new Node();
                         childNode.setSymbol(childSym);
                         workerNode.addChild(childNode);
-                        worklist.add(new Pair<>(childSym, childNode));
+                        childList.add(new Pair<>(childSym, childNode));
+                    }
+                    /* FIXME: Perform DFS without recursion. */
+                    if (!childList.isEmpty()) {
+                        Collections.reverse(childList);
+                        for (Pair<Object, Node> elem : childList) {
+                            worklist.addFirst(elem);
+                        }
                     }
                     break;
                 }
             }
         }
 
+        assert models.isEmpty() : models;
 //        System.out.println("Current AST:" + root + " models:" + models);
         return root;
     }
