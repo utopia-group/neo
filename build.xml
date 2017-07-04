@@ -37,6 +37,22 @@
       <arg value="${arg1}"/>
 	</java>
   </target>
+  <target name="deep" depends="jar">
+	<java classname="org.genesys.clients.DeepCoderMain"
+          maxmemory="4g"
+          fork="true"
+          failonerror="true">
+	      <jvmarg value="-ea" />
+      <env key="DYLD_LIBRARY_PATH" value="lib"/>
+      <classpath>
+		<pathelement location="./genesys.jar"/>
+		<pathelement location="lib/com.microsoft.z3.jar"/>
+		<pathelement location="lib/gson-2.3.1.jar"/>
+		<pathelement location="lib/sat4j-genesys.jar"/>
+      </classpath>
+	</java>
+  </target>
+
 
   <target name="clean">
     <delete dir="classes"/>
