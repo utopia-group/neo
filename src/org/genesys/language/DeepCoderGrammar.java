@@ -57,6 +57,13 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             productions.add(new Production<>(symbol, "-1", symbol));
             productions.add(new Production<>(symbol, "*3", symbol));
             productions.add(new Production<>(symbol, "maximum", new ListType(new IntType())));
+            productions.add(new Production<>(symbol, "minimum", new ListType(new IntType())));
+            productions.add(new Production<>(symbol, "sum", new ListType(new IntType())));
+            productions.add(new Production<>(symbol, "head", new ListType(new IntType())));
+            productions.add(new Production<>(symbol, "last", new ListType(new IntType())));
+
+            productions.add(new Production<>(symbol, "count", new FunctionType(new IntType(), new BoolType()),
+                    new ListType(new IntType())));
 
         } else if (symbol instanceof ListType) {
             ListType type = (ListType) symbol;
@@ -72,6 +79,14 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             // zipWith (List<T> -> List<T> -> int -> int -> int -> List<T>)
             productions.add(new Production<>(symbol, "zipWith", new FunctionType(new PairType(T, T), T),
                     new ListType(new IntType()), new ListType(new IntType())));
+
+            /* other functions */
+            productions.add(new Production<>(symbol, "sort", new ListType(new IntType())));
+            productions.add(new Production<>(symbol, "reverse", new ListType(new IntType())));
+            productions.add(new Production<>(symbol, "take", new ListType(new IntType()), new IntType()));
+//            productions.add(new Production<>(symbol, "drop", new ListType(new IntType()), new IntType()));
+            productions.add(new Production<>(symbol, "scanl", new FunctionType(new PairType(T, T), T),
+                    new ListType(new IntType())));
         } else if (symbol instanceof FunctionType) {
             FunctionType type = (FunctionType) symbol;
             // l(a,b).(+ a b) ::= ((Integer, Integer) -> Integer)

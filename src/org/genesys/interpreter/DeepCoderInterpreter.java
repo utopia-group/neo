@@ -1,9 +1,6 @@
 package org.genesys.interpreter;
 
-import org.genesys.interpreter.deepcode.FilterLList;
-import org.genesys.interpreter.deepcode.MapLList;
-import org.genesys.interpreter.deepcode.MaximumUnop;
-import org.genesys.interpreter.deepcode.ZipWith;
+import org.genesys.interpreter.deepcode.*;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
@@ -36,19 +33,38 @@ public class DeepCoderInterpreter implements Interpreter<Node, Object> {
         executors.put("+1", (objects, input) -> new Maybe<>((int) objects.get(0) + 1));
         executors.put("*3", (objects, input) -> new Maybe<>((int) objects.get(0) * 3));
         executors.put("maximum", (objects, input) -> new Maybe<>(new MaximumUnop().apply(objects.get(0))));
+        executors.put("minimum", (objects, input) -> new Maybe<>(new MinimumUnop().apply(objects.get(0))));
+        executors.put("sum", (objects, input) -> new Maybe<>(new SumUnop().apply(objects.get(0))));
+        executors.put("last", (objects, input) -> new Maybe<>(new LastUnop().apply(objects.get(0))));
+        executors.put("head", (objects, input) -> new Maybe<>(new HeadUnop().apply(objects.get(0))));
+        executors.put("sort", (objects, input) -> new Maybe<>(new SortUnop().apply(objects.get(0))));
+        executors.put("reverse", (objects, input) -> new Maybe<>(new ReverseUnop().apply(objects.get(0))));
         executors.put("-", (objects, input) -> new Maybe<>(-(int) objects.get(0)));
-        executors.put("map", (objects, input) -> {
-            return new Maybe<>(new MapLList((Unop) objects.get(0)).apply(objects.get(1)));
-        });
-        executors.put("filter", (objects, input) -> {
-            return new Maybe<>(new FilterLList((Unop) objects.get(0)).apply(objects.get(1)));
-        });
+        executors.put("map", (objects, input) ->
+                new Maybe<>(new MapLList((Unop) objects.get(0)).apply(objects.get(1)))
+        );
+        executors.put("filter", (objects, input) ->
+                new Maybe<>(new FilterLList((Unop) objects.get(0)).apply(objects.get(1)))
+        );
+        executors.put("count", (objects, input) ->
+                new Maybe<>(new CountList((Unop) objects.get(0)).apply(objects.get(1))));
         executors.put("zipWith", (objects, input) -> {
             assert objects.size() == 3 : objects;
             List args = new ArrayList();
             args.add(objects.get(1));
             args.add(objects.get(2));
             return new Maybe<>(new ZipWith((Binop) objects.get(0)).apply(args));
+        });
+        executors.put("scanl", (objects, input) -> {
+            assert objects.size() == 2 : objects;
+            return new Maybe<>(new Scanl((Binop) objects.get(0)).apply(objects.get(1)));
+        });
+        executors.put("take", (objects, input) -> {
+            assert objects.size() == 2 : objects;
+            List args = new ArrayList();
+            args.add(objects.get(0));
+            args.add(objects.get(1));
+            return new Maybe<>(new TakeUnop().apply(args));
         });
         executors.put("l(a,b).(+ a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("+")));
         executors.put("l(a,b).(* a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("*")));

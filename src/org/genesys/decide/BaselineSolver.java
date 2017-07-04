@@ -31,6 +31,8 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private final MultivalueMap<Production, String> prodCtrlInvMap = new MultivalueMap<>();
 
+    private final MultivalueMap<String, BoolExpr> inputMap = new MultivalueMap<>();
+
     /* Control variables for symbols */
     private final Map<BoolExpr, String> symCtrlMap = new HashMap<>();
 
@@ -43,6 +45,11 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 //        System.out.println("start symbol:" + start);
         Trio<Integer, BoolExpr, BoolExpr> formula = generate(grammar_, start, maxLen_);
         BoolExpr formulaConjoin = z3Utils.conjoin(formula.t1, z3Utils.getVarById("bool_0"));
+        //all input vars must be used.
+        for (String inputKey : inputMap.keySet()) {
+            BoolExpr inputCst = z3Utils.disjoin(LibUtils.listToArray(inputMap.get(inputKey)));
+            formulaConjoin = z3Utils.conjoin(formulaConjoin, inputCst);
+        }
 //        System.out.println("Big formula: " + formulaConjoin);
         z3Utils.init(formulaConjoin);
     }
@@ -79,6 +86,11 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             BoolExpr prodVar = z3Utils.getFreshBoolVar();
             prodCtrlMap.put(prodVar.toString(), prod);
             prodCtrlInvMap.add(prod, prodVar.toString());
+            //Track input constraints.
+            String prodFunc = prod.function;
+            if (prodFunc != null && prodFunc.contains("input")) {
+                inputMap.add(prodFunc, prodVar);
+            }
             //System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
