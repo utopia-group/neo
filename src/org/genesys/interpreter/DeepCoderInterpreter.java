@@ -1,6 +1,7 @@
 package org.genesys.interpreter;
 
 import org.genesys.interpreter.deepcode.*;
+import org.genesys.language.Production;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
@@ -67,6 +68,7 @@ public class DeepCoderInterpreter implements Interpreter<Node, Object> {
             return new Maybe<>(new TakeUnop().apply(args));
         });
         executors.put("l(a,b).(+ a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("+")));
+        executors.put("l(a,b).(min a b)", (objects, input) -> new Maybe<>(new MinBinop()));
         executors.put("l(a,b).(* a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("*")));
         executors.put("l(a,b).(% a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("%")));
         executors.put("l(a,b).(> a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop(">")));

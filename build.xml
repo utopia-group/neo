@@ -50,6 +50,8 @@
 		<pathelement location="lib/gson-2.3.1.jar"/>
 		<pathelement location="lib/sat4j-genesys.jar"/>
       </classpath>
+      <arg value="${app}"/>
+      <arg value="${depth}"/>
 	</java>
   </target>
 

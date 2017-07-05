@@ -1,5 +1,7 @@
 package org.genesys.language;
 
+import org.genesys.models.Example;
+import org.genesys.models.Problem;
 import org.genesys.type.*;
 
 import java.util.ArrayList;
@@ -20,6 +22,30 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
     public DeepCoderGrammar(AbstractType inputType, AbstractType outputType) {
         this.inputType = inputType;
         this.outputType = outputType;
+    }
+
+    public DeepCoderGrammar(Problem p) {
+        assert !p.getExamples().isEmpty();
+        Example example = p.getExamples().get(0);
+        List input = example.getInput();
+        for (int i = 0; i < input.size(); i++) {
+            Object elem = input.get(i);
+            InputType in;
+            if (elem instanceof List)
+                in = new InputType(i, new ListType(new IntType()));
+            else
+                in = new InputType(i, new IntType());
+
+        /* dynamically add input to grammar. */
+            addInput(in);
+        }
+        Object output = example.getOutput();
+        //output is either an integer or list.
+        if (output instanceof List) {
+            this.outputType = new ListType(new IntType());
+        } else {
+            this.outputType = new IntType();
+        }
     }
 
     public void addInput(InputType in) {
@@ -96,6 +122,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
                 productions.add(new Production<>(symbol, "l(a,b).(+ a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(* a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(% a b)"));
+                productions.add(new Production<>(symbol, "l(a,b).(min a b)"));
             }
             // l(a,b).(> a b) ::= ((Integer, Integer) -> Boolean)
             // l(a,b).(< a b) ::= ((Integer, Integer) -> Boolean)

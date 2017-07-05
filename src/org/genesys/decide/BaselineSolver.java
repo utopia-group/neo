@@ -24,7 +24,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Grammar grammar_;
 
-    private int maxLen_ = 5;
+    private int maxLen_ = 4;
 
     /* Control variables for productions */
     private final Map<String, Production> prodCtrlMap = new HashMap<>();
@@ -51,6 +51,21 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             formulaConjoin = z3Utils.conjoin(formulaConjoin, inputCst);
         }
 //        System.out.println("Big formula: " + formulaConjoin);
+        z3Utils.init(formulaConjoin);
+    }
+
+    public BaselineSolver(Grammar g, int depth) {
+        maxLen_ = depth;
+        z3Utils = Z3Utils.getInstance();
+        grammar_ = g;
+        Object start = grammar_.start();
+        Trio<Integer, BoolExpr, BoolExpr> formula = generate(grammar_, start, maxLen_);
+        BoolExpr formulaConjoin = z3Utils.conjoin(formula.t1, z3Utils.getVarById("bool_0"));
+        //all input vars must be used.
+        for (String inputKey : inputMap.keySet()) {
+            BoolExpr inputCst = z3Utils.disjoin(LibUtils.listToArray(inputMap.get(inputKey)));
+            formulaConjoin = z3Utils.conjoin(formulaConjoin, inputCst);
+        }
         z3Utils.init(formulaConjoin);
     }
 

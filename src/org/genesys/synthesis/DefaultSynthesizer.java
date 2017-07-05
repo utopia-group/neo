@@ -35,6 +35,13 @@ public class DefaultSynthesizer implements Synthesizer {
         problem_ = problem;
     }
 
+    public DefaultSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth) {
+        solver_ = new BaselineSolver(grammar, depth);
+        checker_ = checker;
+        interpreter_ = interpreter;
+        problem_ = problem;
+    }
+
     @Override
     public Node synthesize() {
                 /* retrieve an AST from the solver */

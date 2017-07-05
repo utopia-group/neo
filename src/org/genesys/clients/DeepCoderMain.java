@@ -25,23 +25,22 @@ import java.io.FileReader;
 public class DeepCoderMain {
 
     public static void main(String[] args) throws FileNotFoundException {
-        String json = "./problem/DeepCoder/prog00.json";
+        String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
         Gson gson = new Gson();
         Problem dcProblem = gson.fromJson(new FileReader(json), Problem.class);
         System.out.println("Run DeepCoder main..." + dcProblem);
 
-        DeepCoderGrammar grammar = new DeepCoderGrammar(new PairType(new ListType(new IntType()),
-                new ListType(new IntType())), new IntType());
-        InputType in1 = new InputType(0, new ListType(new IntType()));
-        InputType in2 = new InputType(1, new ListType(new IntType()));
-        /* dynamically add input to grammar. */
-        grammar.addInput(in1);
-        grammar.addInput(in2);
-
+        DeepCoderGrammar grammar = new DeepCoderGrammar(dcProblem);
         Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
-        Synthesizer synth = new DefaultSynthesizer(grammar, dcProblem, checker, interpreter);
+        DefaultSynthesizer synth;
+        if (args.length == 2) {
+            int depth = Integer.valueOf(args[1]);
+            synth = new DefaultSynthesizer(grammar, dcProblem, checker, interpreter, depth);
+        } else {
+            synth = new DefaultSynthesizer(grammar, dcProblem, checker, interpreter);
+        }
         synth.synthesize();
     }
 }
