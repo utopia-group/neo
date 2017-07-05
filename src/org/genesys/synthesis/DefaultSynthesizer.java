@@ -28,6 +28,10 @@ public class DefaultSynthesizer implements Synthesizer {
 
     private Problem problem_;
 
+    private double totalDecide = 0.0;
+
+    private double totalTest = 0.0;
+
     public DefaultSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter) {
         solver_ = new BaselineSolver(grammar);
         checker_ = checker;
@@ -58,14 +62,20 @@ public class DefaultSynthesizer implements Synthesizer {
                 System.out.println("Synthesized PROGRAM: " + ast);
                 break;
             }
+            long start = LibUtils.tick();
             ast = solver_.getModel(null);
+            long end = LibUtils.tick();
+            totalDecide += LibUtils.computeTime(start, end);
         }
+        System.out.println("Decide time=:" + (totalDecide));
+        System.out.println("Test time=:" + (totalTest));
 
         return ast;
     }
 
     /* Verify the program using I-O examples. */
     private boolean verify(Node program) {
+        long start = LibUtils.tick();
         boolean passed = true;
         System.out.println("Program: " + program);
         for (Example example : problem_.getExamples()) {
@@ -86,6 +96,8 @@ public class DefaultSynthesizer implements Synthesizer {
                 break;
             }
         }
+        long end = LibUtils.tick();
+        totalTest += LibUtils.computeTime(start, end);
         return passed;
     }
 }

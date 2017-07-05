@@ -35,7 +35,7 @@ public class LibUtils {
     }
 
     public static long tick() {
-        return System.currentTimeMillis();
+        return System.nanoTime();
     }
 
     public static AbstractList getAbsList(List arg) {
