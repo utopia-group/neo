@@ -7,10 +7,7 @@ import org.genesys.interpreter.L2Interpreter;
 import org.genesys.language.DeepCoderGrammar;
 import org.genesys.language.L2Grammar;
 import org.genesys.models.Problem;
-import org.genesys.synthesis.Checker;
-import org.genesys.synthesis.DefaultSynthesizer;
-import org.genesys.synthesis.DummyChecker;
-import org.genesys.synthesis.Synthesizer;
+import org.genesys.synthesis.*;
 import org.genesys.type.InputType;
 import org.genesys.type.IntType;
 import org.genesys.type.ListType;
@@ -25,6 +22,7 @@ import java.io.FileReader;
 public class DeepCoderMain {
 
     public static void main(String[] args) throws FileNotFoundException {
+        String specLoc = "./specs/DeepCoder";
         String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
         Gson gson = new Gson();
@@ -32,7 +30,8 @@ public class DeepCoderMain {
         System.out.println("Run DeepCoder main..." + dcProblem);
 
         DeepCoderGrammar grammar = new DeepCoderGrammar(dcProblem);
-        Checker checker = new DummyChecker();
+        /* Load component specs. */
+        Checker checker = new DeepCoderChecker(specLoc);
         Interpreter interpreter = new DeepCoderInterpreter();
         DefaultSynthesizer synth;
         if (args.length == 2) {
