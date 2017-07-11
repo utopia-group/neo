@@ -1,6 +1,8 @@
 package org.genesys.language;
 
 
+import org.genesys.type.AbstractType;
+
 import java.util.List;
 
 /**
@@ -15,5 +17,9 @@ public interface Grammar<T> {
     List<Production<T>> getProductions();
 
     List<Production<T>> productionsFor(T symbol);
+
+    AbstractType getOutputType();
+
+    List<Production<T>> getInputProductions();
 
 }

@@ -62,9 +62,83 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         return "DeepCoderGrammar";
     }
 
+    public AbstractType getOutputType(){
+        return this.outputType;
+    }
+
+    @Override
+    public List<Production<AbstractType>> getInputProductions() {
+        List<Production<AbstractType>> productions = new ArrayList<>();
+
+        for (InputType input : inputTypes) {
+            if (input.getType() instanceof IntType)
+                productions.add(new Production<>(new IntType(), "input" + input.getIndex()));
+            else if (input.getType() instanceof ListType)
+                productions.add(new Production<>(new ListType(new IntType()), "input" + input.getIndex()));
+            else if (input.getType() instanceof BoolType)
+                productions.add(new Production<>(new BoolType(), "input" + input.getIndex()));
+            else
+                assert(false);
+        }
+
+        return productions;
+    }
+
     @Override
     public List<Production<AbstractType>> getProductions() {
-        return null;
+        List<Production<AbstractType>> productions = new ArrayList<>();
+
+        // BoolType
+        productions.add(new Production<>(new BoolType(), "true"));
+        productions.add(new Production<>(new BoolType(), "false"));
+
+        // IntType
+        productions.add(new Production<>(new IntType(), "0"));
+        productions.add(new Production<>(new IntType(), "1"));
+        productions.add(new Production<>(new IntType(), "+1", new IntType()));
+        productions.add(new Production<>(new IntType(), "-1", new IntType()));
+        productions.add(new Production<>(new IntType(), "*3", new IntType()));
+        productions.add(new Production<>(new IntType(), "maximum", new ListType(new IntType())));
+        productions.add(new Production<>(new IntType(), "minimum", new ListType(new IntType())));
+        productions.add(new Production<>(new IntType(), "sum", new ListType(new IntType())));
+        productions.add(new Production<>(new IntType(), "head", new ListType(new IntType())));
+        productions.add(new Production<>(new IntType(), "last", new ListType(new IntType())));
+        productions.add(new Production<>(new IntType(), "count", new FunctionType(new IntType(), new BoolType()),
+                new ListType(new IntType())));
+
+        // ListType -- only considering lists of IntType
+        productions.add(new Production<>(new ListType(new IntType()), "filter", new FunctionType(new IntType(), new BoolType()),
+                new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "map", new FunctionType(new IntType(), new IntType()),
+                new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "zipWith", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
+                new ListType(new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "sort", new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "reverse", new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "take", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(new ListType(new IntType()), "scanl", new FunctionType(new PairType(new IntType(), new IntType()), new IntType())));
+
+        //FunctionType
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(+ a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(* a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(% a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(min a b)", new IntType()));
+
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(> a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(< a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(== a b)", new BoolType()));
+
+        productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(|| a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(&& a b)", new BoolType()));
+
+        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(+ a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(* a b)", new IntType()));
+
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(* a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(* a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(* a b)", new BoolType()));
+
+        return productions;
     }
 
     @Override

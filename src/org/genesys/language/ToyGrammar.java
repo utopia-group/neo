@@ -1,6 +1,7 @@
 package org.genesys.language;
 
 import org.genesys.models.MultivalueMap;
+import org.genesys.type.AbstractType;
 
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class ToyGrammar implements Grammar<String> {
     public String getName() {
         return name;
     }
+
+    @Override
+    public List<Production<String>> getInputProductions() { return null; }
+
+    @Override
+    public AbstractType getOutputType() { return null; }
 
     @Override
     public List<Production<String>> getProductions() {

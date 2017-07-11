@@ -26,6 +26,9 @@ public class L2Grammar implements Grammar<AbstractType> {
     }
 
     @Override
+    public AbstractType getOutputType(){ return outputType; }
+
+    @Override
     public String getName() {
         return "L2Grammar";
     }
@@ -34,6 +37,9 @@ public class L2Grammar implements Grammar<AbstractType> {
     public List<Production<AbstractType>> getProductions() {
         return null;
     }
+
+    @Override
+    public List<Production<AbstractType>> getInputProductions() { return null; }
 
     @Override
     public List<Production<AbstractType>> productionsFor(AbstractType symbol) {
