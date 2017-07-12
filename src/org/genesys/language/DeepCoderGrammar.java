@@ -107,10 +107,10 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
                 new ListType(new IntType())));
 
         // ListType -- only considering lists of IntType
-//        productions.add(new Production<>(new ListType(new IntType()), "filter", new FunctionType(new IntType(), new BoolType()),
-//                new ListType(new IntType())));
-//        productions.add(new Production<>(new ListType(new IntType()), "map", new FunctionType(new IntType(), new IntType()),
-//                new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "filter", new FunctionType(new IntType(), new BoolType()),
+                new ListType(new IntType())));
+        productions.add(new Production<>(new ListType(new IntType()), "map", new FunctionType(new IntType(), new IntType()),
+                new ListType(new IntType())));
         productions.add(new Production<>(new ListType(new IntType()), "zipWith", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
                 new ListType(new IntType()), new ListType(new IntType())));
         productions.add(new Production<>(new ListType(new IntType()), "sort", new ListType(new IntType())));

@@ -267,6 +267,21 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         return conflict;
     }
 
+    private boolean orphanParent() {
+
+        boolean orphan = false;
+        for (Node node : trailNeo_) {
+            for (int i = 0; i < node.decision.inputs.length; i++) {
+                if (node.children.get(i).function.compareTo("") == 0) {
+                    trail_.add(new Pair<Node, Integer>(node.children.get(i), currentLevel_));
+                    orphan = true;
+                }
+
+            }
+        }
+        return orphan;
+    }
+
     private boolean inputsUsed() {
 
         boolean used = true;
@@ -331,21 +346,24 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
             if (unsat) break;
 
-            if (inputsUsed()) {
-                System.out.println("s SATISFIABLE");
-                break;
-            } else {
-                // Conflict
+            if (!orphanParent()) {
+
+                if (inputsUsed()) {
+                    System.out.println("s SATISFIABLE");
+                    break;
+                } else {
+                    // Conflict
 //                System.out.println("level= " + currentLevel_);
 //                for (Node n : trailNeo_) {
 //                    System.out.println(n.function);
 //                }
 //                System.out.println("INPUTS NOT USED");
-                while (backtrack(currentLevel_ - 1)) {
-                    if (currentLevel_ == 0) {
-                        System.out.println("s UNSATISFIABLE : backtracking inputs");
-                        unsat = true;
-                        break;
+                    while (backtrack(currentLevel_ - 1)) {
+                        if (currentLevel_ == 0) {
+                            System.out.println("s UNSATISFIABLE : backtracking inputs");
+                            unsat = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -490,7 +508,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 Node parent = parents_.get(node);
 //                System.out.println("Parent = " + parent.function);
 //                System.out.println("children = " + parent.decision.inputs.length);
-                for (int i = 0 ; i < parent.decision.inputs.length; i++){
+                for (int i = 0; i < parent.decision.inputs.length; i++) {
 
                     //System.out.println("child = " + i + " has " + parent.children.get(i).function);
                     if (parent.children.get(i) == node)
@@ -506,9 +524,9 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
                     boolean assigned = false;
                     if (!intrail) {
-                            if (parent.children.get(i).function.compareTo("") != 0){
-                                assigned = true;
-                            }
+                        if (parent.children.get(i).function.compareTo("") != 0) {
+                            assigned = true;
+                        }
                     }
                     //System.out.println("assigned = " + assigned + " intrail= " + intrail);
                     if (!assigned && !intrail) {
