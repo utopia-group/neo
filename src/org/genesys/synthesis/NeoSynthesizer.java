@@ -44,15 +44,17 @@ public class NeoSynthesizer implements Synthesizer {
 
     @Override
     public Node synthesize() {
-        ((NeoSolver) solver_).loadGrammar();
 
-                /* retrieve an AST from the solver */
+        /* retrieve an AST from the solver */
+        long start = LibUtils.tick();
         Node ast = solver_.getModel(null);
+        long end = LibUtils.tick();
+        totalDecide += LibUtils.computeTime(start, end);
 
         /* do deduction */
-        while (!checker_.check(problem_, ast)) {
-            ast = solver_.getModel(null);
-        }
+//        while (!checker_.check(problem_, ast)) {
+//            ast = solver_.getModel(null);
+//        }
 
         while (ast != null) {
             /* check input-output using the interpreter */
@@ -60,9 +62,9 @@ public class NeoSynthesizer implements Synthesizer {
                 System.out.println("Synthesized PROGRAM: " + ast);
                 break;
             }
-            long start = LibUtils.tick();
+            start = LibUtils.tick();
             ast = solver_.getModel(null);
-            long end = LibUtils.tick();
+            end = LibUtils.tick();
             totalDecide += LibUtils.computeTime(start, end);
         }
         System.out.println("Decide time=:" + (totalDecide));
@@ -89,7 +91,7 @@ public class NeoSynthesizer implements Synthesizer {
                     break;
                 }
             } catch (Exception e) {
-                System.out.println("Exception!!!!");
+                System.out.println("Exception= " + e);
                 passed = false;
                 break;
             }

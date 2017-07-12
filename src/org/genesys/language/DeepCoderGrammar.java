@@ -62,7 +62,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         return "DeepCoderGrammar";
     }
 
-    public AbstractType getOutputType(){
+    public AbstractType getOutputType() {
         return this.outputType;
     }
 
@@ -78,7 +78,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             else if (input.getType() instanceof BoolType)
                 productions.add(new Production<>(new BoolType(), "input" + input.getIndex()));
             else
-                assert(false);
+                assert (false);
         }
 
         return productions;
@@ -107,10 +107,10 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
                 new ListType(new IntType())));
 
         // ListType -- only considering lists of IntType
-        productions.add(new Production<>(new ListType(new IntType()), "filter", new FunctionType(new IntType(), new BoolType()),
-                new ListType(new IntType())));
-        productions.add(new Production<>(new ListType(new IntType()), "map", new FunctionType(new IntType(), new IntType()),
-                new ListType(new IntType())));
+//        productions.add(new Production<>(new ListType(new IntType()), "filter", new FunctionType(new IntType(), new BoolType()),
+//                new ListType(new IntType())));
+//        productions.add(new Production<>(new ListType(new IntType()), "map", new FunctionType(new IntType(), new IntType()),
+//                new ListType(new IntType())));
         productions.add(new Production<>(new ListType(new IntType()), "zipWith", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
                 new ListType(new IntType()), new ListType(new IntType())));
         productions.add(new Production<>(new ListType(new IntType()), "sort", new ListType(new IntType())));
@@ -119,24 +119,24 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new ListType(new IntType()), "scanl", new FunctionType(new PairType(new IntType(), new IntType()), new IntType())));
 
         //FunctionType
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(+ a b)", new IntType()));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(* a b)", new IntType()));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(% a b)", new IntType()));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(min a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(+ a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(* a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(% a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(min a b)"));
 
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(> a b)", new BoolType()));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(< a b)", new BoolType()));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(== a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(> a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(< a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(== a b)"));
 
-        productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(|| a b)", new BoolType()));
-        productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(&& a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(|| a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(&& a b)"));
 
         productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(+ a b)", new IntType()));
         productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(* a b)", new IntType()));
 
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(* a b)", new BoolType()));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(* a b)", new BoolType()));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(* a b)", new BoolType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(> a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(< a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(== a b)", new IntType()));
 
         return productions;
     }
