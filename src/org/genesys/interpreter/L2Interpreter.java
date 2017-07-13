@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class L2Interpreter implements Interpreter<Node, Object> {
 
-    private final Map<String, Executor> executors = new HashMap<String, Executor>();
+    public final Map<String, Executor> executors = new HashMap<String, Executor>();
 
     public L2Interpreter() {
         executors.put("apply_to_input", new Executor() {

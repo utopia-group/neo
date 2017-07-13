@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class L2Grammar implements Grammar<AbstractType> {
 
-    private AbstractType inputType;
+    public AbstractType inputType;
 
-    private AbstractType outputType;
+    public AbstractType outputType;
 
     public L2Grammar(AbstractType inputType, AbstractType outputType) {
         this.inputType = inputType;
