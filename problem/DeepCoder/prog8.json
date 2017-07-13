@@ -1,0 +1,11 @@
+{
+  "name": "prog8",
+  "examples": [
+    {
+      "input": [
+        [1,2,4,5,7]
+      ],
+      "output": 9
+    }
+  ]
+}

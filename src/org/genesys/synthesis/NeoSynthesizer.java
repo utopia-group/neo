@@ -1,24 +1,20 @@
 package org.genesys.synthesis;
 
 import com.microsoft.z3.BoolExpr;
-import org.genesys.decide.BaselineSolver;
 import org.genesys.decide.AbstractSolver;
+import org.genesys.decide.NeoSolver;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
 import org.genesys.models.Example;
 import org.genesys.models.Node;
 import org.genesys.models.Problem;
-import org.genesys.type.AbstractList;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
 
-import java.util.List;
-
 /**
- * Created by yufeng on 5/28/17.
- * Default synthesizer for DeepCoder.
+ * Created by ruben on 7/6/17.
  */
-public class DefaultSynthesizer implements Synthesizer {
+public class NeoSynthesizer implements Synthesizer {
 
     private AbstractSolver<BoolExpr, Node> solver_;
 
@@ -32,15 +28,15 @@ public class DefaultSynthesizer implements Synthesizer {
 
     private double totalTest = 0.0;
 
-    public DefaultSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter) {
-        solver_ = new BaselineSolver(grammar);
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter) {
+        solver_ = new NeoSolver(grammar);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
     }
 
-    public DefaultSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth) {
-        solver_ = new BaselineSolver(grammar, depth);
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth) {
+        solver_ = new NeoSolver(grammar, depth);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
@@ -48,13 +44,17 @@ public class DefaultSynthesizer implements Synthesizer {
 
     @Override
     public Node synthesize() {
-                /* retrieve an AST from the solver */
+
+        /* retrieve an AST from the solver */
+        long start = LibUtils.tick();
         Node ast = solver_.getModel(null);
+        long end = LibUtils.tick();
+        totalDecide += LibUtils.computeTime(start, end);
 
         /* do deduction */
-        while (!checker_.check(problem_, ast)) {
-            ast = solver_.getModel(null);
-        }
+//        while (!checker_.check(problem_, ast)) {
+//            ast = solver_.getModel(null);
+//        }
 
         while (ast != null) {
             /* check input-output using the interpreter */
@@ -62,9 +62,9 @@ public class DefaultSynthesizer implements Synthesizer {
                 System.out.println("Synthesized PROGRAM: " + ast);
                 break;
             }
-            long start = LibUtils.tick();
+            start = LibUtils.tick();
             ast = solver_.getModel(null);
-            long end = LibUtils.tick();
+            end = LibUtils.tick();
             totalDecide += LibUtils.computeTime(start, end);
         }
         System.out.println("Decide time=:" + (totalDecide));
@@ -91,7 +91,7 @@ public class DefaultSynthesizer implements Synthesizer {
                     break;
                 }
             } catch (Exception e) {
-                System.out.println("Exception!!!!");
+                System.out.println("Exception= " + e);
                 passed = false;
                 break;
             }
@@ -100,4 +100,6 @@ public class DefaultSynthesizer implements Synthesizer {
         totalTest += LibUtils.computeTime(start, end);
         return passed;
     }
+
+
 }

@@ -26,6 +26,9 @@ public class L2Grammar implements Grammar<AbstractType> {
     }
 
     @Override
+    public AbstractType getOutputType(){ return outputType; }
+
+    @Override
     public String getName() {
         return "L2Grammar";
     }
@@ -34,6 +37,9 @@ public class L2Grammar implements Grammar<AbstractType> {
     public List<Production<AbstractType>> getProductions() {
         return null;
     }
+
+    @Override
+    public List<Production<AbstractType>> getInputProductions() { return null; }
 
     @Override
     public List<Production<AbstractType>> productionsFor(AbstractType symbol) {
@@ -110,6 +116,7 @@ public class L2Grammar implements Grammar<AbstractType> {
                     && ((PairType) type.inputType).secondType instanceof IntType && type.outputType instanceof IntType) {
                 productions.add(new Production<>(symbol, "l(a,b).(+ a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(* a b)"));
+                productions.add(new Production<>(symbol, "l(a,b).(% a b)"));
             }
             // l(a,b).(> a b) ::= ((Integer, Integer) -> Boolean)
             // l(a,b).(< a b) ::= ((Integer, Integer) -> Boolean)
@@ -121,6 +128,7 @@ public class L2Grammar implements Grammar<AbstractType> {
                 productions.add(new Production<>(symbol, "l(a,b).(< a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(>= a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(<= a b)"));
+                productions.add(new Production<>(symbol, "l(a,b).(== a b)"));
             }
             // l(a,b).(|| a b) ::= ((Boolean, Boolean) -> Boolean)
             // l(a,b).(&& a b) ::= ((Boolean, Boolean) -> Boolean)
@@ -134,6 +142,7 @@ public class L2Grammar implements Grammar<AbstractType> {
             if (type.inputType instanceof IntType && type.outputType instanceof IntType) {
                 productions.add(new Production<>(symbol, "l(a).(+ a b)", new IntType()));
                 productions.add(new Production<>(symbol, "l(a).(* a b)", new IntType()));
+                productions.add(new Production<>(symbol, "l(a).(% a b)", new IntType()));
             }
             // l(a).(> a b) (Integer) ::= (Integer -> Boolean)
             // l(a).(< a b) (Integer) ::= (Integer -> Boolean)
@@ -144,6 +153,7 @@ public class L2Grammar implements Grammar<AbstractType> {
                 productions.add(new Production<>(symbol, "l(a).(< a b)", new IntType()));
                 productions.add(new Production<>(symbol, "l(a).(>= a b)", new IntType()));
                 productions.add(new Production<>(symbol, "l(a).(<= a b)", new IntType()));
+                productions.add(new Production<>(symbol, "l(a).(== a b)", new IntType()));
             }
             // l(a).(|| a b) (Integer) ::= (Boolean -> Boolean)
             // l(a).(&& a b) (Integer) ::= (Boolean -> Boolean)

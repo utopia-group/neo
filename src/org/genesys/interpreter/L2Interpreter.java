@@ -121,6 +121,11 @@ public class L2Interpreter implements Interpreter<Node, Object> {
                 return new Maybe<Object>(new PrimitiveBinop("*"));
             }
         });
+        executors.put("l(a,b).(% a b)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new PrimitiveBinop("%"));
+            }
+        });
         executors.put("l(a,b).(> a b)", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new PrimitiveBinop(">"));
@@ -139,6 +144,11 @@ public class L2Interpreter implements Interpreter<Node, Object> {
         executors.put("l(a,b).(<= a b)", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new PrimitiveBinop("<="));
+            }
+        });
+        executors.put("l(a,b).(== a b)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new PrimitiveBinop("=="));
             }
         });
         executors.put("l(a,b).(|| a b)", new Executor() {
@@ -181,6 +191,11 @@ public class L2Interpreter implements Interpreter<Node, Object> {
                 return new Maybe<Object>(new PrimitiveUnop("<=", objects.get(0)));
             }
         });
+        executors.put("l(a).(== a b)", new Executor() {
+            public Maybe<Object> execute(List<Object> objects, Object input) {
+                return new Maybe<Object>(new PrimitiveUnop("==", objects.get(0)));
+            }
+        });
         executors.put("l(a).(|| a b)", new Executor() {
             public Maybe<Object> execute(List<Object> objects, Object input) {
                 return new Maybe<Object>(new PrimitiveUnop("||", objects.get(0)));
@@ -208,9 +223,9 @@ public class L2Interpreter implements Interpreter<Node, Object> {
     public Maybe<Object> execute(Node node, Object input) {
         List<Object> arglist = new ArrayList<Object>();
 
-        for(Node child : node.children) {
+        for (Node child : node.children) {
             Maybe<Object> object = this.execute(child, input);
-            if(!object.has()) {
+            if (!object.has()) {
                 return object;
             }
             arglist.add(object.get());

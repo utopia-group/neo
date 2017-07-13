@@ -31,6 +31,8 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private final MultivalueMap<Production, String> prodCtrlInvMap = new MultivalueMap<>();
 
+    private final MultivalueMap<String, BoolExpr> inputMap = new MultivalueMap<>();
+
     /* Control variables for symbols */
     private final Map<BoolExpr, String> symCtrlMap = new HashMap<>();
 
@@ -43,7 +45,27 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 //        System.out.println("start symbol:" + start);
         Trio<Integer, BoolExpr, BoolExpr> formula = generate(grammar_, start, maxLen_);
         BoolExpr formulaConjoin = z3Utils.conjoin(formula.t1, z3Utils.getVarById("bool_0"));
+        //all input vars must be used.
+        for (String inputKey : inputMap.keySet()) {
+            BoolExpr inputCst = z3Utils.disjoin(LibUtils.listToArray(inputMap.get(inputKey)));
+            formulaConjoin = z3Utils.conjoin(formulaConjoin, inputCst);
+        }
 //        System.out.println("Big formula: " + formulaConjoin);
+        z3Utils.init(formulaConjoin);
+    }
+
+    public BaselineSolver(Grammar g, int depth) {
+        maxLen_ = depth;
+        z3Utils = Z3Utils.getInstance();
+        grammar_ = g;
+        Object start = grammar_.start();
+        Trio<Integer, BoolExpr, BoolExpr> formula = generate(grammar_, start, maxLen_);
+        BoolExpr formulaConjoin = z3Utils.conjoin(formula.t1, z3Utils.getVarById("bool_0"));
+        //all input vars must be used.
+        for (String inputKey : inputMap.keySet()) {
+            BoolExpr inputCst = z3Utils.disjoin(LibUtils.listToArray(inputMap.get(inputKey)));
+            formulaConjoin = z3Utils.conjoin(formulaConjoin, inputCst);
+        }
         z3Utils.init(formulaConjoin);
     }
 
@@ -61,6 +83,7 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
 
     private <T> Trio<Integer, BoolExpr, BoolExpr> generate(Grammar grammar, T s, int len) {
         List<Production<T>> prods = grammar.productionsFor(s);
+//        System.out.println(s + "--->" + prods);
         List<BoolExpr> exactList = new ArrayList<>();
         List<BoolExpr> conjoinList = new ArrayList<>();
         /* Control variable for current symbol. */
@@ -78,7 +101,12 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             BoolExpr prodVar = z3Utils.getFreshBoolVar();
             prodCtrlMap.put(prodVar.toString(), prod);
             prodCtrlInvMap.add(prod, prodVar.toString());
-//            System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
+            //Track input constraints.
+            String prodFunc = prod.function;
+            if (prodFunc != null && prodFunc.contains("input")) {
+                inputMap.add(prodFunc, prodVar);
+            }
+            //System.out.println(prodVar + " mapsto%%%%%%%: " + prod);
             /* create a fresh var for each production. */
             for (T child : prod.inputs) {
                 Trio<Integer, BoolExpr, BoolExpr> subResult = generate(grammar, child, len);
@@ -149,14 +177,14 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
             return (lhsIdx - rhsIdx);
         });
 
-        Queue<Pair<Object, Node>> worklist = new LinkedList<>();
+        LinkedList<Pair<Object, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();
         Node root = new Node();
         root.setSymbol(startNode);
         Pair<Object, Node> rootPair = new Pair<>(startNode, root);
         worklist.add(rootPair);
         while (!worklist.isEmpty()) {
-            Pair<Object, Node> workerPair = worklist.remove();
+            Pair<Object, Node> workerPair = worklist.pollFirst();
             Object workerSym = workerPair.t0;
             Node workerNode = workerPair.t1;
 
@@ -170,17 +198,26 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
                     models.removeFirst();
                     workerNode.function = prod.function;
 
+                    List<Pair<Object, Node>> childList = new ArrayList();
                     for (Object childSym : prod.inputs) {
                         Node childNode = new Node();
                         childNode.setSymbol(childSym);
                         workerNode.addChild(childNode);
-                        worklist.add(new Pair<>(childSym, childNode));
+                        childList.add(new Pair<>(childSym, childNode));
+                    }
+                    /* FIXME: Perform DFS without recursion. */
+                    if (!childList.isEmpty()) {
+                        Collections.reverse(childList);
+                        for (Pair<Object, Node> elem : childList) {
+                            worklist.addFirst(elem);
+                        }
                     }
                     break;
                 }
             }
         }
 
+        assert models.isEmpty() : models;
 //        System.out.println("Current AST:" + root + " models:" + models);
         return root;
     }

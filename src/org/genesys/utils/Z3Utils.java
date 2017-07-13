@@ -132,4 +132,9 @@ public class Z3Utils {
         solver_.add(ctx_.mkNot(currModel));
         return (solver_.check() == Status.SATISFIABLE);
     }
+
+    public BoolExpr convertStrToExpr(String cst) {
+        BoolExpr e = ctx_.parseSMTLIB2String(cst, null, null, null, null);
+        return e;
+    }
 }

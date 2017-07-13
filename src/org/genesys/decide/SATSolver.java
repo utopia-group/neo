@@ -175,18 +175,19 @@ public class SATSolver<C, T> implements AbstractSolver<C, T> {
         satSolver.getSolver().newVar(2);
         try {
             satSolver.getSolver().addClause(new VecInt(new int[] {-1,2}));
-            satSolver.getSolver().addClause(new VecInt(new int[] {-2,1}));
+            satSolver.getSolver().addClause(new VecInt(new int[] {2,1}));
             satSolver.getSolver().addClause(new VecInt(new int[] {-1}));
             satSolver.getSolver().addClause(new VecInt(new int[] {2}));
         } catch (ContradictionException e) {
             e.printStackTrace();
         }
-        boolean res = false;
-        try {
-            res = satSolver.getSolver().isSatisfiable();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        }
-        System.out.println("res = " + res);
+        //boolean res = false;
+        satSolver.getSolver().propagate();
+//        try {
+            //res = satSolver.getSolver().isSatisfiable();
+//        } catch (TimeoutException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("res = " + res);
     }
 }
