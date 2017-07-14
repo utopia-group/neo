@@ -51,6 +51,16 @@ public class Z3Utils {
         return pa;
     }
 
+    public BoolExpr genVarByName(String var) {
+        BoolExpr pa = ctx_.mkBoolConst(var);
+        return pa;
+    }
+
+    public BoolExpr genEqCst(String var, int val) {
+        BoolExpr eq = ctx_.mkEq(ctx_.mkIntConst(var), ctx_.mkInt(val));
+        return eq;
+    }
+
     public BoolExpr getVarById(String id) {
         return stringBoolExprMap.get(id);
     }
@@ -136,5 +146,13 @@ public class Z3Utils {
     public BoolExpr convertStrToExpr(String cst) {
         BoolExpr e = ctx_.parseSMTLIB2String(cst, null, null, null, null);
         return e;
+    }
+
+    public boolean isSat(BoolExpr expr) {
+        solver_.push();
+        solver_.add(expr);
+        boolean flag = (solver_.check() == Status.SATISFIABLE);
+        solver_.pop();
+        return flag;
     }
 }

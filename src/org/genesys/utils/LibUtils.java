@@ -9,6 +9,8 @@ import org.genesys.type.EmptyList;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by yufeng on 5/29/17.
@@ -86,6 +88,16 @@ public class LibUtils {
             if (fst instanceof Double) fst = ((Double) fst).intValue();
             return new Cons(fst, construct(arg));
         }
+    }
+
+    public static List<String> extractNums(String str) {
+        List list = new ArrayList();
+        Pattern p = Pattern.compile("-?\\d+");
+        Matcher m = p.matcher(str);
+        while (m.find()) {
+            list.add(m.group());
+        }
+        return list;
     }
 
     @SuppressWarnings("unchecked")

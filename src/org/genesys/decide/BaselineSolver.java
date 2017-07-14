@@ -178,8 +178,11 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         });
 
         LinkedList<Pair<Object, Node>> worklist = new LinkedList<>();
+        int count = 1;
         Object startNode = grammar_.start();
         Node root = new Node();
+        root.id = count;
+        count++;
         root.setSymbol(startNode);
         Pair<Object, Node> rootPair = new Pair<>(startNode, root);
         worklist.add(rootPair);
@@ -201,9 +204,11 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
                     List<Pair<Object, Node>> childList = new ArrayList();
                     for (Object childSym : prod.inputs) {
                         Node childNode = new Node();
+                        childNode.id = count;
                         childNode.setSymbol(childSym);
                         workerNode.addChild(childNode);
                         childList.add(new Pair<>(childSym, childNode));
+                        count++;
                     }
                     /* FIXME: Perform DFS without recursion. */
                     if (!childList.isEmpty()) {

@@ -85,6 +85,7 @@ public class DefaultSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
+                System.out.println("result: " + tgt.get());
 
                 if (!tgt.get().equals(output)) {
                     passed = false;

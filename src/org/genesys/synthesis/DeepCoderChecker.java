@@ -2,17 +2,18 @@ package org.genesys.synthesis;
 
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.genesys.models.Component;
+import org.genesys.models.Example;
 import org.genesys.models.Node;
 import org.genesys.models.Problem;
+import org.genesys.utils.LibUtils;
 import org.genesys.utils.Z3Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Created by yufeng on 6/3/17.
@@ -41,20 +42,63 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
      */
     @Override
     public boolean check(Problem specification, Node node) {
+
+        Example example = specification.getExamples().get(0);
+        Object output = example.getOutput();
+        List inputs = example.getInput();
+
         System.out.println("checking=========" + node);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
+        List<BoolExpr> cstList = new ArrayList<>();
+
         queue.add(node);
         while (!queue.isEmpty()) {
             Node worker = queue.remove();
             //Generate constraint between worker and its children.
             String func = worker.function;
-            Component comp = components_.get(func);
-            System.out.println("component:" + func + " " + comp);
-            if (comp != null) {
-                for (String cst : comp.getConstraint()) {
-                    BoolExpr expr = z3.convertStrToExpr(cst);
+            String workerVar = "V_LEN" + worker.id;
+            if ("root".equals(func)) {
+                //attach output
+                int outSize = 1;
+                if (output instanceof List) {
+                    outSize = ((List) output).size();
+                }
+                BoolExpr outCst = z3.genEqCst(workerVar, outSize);
+                cstList.add(outCst);
+            } else if (func.contains("input")) {
+                //attach inputs
+                List<String> nums = LibUtils.extractNums(func);
+                assert !nums.isEmpty();
+                int index = Integer.valueOf(nums.get(0));
+                Object inputObj = inputs.get(index);
+                int inSize = 1;
+                if (inputObj instanceof List) {
+                    inSize = ((List) inputObj).size();
+                }
+                BoolExpr inCst = z3.genEqCst(workerVar, inSize);
+                cstList.add(inCst);
+            } else {
+                //Get component spec.
+                if (!worker.children.isEmpty()) {
+                    Component comp = components_.get(func);
+//                    System.out.println("component:" + func + " " + comp);
+                    if (comp != null) {
+                        for (String cstStr : comp.getConstraint()) {
+                            String targetCst = cstStr.replace("OUT_LEN_SPEC", workerVar);
+                            for (int i = 0; i < worker.children.size(); i++) {
+                                Node child = worker.children.get(i);
+                                String childVar = "V_LEN" + child.id;
+                                String targetId = "IN" + i + "_LEN_SPEC";
+                                targetCst = targetCst.replace(targetId, childVar);
+                            }
+//                            System.out.println("cst : " + cstStr + " after: " + targetCst);
+
+                            BoolExpr expr = z3.convertStrToExpr(targetCst);
+                            cstList.add(expr);
+                        }
+                    }
                 }
             }
 
@@ -62,7 +106,9 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                 queue.add(child);
             }
         }
-        return true;
+        BoolExpr[] deductCst = LibUtils.listToArray(cstList);
+        BoolExpr formula = z3.conjoin(deductCst);
+        return z3.isSat(formula);
     }
 
     @Override
