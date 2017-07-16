@@ -47,7 +47,7 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
         Object output = example.getOutput();
         List inputs = example.getInput();
 
-        System.out.println("checking=========" + node);
+//        System.out.println("checking=========" + node);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
@@ -59,6 +59,7 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
             //Generate constraint between worker and its children.
             String func = worker.function;
             String workerVar = "V_LEN" + worker.id;
+//            System.out.println("working on : " + func + " id:" + workerVar);
             if ("root".equals(func)) {
                 //attach output
                 int outSize = 1;
@@ -66,7 +67,13 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                     outSize = ((List) output).size();
                 }
                 BoolExpr outCst = z3.genEqCst(workerVar, outSize);
+                assert worker.children.size() == 1;
+                Node lastChild = worker.children.get(0);
+                String childVar = "V_LEN" + lastChild.id;
+                BoolExpr eqCst = z3.genEqCst(workerVar, childVar);
+
                 cstList.add(outCst);
+                cstList.add(eqCst);
             } else if (func.contains("input")) {
                 //attach inputs
                 List<String> nums = LibUtils.extractNums(func);
@@ -108,7 +115,8 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
         }
         BoolExpr[] deductCst = LibUtils.listToArray(cstList);
         BoolExpr formula = z3.conjoin(deductCst);
-        return z3.isSat(formula);
+        boolean sat = z3.isSat(formula);
+        return sat;
     }
 
     @Override

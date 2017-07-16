@@ -61,6 +61,11 @@ public class Z3Utils {
         return eq;
     }
 
+    public BoolExpr genEqCst(String var, String val) {
+        BoolExpr eq = ctx_.mkEq(ctx_.mkIntConst(var), ctx_.mkIntConst(val));
+        return eq;
+    }
+
     public BoolExpr getVarById(String id) {
         return stringBoolExprMap.get(id);
     }
