@@ -46,26 +46,28 @@ public class NeoSynthesizer implements Synthesizer {
     public Node synthesize() {
 
         /* retrieve an AST from the solver */
-        long start = LibUtils.tick();
         Node ast = solver_.getModel(null);
-        long end = LibUtils.tick();
-        totalDecide += LibUtils.computeTime(start, end);
-
-        /* do deduction */
-//        while (!checker_.check(problem_, ast)) {
-//            ast = solver_.getModel(null);
-//        }
 
         while (ast != null) {
+            /* do deduction */
+            if (!checker_.check(problem_, ast)) {
+                long start = LibUtils.tick();
+                ast = solver_.getModel(null);
+                long end = LibUtils.tick();
+                totalDecide += LibUtils.computeTime(start, end);
+                continue;
+            }
+
             /* check input-output using the interpreter */
             if (verify(ast)) {
                 System.out.println("Synthesized PROGRAM: " + ast);
                 break;
+            } else {
+                long start = LibUtils.tick();
+                ast = solver_.getModel(null);
+                long end = LibUtils.tick();
+                totalDecide += LibUtils.computeTime(start, end);
             }
-            start = LibUtils.tick();
-            ast = solver_.getModel(null);
-            end = LibUtils.tick();
-            totalDecide += LibUtils.computeTime(start, end);
         }
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
