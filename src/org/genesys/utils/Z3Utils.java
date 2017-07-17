@@ -20,10 +20,16 @@ public class Z3Utils {
 
     private Model model_;
 
+    private boolean unSatCore_ = false;
+
+    private int cstCnt_ = 1;
+
     /* Global counter for z3 var. */
     private int counter = 0;
 
     private Map<String, BoolExpr> stringBoolExprMap;
+
+    private Map<Integer, BoolExpr> cstMap_;
 
     protected Z3Utils() {
         ctx_ = new Context();
@@ -126,7 +132,6 @@ public class Z3Utils {
             model_ = m;
         } else {
             model_ = null;
-            System.out.println("UNSAT_core:" + solver_.getUnsatCore().length);
         }
         return model_;
     }
@@ -157,7 +162,26 @@ public class Z3Utils {
         solver_.push();
         solver_.add(expr);
         boolean flag = (solver_.check() == Status.SATISFIABLE);
+        if (!flag) {
+            printUnsatCore();
+        }
         solver_.pop();
         return flag;
     }
+
+    public void addCst(BoolExpr e) {
+        if (unSatCore_) {
+            int val = cstCnt_;
+            cstMap_.put(val, e);
+//            solver_.add(e, Integer.toString(val));
+            cstCnt_++;
+        } else {
+            solver_.add(e);
+        }
+    }
+
+    public void printUnsatCore() {
+//        System.out.println("UNSAT_core:" + solver_.getUnsatCore().length);
+    }
+
 }

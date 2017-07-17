@@ -3,6 +3,7 @@
   "name":"filter",
   "constraint":
   [
-  "(declare-const IN1_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (> IN1_LEN_SPEC OUT_LEN_SPEC))"
+  "(declare-const IN1_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (> IN1_LEN_SPEC OUT_LEN_SPEC))",
+  "(declare-const IN1_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert (>= IN1_MAX_SPEC OUT_MAX_SPEC))"
   ]
 }

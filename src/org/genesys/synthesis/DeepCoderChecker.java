@@ -47,7 +47,6 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
         Object output = example.getOutput();
         List inputs = example.getInput();
 
-//        System.out.println("checking=========" + node);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
@@ -59,13 +58,26 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
             //Generate constraint between worker and its children.
             String func = worker.function;
             String workerVar = "V_LEN" + worker.id;
+            String workerVar2 = "V_MAX" + worker.id;
+
 //            System.out.println("working on : " + func + " id:" + workerVar);
             if ("root".equals(func)) {
                 //attach output
                 int outSize = 1;
+                int outMax;
                 if (output instanceof List) {
+                    //len
                     outSize = ((List) output).size();
+
+                    //max
+                    assert output instanceof List : output;
+                    List<Double> list = LibUtils.cast(output);
+                    Optional<Double> max = list.stream().reduce(Double::max);
+                    outMax = max.get().intValue();
+                } else {
+                    outMax = ((Double) output).intValue();
                 }
+
                 BoolExpr outCst = z3.genEqCst(workerVar, outSize);
                 assert worker.children.size() == 1;
                 Node lastChild = worker.children.get(0);
@@ -74,6 +86,15 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
 
                 cstList.add(outCst);
                 cstList.add(eqCst);
+
+                BoolExpr outMaxCst = z3.genEqCst(workerVar2, outMax);
+                assert worker.children.size() == 1;
+                String childVar2 = "V_MAX" + lastChild.id;
+                BoolExpr eqCst2 = z3.genEqCst(workerVar2, childVar2);
+
+                cstList.add(outMaxCst);
+                cstList.add(eqCst2);
+
             } else if (func.contains("input")) {
                 //attach inputs
                 List<String> nums = LibUtils.extractNums(func);
@@ -81,11 +102,22 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                 int index = Integer.valueOf(nums.get(0));
                 Object inputObj = inputs.get(index);
                 int inSize = 1;
+                int inMax;
                 if (inputObj instanceof List) {
                     inSize = ((List) inputObj).size();
+
+                    assert inputObj instanceof List : inputObj;
+                    List<Double> list = LibUtils.cast(inputObj);
+                    Optional<Double> max = list.stream().reduce(Double::max);
+                    inMax = max.get().intValue();
+                } else {
+                    inMax = ((Double) inputObj).intValue();
                 }
                 BoolExpr inCst = z3.genEqCst(workerVar, inSize);
                 cstList.add(inCst);
+
+                BoolExpr inMaxCst = z3.genEqCst(workerVar2, inMax);
+                cstList.add(inMaxCst);
             } else {
                 //Get component spec.
                 if (!worker.children.isEmpty()) {
@@ -94,11 +126,16 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                     if (comp != null) {
                         for (String cstStr : comp.getConstraint()) {
                             String targetCst = cstStr.replace("OUT_LEN_SPEC", workerVar);
+//                             targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
                             for (int i = 0; i < worker.children.size(); i++) {
                                 Node child = worker.children.get(i);
                                 String childVar = "V_LEN" + child.id;
                                 String targetId = "IN" + i + "_LEN_SPEC";
                                 targetCst = targetCst.replace(targetId, childVar);
+
+                                String childVar2 = "V_MAX" + child.id;
+                                String targetId2 = "IN" + i + "_MAX_SPEC";
+                                targetCst = targetCst.replace(targetId2, childVar2);
                             }
 //                            System.out.println("cst : " + cstStr + " after: " + targetCst);
 

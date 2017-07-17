@@ -50,6 +50,8 @@ public class DefaultSynthesizer implements Synthesizer {
     public Node synthesize() {
         /* retrieve an AST from the solver */
         Node ast = solver_.getModel(null);
+        int total = 0;
+        int prune = 0;
 
         while (ast != null) {
             /* do deduction */
@@ -57,6 +59,8 @@ public class DefaultSynthesizer implements Synthesizer {
                 long start = LibUtils.tick();
                 ast = solver_.getModel(null);
                 long end = LibUtils.tick();
+                prune++;
+                total++;
                 totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
@@ -69,11 +73,13 @@ public class DefaultSynthesizer implements Synthesizer {
                 long start = LibUtils.tick();
                 ast = solver_.getModel(null);
                 long end = LibUtils.tick();
+                total++;
                 totalDecide += LibUtils.computeTime(start, end);
             }
         }
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
+        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 1.0)/total);
 
         return ast;
     }

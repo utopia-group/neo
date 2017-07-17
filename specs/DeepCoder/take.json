@@ -3,6 +3,7 @@
   "name":"take",
   "constraint":
   [
-    "(declare-const IN0_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (> IN0_LEN_SPEC OUT_LEN_SPEC))"
+    "(declare-const IN0_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (> IN0_LEN_SPEC OUT_LEN_SPEC))",
+    "(declare-const IN0_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert (>= IN0_MAX_SPEC OUT_MAX_SPEC))"
   ]
 }
