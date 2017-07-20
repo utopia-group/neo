@@ -20,7 +20,7 @@ public class Z3Utils {
 
     private Model model_;
 
-    private boolean unSatCore_ = false;
+    private boolean unSatCore_ = true;
 
     private int cstCnt_ = 1;
 
@@ -29,7 +29,7 @@ public class Z3Utils {
 
     private Map<String, BoolExpr> stringBoolExprMap;
 
-    private Map<Integer, BoolExpr> cstMap_;
+    private Map<BoolExpr, BoolExpr> cstMap_ = new HashMap<>();
 
     protected Z3Utils() {
         ctx_ = new Context();
@@ -158,22 +158,27 @@ public class Z3Utils {
         return e;
     }
 
-    public boolean isSat(BoolExpr expr) {
+    public boolean isSat(List<BoolExpr> exprList) {
         solver_.push();
-        solver_.add(expr);
+        for (BoolExpr expr : exprList) {
+//            solver_.add(expr);
+            this.addCst(expr);
+        }
         boolean flag = (solver_.check() == Status.SATISFIABLE);
         if (!flag) {
             printUnsatCore();
         }
         solver_.pop();
+        cstCnt_ = 1;
         return flag;
     }
 
     public void addCst(BoolExpr e) {
         if (unSatCore_) {
             int val = cstCnt_;
-            cstMap_.put(val, e);
-//            solver_.add(e, Integer.toString(val));
+            BoolExpr p1 = ctx_.mkBoolConst(Integer.toString(val));
+            solver_.assertAndTrack(e, p1);
+            cstMap_.put(p1, e);
             cstCnt_++;
         } else {
             solver_.add(e);
@@ -181,7 +186,9 @@ public class Z3Utils {
     }
 
     public void printUnsatCore() {
-//        System.out.println("UNSAT_core:" + solver_.getUnsatCore().length);
+        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
+        for (BoolExpr e : solver_.getUnsatCore())
+            System.out.println(e + " " + cstMap_.get(e));
     }
 
 }

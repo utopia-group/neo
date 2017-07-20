@@ -150,9 +150,9 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                 queue.add(child);
             }
         }
-        BoolExpr[] deductCst = LibUtils.listToArray(cstList);
-        BoolExpr formula = z3.conjoin(deductCst);
-        boolean sat = z3.isSat(formula);
+//        BoolExpr[] deductCst = LibUtils.listToArray(cstList);
+//        BoolExpr formula = z3.conjoin(deductCst);
+        boolean sat = z3.isSat(cstList);
         return sat;
     }
 
