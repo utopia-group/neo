@@ -18,10 +18,10 @@ public class RawDatapoint<T> {
 	public String toString() {
 		return "(" + toString(this.xFunctions) + ", [" + this.xInput + "], [" + this.xOutput + "], [" + this.yFunction + "])";
 	}
-	public <T> String toString(List<T> ts) {
+	public <U> String toString(List<U> ts) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		for(T t : ts) {
+		for(U t : ts) {
 			sb.append(t).append(", ");
 		}
 		if(ts.size() > 0) {
