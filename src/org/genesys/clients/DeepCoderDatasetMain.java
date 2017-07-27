@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeSet;
 
-import org.genesys.interpreter.L2Interpreter;
-import org.genesys.language.L2Grammar;
+import org.genesys.interpreter.DeepCoderInterpreter;
+import org.genesys.language.DeepCoderGrammar;
 import org.genesys.ml.DataPoint;
 import org.genesys.ml.DatasetGenerator;
 import org.genesys.ml.DefaultProgramSampler;
@@ -24,7 +24,7 @@ import org.genesys.type.AbstractType;
 import org.genesys.type.IntType;
 import org.genesys.type.ListType;
 
-public class L2DatasetMain {
+public class DeepCoderDatasetMain {
 	public static void main(String[] args) {
 		int maxDepth = 20;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
@@ -37,8 +37,8 @@ public class L2DatasetMain {
 		int nGramLength = 2;
 		L2XFeaturizerParameters xFeaturizerParameters = new L2XFeaturizerParameters(inputSamplerParameters, nGramLength);
 		
-        L2Grammar grammar = new L2Grammar(new ListType(new IntType()), new ListType(new IntType()));
-        L2Interpreter interpreter = new L2Interpreter();
+        DeepCoderGrammar grammar = new DeepCoderGrammar(new ListType(new IntType()), new IntType());
+        DeepCoderInterpreter interpreter = new DeepCoderInterpreter();
         Random random = new Random();
         
         List<String> functions = new ArrayList<String>();

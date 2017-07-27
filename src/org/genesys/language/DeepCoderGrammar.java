@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class DeepCoderGrammar implements Grammar<AbstractType> {
 
-    private AbstractType inputType;
+    public AbstractType inputType;
 
-    private AbstractType outputType;
+    public AbstractType outputType;
 
     private List<InputType> inputTypes = new ArrayList<>();
 

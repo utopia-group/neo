@@ -2,12 +2,12 @@ package org.genesys.ml;
 
 public class L2InputSamplerParameters {
 	public final int maxLength;
-	public final int maxInt;
-	public final int minInt;
+	public final int maxValue;
+	public final int minValue;
 	
-	public L2InputSamplerParameters(int maxLength, int maxInt, int minInt) {
+	public L2InputSamplerParameters(int maxLength, int maxValue, int minValue) {
 		this.maxLength = maxLength;
-		this.maxInt = maxInt;
-		this.minInt = minInt;
+		this.maxValue = maxValue;
+		this.minValue = minValue;
 	}
 }

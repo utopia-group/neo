@@ -1,5 +1,7 @@
 package org.genesys.ml;
 
+import java.util.List;
+
 public interface YFeaturizer {
-	public double[] getFeatures(String function);
+	public List<Double> getFeatures(String function);
 }

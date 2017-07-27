@@ -37,7 +37,7 @@ public class L2InputSampler implements Sampler<Object> {
 			}
 			return convert(list);
 		} else if(type instanceof IntType) {
-			return (Integer)this.parameters.minInt + this.random.nextInt((this.parameters.maxInt - this.parameters.minInt));
+			return (Integer)this.parameters.minValue + this.random.nextInt((this.parameters.maxValue - this.parameters.minValue));
 		} else {
 			throw new RuntimeException("Type not yet handled: " + type);
 		}

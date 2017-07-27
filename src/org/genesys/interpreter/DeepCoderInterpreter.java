@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class DeepCoderInterpreter implements Interpreter<Node, Object> {
 
-    private final Map<String, Executor> executors = new HashMap<String, Executor>();
+    public final Map<String, Executor> executors = new HashMap<String, Executor>();
 
     public DeepCoderInterpreter() {
         executors.put("root", (objects, input) -> {

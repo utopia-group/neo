@@ -11,23 +11,15 @@ public class DefaultYFeaturizer implements YFeaturizer {
 	}
 	
 	@Override
-	public double[] getFeatures(String function) {
-		return toArray(featurize(function, this.functions));
+	public List<Double> getFeatures(String function) {
+		return featurize(function, this.functions);
 	}
 	
-	public static List<Double> featurize(String curFunction, List<String> functions) {
+	private static List<Double> featurize(String curFunction, List<String> functions) {
 		List<Double> features = new ArrayList<Double>();
 		for(String function : functions) {
 			features.add(function.equals(curFunction) ? 1.0 : 0.0);
 		}
 		return features;
-	}
-	
-	public static double[] toArray(List<Double> list) {
-		double[] array = new double[list.size()];
-		for(int i=0; i<list.size(); i++) {
-			array[i] = list.get(i);
-		}
-		return array;
 	}
 }

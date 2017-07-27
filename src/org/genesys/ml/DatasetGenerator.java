@@ -20,17 +20,20 @@ public class DatasetGenerator {
 		
 		// Step 1: Sample program and input, and obtain output
 		Node program = programSampler.sample();
+		System.out.println("SAMPLED PROGRAM: " + program);
 		T input = inputSampler.sample();
+		System.out.println("SAMPLED INPUT: " + input);
 		T output = interpreter.execute(program, input).get();
+		System.out.println("COMPUTED OUTPUT: " + output);
 		
 		// Step 2: Construct n-grams
 		List<Pair<String,List<String>>> ancestors = getFunctionData(program);
 		
 		// Step 3: Construct data points
 		for(Pair<String,List<String>> ancestor : ancestors) {
-			double[] xFeatures = xFeaturizer.getFeatures(ancestor.t1, input, output);
-			double[] yFeatures = yFeaturizer.getFeatures(ancestor.t0);
-			DataPoint dataPoint = new DataPoint(xFeatures, yFeatures);
+			Pair<List<Integer>,List<Integer>> xFeatures = xFeaturizer.getFeatures(ancestor.t1, input, output);
+			List<Double> yFeatures = yFeaturizer.getFeatures(ancestor.t0);
+			DataPoint dataPoint = new DataPoint(xFeatures.t0, xFeatures.t1, yFeatures);
 			dataset.add(dataPoint);
 		}
 		
