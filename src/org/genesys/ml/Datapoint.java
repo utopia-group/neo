@@ -3,11 +3,11 @@ package org.genesys.ml;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataPoint {
+public class Datapoint {
 	public final List<Integer> xFunctionFeatures = new ArrayList<Integer>();
 	public final List<Integer> xValueFeatures = new ArrayList<Integer>();
 	public final List<Double> yFeatures = new ArrayList<Double>();
-	public DataPoint(List<Integer> xFunctionFeatures, List<Integer> xValueFeatures, List<Double> yFeatures) {
+	public Datapoint(List<Integer> xFunctionFeatures, List<Integer> xValueFeatures, List<Double> yFeatures) {
 		this.xFunctionFeatures.addAll(xFunctionFeatures);
 		this.xValueFeatures.addAll(xValueFeatures);
 		this.yFeatures.addAll(yFeatures);

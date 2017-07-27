@@ -9,14 +9,12 @@ import org.genesys.models.Node;
 import org.genesys.models.Pair;
 
 public class DatasetGenerator {
-	public static <T> List<DataPoint> generateDataset(
+	public static <T> List<RawDatapoint<T>> generateDataset(
 			Interpreter<Node,T> interpreter,
-			XFeaturizer<T> xFeaturizer,
-			YFeaturizer yFeaturizer,
 			Sampler<Node> programSampler,
 			Sampler<T> inputSampler) {
 		
-		List<DataPoint> dataset = new ArrayList<DataPoint>();
+		List<RawDatapoint<T>> dataset = new ArrayList<RawDatapoint<T>>();
 		
 		// Step 1: Sample program and input, and obtain output
 		Node program = programSampler.sample();
@@ -31,12 +29,24 @@ public class DatasetGenerator {
 		
 		// Step 3: Construct data points
 		for(Pair<String,List<String>> ancestor : ancestors) {
-			Pair<List<Integer>,List<Integer>> xFeatures = xFeaturizer.getFeatures(ancestor.t1, input, output);
-			List<Double> yFeatures = yFeaturizer.getFeatures(ancestor.t0);
-			DataPoint dataPoint = new DataPoint(xFeatures.t0, xFeatures.t1, yFeatures);
-			dataset.add(dataPoint);
+			RawDatapoint<T> datapoint = new RawDatapoint<T>(ancestor.t1, input, output, ancestor.t0);
+			dataset.add(datapoint);
 		}
 		
+		return dataset;
+	}
+	
+	public static <T> List<Datapoint> translateDataset(
+			List<RawDatapoint<T>> rawDataset,
+			XFeaturizer<T> xFeaturizer,
+			YFeaturizer yFeaturizer) {
+		List<Datapoint> dataset = new ArrayList<Datapoint>();
+		for(RawDatapoint<T> rawDataPoint : rawDataset) {
+			Pair<List<Integer>,List<Integer>> xFeatures = xFeaturizer.getFeatures(rawDataPoint.xFunctions, rawDataPoint.xInput, rawDataPoint.xOutput);
+			List<Double> yFeatures = yFeaturizer.getFeatures(rawDataPoint.yFunction);
+			Datapoint datapoint = new Datapoint(xFeatures.t0, xFeatures.t1, yFeatures);
+			dataset.add(datapoint);
+		}
 		return dataset;
 	}
 	

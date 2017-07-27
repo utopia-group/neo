@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.language.DeepCoderGrammar;
-import org.genesys.ml.DataPoint;
+import org.genesys.ml.Datapoint;
 import org.genesys.ml.DatasetGenerator;
 import org.genesys.ml.DefaultProgramSampler;
 import org.genesys.ml.DefaultProgramSamplerParameters;
@@ -16,6 +16,7 @@ import org.genesys.ml.L2InputSampler;
 import org.genesys.ml.L2InputSamplerParameters;
 import org.genesys.ml.L2XFeaturizer;
 import org.genesys.ml.L2XFeaturizerParameters;
+import org.genesys.ml.RawDatapoint;
 import org.genesys.ml.Sampler;
 import org.genesys.ml.XFeaturizer;
 import org.genesys.ml.YFeaturizer;
@@ -51,8 +52,12 @@ public class DeepCoderDatasetMain {
         Sampler<Node> programSampler = new DefaultProgramSampler<AbstractType>(grammar, programSamplerParameters, random);
         Sampler<Object> inputSampler = new L2InputSampler(grammar.inputType, inputSamplerParameters, random);
         
-		List<DataPoint> data = DatasetGenerator.generateDataset(interpreter, xFeaturizer, yFeaturizer, programSampler, inputSampler);
-		for(DataPoint datapoint : data) {
+        List<RawDatapoint<Object>> rawDataset = DatasetGenerator.generateDataset(interpreter, programSampler, inputSampler);
+		for(RawDatapoint<Object> rawDatapoint : rawDataset) {
+			System.out.println(rawDatapoint);
+		}
+		List<Datapoint> dataset = DatasetGenerator.translateDataset(rawDataset, xFeaturizer, yFeaturizer);
+		for(Datapoint datapoint : dataset) {
 			System.out.println(datapoint);
 		}
 	}
