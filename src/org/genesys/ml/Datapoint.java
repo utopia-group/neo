@@ -14,18 +14,6 @@ public class Datapoint {
 	}
 	@Override
 	public String toString() {
-		return "(" + toString(this.xFunctionFeatures) + ", " + toString(this.xValueFeatures) + ", " + toString(this.yFeatures) + ")";
-	}
-	public <T> String toString(List<T> ts) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for(T t : ts) {
-			sb.append(t).append(", ");
-		}
-		if(ts.size() > 0) {
-			sb.delete(sb.length()-2, sb.length());
-		}
-		sb.append("]");
-		return sb.toString();
+		return "(" + Utils.toString(this.xFunctionFeatures) + ", " + Utils.toString(this.xValueFeatures) + ", " + Utils.toString(this.yFeatures) + ")";
 	}
 }

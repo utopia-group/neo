@@ -16,18 +16,6 @@ public class RawDatapoint<T> {
 	}
 	@Override
 	public String toString() {
-		return "(" + toString(this.xFunctions) + ", [" + this.xInput + "], [" + this.xOutput + "], [" + this.yFunction + "])";
-	}
-	public <U> String toString(List<U> ts) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for(U t : ts) {
-			sb.append(t).append(", ");
-		}
-		if(ts.size() > 0) {
-			sb.delete(sb.length()-2, sb.length());
-		}
-		sb.append("]");
-		return sb.toString();
+		return "(" + Utils.toString(this.xFunctions) + ", [" + this.xInput + "], [" + this.xOutput + "], [" + this.yFunction + "])";
 	}
 }

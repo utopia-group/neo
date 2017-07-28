@@ -50,7 +50,7 @@ public class DatasetGenerator {
 		return dataset;
 	}
 	
-	private static List<Pair<String,List<String>>> getFunctionData(Node program) {
+	public static List<Pair<String,List<String>>> getFunctionData(Node program) {
 		List<Pair<String,List<String>>> data = new ArrayList<Pair<String,List<String>>>();
 		Stack<String> stack = new Stack<String>();
 		getFunctionDataHelper(program, stack, data);
