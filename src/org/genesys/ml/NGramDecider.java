@@ -3,11 +3,12 @@ package org.genesys.ml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.genesys.decide.Decider;
 import org.genesys.ml.Utils.Counter;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 
-public class NGramDecider<T> implements Decider<T> {
+public class NGramDecider implements Decider {
 	private final int nGramLength;
 	private final Counter<Pair<String,String>> counts = new Counter<Pair<String,String>>();
 	private final String NO_FUNCTION = "";
@@ -31,7 +32,7 @@ public class NGramDecider<T> implements Decider<T> {
 	}
 	
 	@Override
-	public String decide(List<String> ancestors, T input, T output, List<String> functionChoices) {
+	public String decide(List<String> ancestors, List<String> functionChoices) {
 		String curFunction = null;
 		int curCount = 0;
 		String nGram = getNGram(ancestors);
