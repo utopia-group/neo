@@ -20,7 +20,7 @@ public class Utils {
 	public static class Counter<T> {
 		private final Map<T,Integer> counts = new HashMap<T,Integer>();
 		public void increment(T t) {
-			if(this.counts.containsKey(t)) {
+			if(!this.counts.containsKey(t)) {
 				this.counts.put(t, 1);
 			} else {
 				this.counts.put(t, this.counts.get(t)+1);

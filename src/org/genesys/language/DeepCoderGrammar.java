@@ -21,6 +21,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
 
     public DeepCoderGrammar(AbstractType inputType, AbstractType outputType) {
         this.inputType = inputType;
+        inputTypes.add(new InputType(0, inputType));
         this.outputType = outputType;
     }
 

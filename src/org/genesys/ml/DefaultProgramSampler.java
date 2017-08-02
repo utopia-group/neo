@@ -10,6 +10,7 @@ import org.genesys.language.Grammar;
 import org.genesys.language.Production;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
+import org.genesys.type.InitType;
 
 public class DefaultProgramSampler<T> implements Sampler<Node> {
 	private final Grammar<T> grammar;

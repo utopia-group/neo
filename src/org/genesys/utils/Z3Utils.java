@@ -166,7 +166,7 @@ public class Z3Utils {
         }
         boolean flag = (solver_.check() == Status.SATISFIABLE);
         if (!flag) {
-            printUnsatCore();
+            //printUnsatCore();
         }
         solver_.pop();
         cstCnt_ = 1;

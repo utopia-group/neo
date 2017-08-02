@@ -126,7 +126,7 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                     if (comp != null) {
                         for (String cstStr : comp.getConstraint()) {
                             String targetCst = cstStr.replace("OUT_LEN_SPEC", workerVar);
-//                             targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
+                             targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
                             for (int i = 0; i < worker.children.size(); i++) {
                                 Node child = worker.children.get(i);
                                 String childVar = "V_LEN" + child.id;
@@ -153,6 +153,9 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
 //        BoolExpr[] deductCst = LibUtils.listToArray(cstList);
 //        BoolExpr formula = z3.conjoin(deductCst);
         boolean sat = z3.isSat(cstList);
+        if(sat && node.toString().contains("sort")) {
+            System.out.println("*****BUG:" + node + " cst:" + cstList);
+        }
         return sat;
     }
 

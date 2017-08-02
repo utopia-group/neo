@@ -31,10 +31,21 @@ public class DeepCoderNGramMain {
         // sample programs
         List<Node> programs = new ArrayList<Node>();
         for(int i=0; i<numSamples; i++) {
-        	programs.add(programSampler.sample());
+            Node sample = programSampler.sample();
+            System.out.println("sample:" + sample);
+        	programs.add(sample);
         }
         
         // build n-gram statistics
         Decider decider = new NGramDecider(programs, nGramLength);
+        List<String> ancestors = new ArrayList<>();
+        ancestors.add("last");
+        ancestors.add("sort");
+        List<String> functionChoices = new ArrayList<>();
+        functionChoices.add("last");
+        functionChoices.add("filter");
+        functionChoices.add("sum");
+        String nextChoice = decider.decide(ancestors, functionChoices);
+        System.out.println("Previous: " + ancestors + " Next decision: " + nextChoice);
 	}
 }
