@@ -59,7 +59,8 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
             String func = worker.function;
             String workerVar = "V_LEN" + worker.id;
             String workerVar2 = "V_MAX" + worker.id;
-
+            //Get component spec.
+            Component comp = components_.get(func);
 //            System.out.println("working on : " + func + " id:" + workerVar);
             if ("root".equals(func)) {
                 //attach output
@@ -119,17 +120,16 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                 BoolExpr inMaxCst = z3.genEqCst(workerVar2, inMax);
                 cstList.add(inMaxCst);
             } else {
-                //Get component spec.
                 if (!worker.children.isEmpty()) {
-                    Component comp = components_.get(func);
-//                    System.out.println("component:" + func + " " + comp);
                     if (comp != null) {
                         for (String cstStr : comp.getConstraint()) {
                             String targetCst = cstStr.replace("OUT_LEN_SPEC", workerVar);
-                             targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
+                            targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
+
                             for (int i = 0; i < worker.children.size(); i++) {
                                 Node child = worker.children.get(i);
                                 String childVar = "V_LEN" + child.id;
+
                                 String targetId = "IN" + i + "_LEN_SPEC";
                                 targetCst = targetCst.replace(targetId, childVar);
 
@@ -137,7 +137,25 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                                 String targetId2 = "IN" + i + "_MAX_SPEC";
                                 targetCst = targetCst.replace(targetId2, childVar2);
                             }
-//                            System.out.println("cst : " + cstStr + " after: " + targetCst);
+
+                            Node fstChild = worker.children.get(0);
+                            Component fstComp = components_.get(fstChild.function);
+                            if(fstComp!= null && comp.isHigh()) {
+                                List<String> childSpecs = fstComp.getConstraint();
+                                for(String childCst : childSpecs) {
+                                    String fstChildVar = "V_MAX" + fstChild.id;
+                                    childCst = childCst.replace("OUT_MAX_SPEC", fstChildVar);
+                                    String postfix = "_" + worker.id;
+                                    childCst = childCst.replaceAll("IN[0-9]_MAX_SPEC", "$0" + postfix);
+                                    BoolExpr exprChild = z3.convertStrToExpr(childCst);
+                                    cstList.add(exprChild);
+                                }
+                            }
+
+                            if(targetCst.contains("IN0_ARG")) {
+                                targetCst = targetCst.replace("0_ARG", "");
+                                targetCst = targetCst.replace("CHILD", String.valueOf(worker.id));
+                            }
 
                             BoolExpr expr = z3.convertStrToExpr(targetCst);
                             cstList.add(expr);
@@ -146,16 +164,13 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                 }
             }
 
-            for (Node child : worker.children) {
+            for (int i = 0 ; i < worker.children.size(); i++) {
+                Node child = worker.children.get(i);
+                if((comp != null) && comp.isHigh() && (i == 0)) continue;
                 queue.add(child);
             }
         }
-//        BoolExpr[] deductCst = LibUtils.listToArray(cstList);
-//        BoolExpr formula = z3.conjoin(deductCst);
         boolean sat = z3.isSat(cstList);
-        if(sat && node.toString().contains("sort")) {
-            System.out.println("*****BUG:" + node + " cst:" + cstList);
-        }
         return sat;
     }
 

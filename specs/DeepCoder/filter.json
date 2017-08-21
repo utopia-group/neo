@@ -1,6 +1,7 @@
 {
   "id":10,
   "name":"filter",
+  "high":true,
   "constraint":
   [
   "(declare-const IN1_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (> IN1_LEN_SPEC OUT_LEN_SPEC))",

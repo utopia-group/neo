@@ -20,7 +20,7 @@ public class Z3Utils {
 
     private Model model_;
 
-    private boolean unSatCore_ = true;
+    private boolean unSatCore_ = false;
 
     private int cstCnt_ = 1;
 
@@ -165,8 +165,8 @@ public class Z3Utils {
             this.addCst(expr);
         }
         boolean flag = (solver_.check() == Status.SATISFIABLE);
-        if (!flag) {
-            //printUnsatCore();
+        if (!flag && unSatCore_) {
+            printUnsatCore();
         }
         solver_.pop();
         cstCnt_ = 1;

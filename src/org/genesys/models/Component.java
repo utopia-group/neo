@@ -20,6 +20,8 @@ public class Component {
         return id;
     }
 
+    public boolean isHigh() { return high; }
+
     public String getName() {
         return name;
     }
@@ -31,6 +33,9 @@ public class Component {
     private Integer id;
 
     private String name;
+
+    /* Is this a function? */
+    private boolean high;
 
     private List<String> constraint;
 

@@ -155,9 +155,6 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         } else if (symbol instanceof IntType) {
             productions.add(new Production<>(symbol, "0"));
             productions.add(new Production<>(symbol, "1"));
-            productions.add(new Production<>(symbol, "+1", symbol));
-            productions.add(new Production<>(symbol, "-1", symbol));
-            productions.add(new Production<>(symbol, "*3", symbol));
             productions.add(new Production<>(symbol, "maximum", new ListType(new IntType())));
             productions.add(new Production<>(symbol, "minimum", new ListType(new IntType())));
             productions.add(new Production<>(symbol, "sum", new ListType(new IntType())));
@@ -220,8 +217,9 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             // l(a).(+ a b) (Integer) ::= (Integer -> Integer)
             // l(a).(* a b) (Integer) ::= (Integer -> Integer)
             if (type.inputType instanceof IntType && type.outputType instanceof IntType) {
-                productions.add(new Production<>(symbol, "l(a).(+ a b)", new IntType()));
-                productions.add(new Production<>(symbol, "l(a).(* a b)", new IntType()));
+//                productions.add(new Production<>(symbol, "l(a).(+ a b)", new IntType()));
+//                productions.add(new Production<>(symbol, "l(a).(* a b)", new IntType()));
+                productions.add(new Production<>(symbol, "inc3"));
 //                productions.add(new Production<>(symbol, "l(a).(% a b)", new IntType()));
             }
             // l(a).(> a b) (Integer) ::= (Integer -> Boolean)
