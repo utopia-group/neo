@@ -2,11 +2,7 @@ package org.genesys.synthesis;
 
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.genesys.models.Component;
-import org.genesys.models.Example;
-import org.genesys.models.Node;
-import org.genesys.models.Problem;
+import org.genesys.models.*;
 import org.genesys.utils.LibUtils;
 import org.genesys.utils.Z3Utils;
 
@@ -18,7 +14,7 @@ import java.util.*;
 /**
  * Created by yufeng on 6/3/17.
  */
-public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
+public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, List<Integer>>>> {
 
     private HashMap<String, Component> components_ = new HashMap<>();
 
@@ -51,6 +47,7 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
+        Map<String, Integer> clauseToNodeMap_ = new HashMap<>();
 
         queue.add(node);
         while (!queue.isEmpty()) {
@@ -149,6 +146,7 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                                     childCst = childCst.replaceAll("IN[0-9]_MAX_SPEC", "$0" + postfix);
                                     BoolExpr exprChild = z3.convertStrToExpr(childCst);
                                     cstList.add(exprChild);
+                                    clauseToNodeMap_.put(exprChild.toString(), fstChild.id);
                                 }
                             }
 
@@ -159,6 +157,7 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
 
                             BoolExpr expr = z3.convertStrToExpr(targetCst);
                             cstList.add(expr);
+                            clauseToNodeMap_.put(expr.toString(), worker.id);
                         }
                     }
                 }
@@ -170,12 +169,14 @@ public class DeepCoderChecker implements Checker<Problem, BoolExpr> {
                 queue.add(child);
             }
         }
-        boolean sat = z3.isSat(cstList);
+        boolean sat = z3.isSat(cstList, clauseToNodeMap_, components_.values());
+        if(!sat) System.out.println("Prune program:" + node);
         return sat;
     }
 
     @Override
-    public BoolExpr learnCore() {
-        return null;
+    public List<Pair<Integer, List<Integer>>> learnCore() {
+        Z3Utils z3 = Z3Utils.getInstance();
+        return z3.getConflicts();
     }
 }

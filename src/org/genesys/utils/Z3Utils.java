@@ -2,10 +2,11 @@ package org.genesys.utils;
 
 import com.microsoft.z3.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import org.genesys.models.Component;
+import org.genesys.models.Pair;
+
 
 /**
  * Created by yufeng on 5/26/17.
@@ -16,11 +17,15 @@ public class Z3Utils {
 
     private Context ctx_;
 
+    private Context ctx_core;
+
     private Solver solver_;
+
+    private Solver solver_core;
 
     private Model model_;
 
-    private boolean unSatCore_ = false;
+    private boolean unSatCore_ = true;
 
     private int cstCnt_ = 1;
 
@@ -31,8 +36,13 @@ public class Z3Utils {
 
     private Map<BoolExpr, BoolExpr> cstMap_ = new HashMap<>();
 
+    private List<Pair<Integer, List<Integer>>> conflicts_ = new ArrayList<>();
+
     protected Z3Utils() {
         ctx_ = new Context();
+        ctx_core = new Context();
+
+        solver_core = ctx_core.mkSolver();
         solver_ = ctx_.mkSolver();
         stringBoolExprMap = new HashMap<>();
     }
@@ -158,7 +168,12 @@ public class Z3Utils {
         return e;
     }
 
-    public boolean isSat(List<BoolExpr> exprList) {
+    public BoolExpr convertStrToExpr2(String cst) {
+        BoolExpr e = ctx_core.parseSMTLIB2String(cst, null, null, null, null);
+        return e;
+    }
+
+    public boolean isSat(List<BoolExpr> exprList, Map<String, Integer> clauseToNodeMap, Collection<Component> components ) {
         solver_.push();
         for (BoolExpr expr : exprList) {
 //            solver_.add(expr);
@@ -166,7 +181,9 @@ public class Z3Utils {
         }
         boolean flag = (solver_.check() == Status.SATISFIABLE);
         if (!flag && unSatCore_) {
-            printUnsatCore();
+            printUnsatCore(clauseToNodeMap, components);
+        } else {
+            conflicts_.clear();
         }
         solver_.pop();
         cstCnt_ = 1;
@@ -185,10 +202,58 @@ public class Z3Utils {
         }
     }
 
-    public void printUnsatCore() {
-        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
-        for (BoolExpr e : solver_.getUnsatCore())
-            System.out.println(e + " " + cstMap_.get(e));
+    public void printUnsatCore(Map<String, Integer> clauseToNodeMap, Collection<Component> components) {
+//        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
+        String inExpr = "IN0_LEN_SPEC";
+        String outExpr = "OUT_LEN_SPEC";
+        conflicts_.clear();
+        for (BoolExpr e : solver_.getUnsatCore()) {
+//            System.out.println(e + " " + cstMap_.get(e));
+            String core = cstMap_.get(e).toString();
+            // only consider useful core for now.
+            if (clauseToNodeMap.containsKey(core)) {
+//                System.out.println("***" + core);
+                int nodeId = clauseToNodeMap.get(core);
+                // remove brackets.
+                String subCore = core.substring(1, core.length() - 1);
+                if(core.contains("MAX")) {
+                    inExpr = "IN0_MAX_SPEC";
+                    outExpr = "OUT_MAX_SPEC";
+                }
+                String[] items = subCore.split(" ");
+                // right now only handle easy cores.
+                if(items.length != 3) continue;
+                String core_str = core.replace(items[1], inExpr);
+                core_str = core_str.replace(items[2], outExpr);
+                String core_cst_str = "(declare-const " + inExpr + " Int)" + "(declare-const "
+                        + outExpr + " Int)" + "(assert " + core_str + ")";
+//                System.out.println("[unsat core]" + core + " replace:" + core_cst_str);
+                BoolExpr my_core = convertStrToExpr2(core_cst_str);
+
+                List<Integer> eq_vec = new ArrayList<>();
+                for(Component comp : components) {
+                    List<BoolExpr> expr_vector = new ArrayList<>();
+                    solver_core.push();
+                    for (String cst : comp.getConstraint()) {
+                        BoolExpr comCst = convertStrToExpr2(cst);
+                        expr_vector.add(comCst);
+                        solver_core.add(comCst);
+                    }
+                    solver_core.add(ctx_core.mkNot(my_core));
+                    boolean flag = (solver_core.check() == Status.SATISFIABLE);
+                    solver_core.pop();
+                    if(!flag) {
+                        eq_vec.add(comp.getId());
+//                        System.out.println("Checking cmp: " + comp.getName() + " CST:" + expr_vector);
+                    }
+                }
+                conflicts_.add(new Pair<>(nodeId, eq_vec));
+            }
+        }
+
     }
 
+    public List<Pair<Integer, List<Integer>>> getConflicts() {
+        return conflicts_;
+    }
 }
