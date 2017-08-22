@@ -123,7 +123,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         //FunctionType
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(+ a b)"));
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(* a b)"));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(% a b)"));
+//        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(% a b)"));
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(min a b)"));
 
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(> a b)"));
@@ -194,7 +194,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
                     && ((PairType) type.inputType).secondType instanceof IntType && type.outputType instanceof IntType) {
                 productions.add(new Production<>(symbol, "l(a,b).(+ a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(* a b)"));
-                productions.add(new Production<>(symbol, "l(a,b).(% a b)"));
+//                productions.add(new Production<>(symbol, "l(a,b).(% a b)"));
                 productions.add(new Production<>(symbol, "l(a,b).(min a b)"));
             }
             // l(a,b).(> a b) ::= ((Integer, Integer) -> Boolean)
