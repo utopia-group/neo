@@ -119,15 +119,20 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             //System.out.println("function= " + node2function.get(p.t0));
             for (String l : p.t1){
                 Pair<Integer, String> id2 = new Pair<>(p.t0,l);
-                assert (coreNodes_.containsKey(id2));
+                if (!coreNodes_.containsKey(id2))
+                    continue;
+                //assert (coreNodes_.containsKey(id2));
                 eq.add(coreNodes_.get(id2));
                 learnt = learnt + " , " + l;
             }
-            eqClauses.add(eq);
+            if (eq.size() > 1)
+                eqClauses.add(eq);
             learnt = learnt + "]";
         }
-        System.out.println("Learning: " + learnt);
-        conflict = SATUtils.getInstance().learnCore(eqClauses);
+        if (!eqClauses.isEmpty()) {
+            System.out.println("Learning: " + learnt);
+            conflict = SATUtils.getInstance().learnCore(eqClauses);
+        }
         return conflict;
 
     }
