@@ -242,7 +242,7 @@ public class Z3Utils {
                     solver_core.add(ctx_core.mkNot(my_core));
                     boolean flag = (solver_core.check() == Status.SATISFIABLE);
                     solver_core.pop();
-                    if(!flag) {
+                    if(!flag && !eq_vec.contains(comp.getId())) {
                         eq_vec.add(comp.getId());
 //                        System.out.println("Checking cmp: " + comp.getName() + " CST:" + expr_vector);
                     }
