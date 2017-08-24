@@ -70,6 +70,12 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     @Override
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core) {
+        return null;
+    }
+
+
+        @Override
     public Node getModel(BoolExpr core) {
         if (model_ != null) {
             boolean hasNext = z3Utils.blockSolution();

@@ -3,6 +3,8 @@ package org.genesys.decide;
 import com.google.gson.Gson;
 import org.genesys.language.Grammar;
 import org.genesys.language.ToyGrammar;
+import org.genesys.models.Node;
+import org.genesys.models.Pair;
 import org.sat4j.minisat.constraints.MixedDataStructureDanielWL;
 import org.sat4j.minisat.core.Constr;
 import org.sat4j.minisat.core.DataStructureFactory;
@@ -40,6 +42,11 @@ public class SATSolver<C, T> implements AbstractSolver<C, T> {
         allVariablesAssigned_ = false;
         production2variable_ = new HashMap<String,Integer>();
         solver_ = defaultSolver();
+    }
+
+    @Override
+    public T getCoreModel(List<Pair<Integer, List<String>>> core) {
+        return null;
     }
 
     @Override
