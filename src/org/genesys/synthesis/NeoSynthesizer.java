@@ -53,6 +53,7 @@ public class NeoSynthesizer implements Synthesizer {
 
         while (ast != null) {
             /* do deduction */
+            total++;
             if (!checker_.check(problem_, ast)) {
                 long start = LibUtils.tick();
 //                Z3Utils z3 = Z3Utils.getInstance();
@@ -60,7 +61,6 @@ public class NeoSynthesizer implements Synthesizer {
                 ast = solver_.getModel(null);
                 long end = LibUtils.tick();
                 prune++;
-                total++;
                 totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
@@ -78,7 +78,7 @@ public class NeoSynthesizer implements Synthesizer {
         }
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
-        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 1.0)/total);
+        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 100.0)/total);
 
         return ast;
     }

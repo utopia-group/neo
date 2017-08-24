@@ -349,7 +349,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             if (!orphanParent()) {
 
                 if (inputsUsed()) {
-                    System.out.println("s SATISFIABLE");
+                    //System.out.println("s SATISFIABLE");
                     break;
                 } else {
                     // Conflict
@@ -400,14 +400,17 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Node translate(Node node) {
 
+        int id = 0;
         LinkedList<Pair<Node, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();
         Node root = new Node();
         root.setSymbol(startNode);
         root.function = "root";
+        root.id=id++;
         Node child = new Node();
         child.function = node.function;
         child.setSymbol(prodSymbols_.get(child.function));
+        child.id=id++;
         root.addChild(child);
 
         for (Node c : node.children) {
@@ -419,6 +422,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             if (p.t0.function.compareTo("") != 0) {
                 Node ch = new Node();
                 ch.function = p.t0.function;
+                ch.id=id++;
                 ch.setSymbol(prodSymbols_.get(ch.function));
                 p.t1.addChild(ch);
                 for (Node c : p.t0.children) {

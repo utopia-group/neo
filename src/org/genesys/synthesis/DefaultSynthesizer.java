@@ -7,10 +7,12 @@ import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
 import org.genesys.models.Example;
 import org.genesys.models.Node;
+import org.genesys.models.Pair;
 import org.genesys.models.Problem;
 import org.genesys.type.AbstractList;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.Z3Utils;
 
 import java.util.List;
 
@@ -55,12 +57,14 @@ public class DefaultSynthesizer implements Synthesizer {
 
         while (ast != null) {
             /* do deduction */
+            total++;
             if (!checker_.check(problem_, ast)) {
                 long start = LibUtils.tick();
                 ast = solver_.getModel(null);
+//                Z3Utils z3 = Z3Utils.getInstance();
+//                List<Pair<Integer, List<Integer>>> conflicts = z3.getConflicts();
                 long end = LibUtils.tick();
                 prune++;
-                total++;
                 totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
@@ -79,7 +83,7 @@ public class DefaultSynthesizer implements Synthesizer {
         }
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
-        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 1.0)/total);
+        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 100.0)/total);
 
         return ast;
     }
