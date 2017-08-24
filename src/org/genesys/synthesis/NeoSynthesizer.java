@@ -10,6 +10,7 @@ import org.genesys.models.Node;
 import org.genesys.models.Problem;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.Z3Utils;
 
 /**
  * Created by ruben on 7/6/17.
@@ -47,13 +48,19 @@ public class NeoSynthesizer implements Synthesizer {
 
         /* retrieve an AST from the solver */
         Node ast = solver_.getModel(null);
+        int total = 0;
+        int prune = 0;
 
         while (ast != null) {
             /* do deduction */
             if (!checker_.check(problem_, ast)) {
                 long start = LibUtils.tick();
+//                Z3Utils z3 = Z3Utils.getInstance();
+//                z3.getConflicts();
                 ast = solver_.getModel(null);
                 long end = LibUtils.tick();
+                prune++;
+                total++;
                 totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
@@ -71,6 +78,7 @@ public class NeoSynthesizer implements Synthesizer {
         }
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
+        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 1.0)/total);
 
         return ast;
     }
