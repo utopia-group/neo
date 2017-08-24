@@ -30,11 +30,13 @@ public class DeepCoderMainNeo {
         //Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
         NeoSynthesizer synth;
-        if (args.length == 2) {
+        if (args.length == 3) {
             int depth = Integer.valueOf(args[1]);
-            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, depth);
+            boolean learning = Boolean.valueOf(args[2]);
+
+            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, depth, specLoc, learning);
         } else {
-            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter);
+            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, specLoc);
         }
         synth.synthesize();
     }

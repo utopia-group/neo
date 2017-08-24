@@ -49,6 +49,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     /* Maps variables to node id */
     private final Map<Pair<Integer, Production>, Integer> varNodes_ = new HashMap<>();
+    private final Map<Pair<Integer, String>, Integer> coreNodes_ = new HashMap<>();
 
     /* Nodes */
     private final List<Node> leafNodes_ = new ArrayList<>();
@@ -71,6 +72,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private int currentLevel_ = 0;
 
+    private Node ast_ = null;
+
     private List<Integer> currentSATLevel_ = new ArrayList<>();
 
     public NeoSolver(Grammar g) {
@@ -84,6 +87,49 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         maxLen_ = depth;
         grammar_ = g;
         Object start = grammar_.start();
+    }
+
+    public boolean learnCore(List<Pair<Integer, List<String>>> core) {
+        boolean conflict = true;
+
+        HashMap<Integer,String> node2function = new HashMap<>();
+        List<Node> bfs = new ArrayList<>();
+        Node root = ast_;
+        bfs.add(root);
+        while (!bfs.isEmpty()) {
+            Node node = bfs.remove(bfs.size() - 1);
+            node2function.put(node.id,node.function);
+            for (int i = 0; i < node.children.size(); i++)
+                bfs.add(node.children.get(i));
+        }
+
+        // FIXME: sometimes the equivalence class will contain the same operator twice
+        // FIXME: sometimes the equivalence class  is repeated
+        List<List<Integer>> eqClauses = new ArrayList<>();
+        String learnt = "";
+        for (Pair<Integer,List<String>> p : core){
+            List<Integer> eq = new ArrayList<>();
+            learnt = learnt + "[(" + p.t0 + ") ";
+            //System.out.println("node= " + p.t0);
+            assert (node2function.containsKey(p.t0));
+            learnt = learnt + node2function.get(p.t0);
+            Pair<Integer, String> id = new Pair<>(p.t0,node2function.get(p.t0));
+            assert (coreNodes_.containsKey(id));
+            eq.add(coreNodes_.get(id));
+            //System.out.println("function= " + node2function.get(p.t0));
+            for (String l : p.t1){
+                Pair<Integer, String> id2 = new Pair<>(p.t0,l);
+                assert (coreNodes_.containsKey(id2));
+                eq.add(coreNodes_.get(id2));
+                learnt = learnt + " , " + l;
+            }
+            eqClauses.add(eq);
+            learnt = learnt + "]";
+        }
+        System.out.println("Learning: " + learnt);
+        conflict = SATUtils.getInstance().learnCore(eqClauses);
+        return conflict;
+
     }
 
     @Override
@@ -102,6 +148,25 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         Node node = search();
         return node;
     }
+
+    @Override
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core) {
+
+        if (!init_) {
+            init_ = true;
+            loadGrammar();
+            initDataStructures();
+        } else {
+            boolean conflict = blockModel();
+            conflict = learnCore(core);
+            if (conflict)
+                return null;
+        }
+
+        Node node = search();
+        return node;
+    }
+
 
     public String nextDecision(List<String> ancestors, List<String> domain) {
 
@@ -136,6 +201,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     private void initDataStructures() {
         // build the k-tree
         root_ = createNode(domainRootProductions_, true);
+        root_.id = 0;
 
         // depth starts at 2 since root is at level 1
         createTree(root_, 2);
@@ -209,7 +275,9 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
         for (Production p : node.domain) {
             Pair<Integer, Production> pair = new Pair<Integer, Production>(node.id, p);
+            Pair<Integer, String> pair2 = new Pair<Integer, String>(node.id, p.function);
             varNodes_.put(pair, ++nbVariables_);
+            coreNodes_.put(pair2,nbVariables_);
         }
 
         for (int i = 0; i < node.children.size(); i++)
@@ -373,6 +441,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             result = translate(root_);
         }
 
+        ast_ = result;
         return result;
     }
 
@@ -400,17 +469,16 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private Node translate(Node node) {
 
-        int id = 0;
         LinkedList<Pair<Node, Node>> worklist = new LinkedList<>();
         Object startNode = grammar_.start();
         Node root = new Node();
         root.setSymbol(startNode);
         root.function = "root";
-        root.id=id++;
+        root.id=0;
         Node child = new Node();
         child.function = node.function;
         child.setSymbol(prodSymbols_.get(child.function));
-        child.id=id++;
+        child.id=node.id;
         root.addChild(child);
 
         for (Node c : node.children) {
@@ -422,7 +490,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             if (p.t0.function.compareTo("") != 0) {
                 Node ch = new Node();
                 ch.function = p.t0.function;
-                ch.id=id++;
+                ch.id=p.t0.id;
                 ch.setSymbol(prodSymbols_.get(ch.function));
                 p.t1.addChild(ch);
                 for (Node c : p.t0.children) {
