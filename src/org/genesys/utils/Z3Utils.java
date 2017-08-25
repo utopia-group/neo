@@ -242,12 +242,13 @@ public class Z3Utils {
                     solver_core.add(ctx_core.mkNot(my_core));
                     boolean flag = (solver_core.check() == Status.SATISFIABLE);
                     solver_core.pop();
-                    if(!flag) {
+                    if(!flag && !eq_vec.contains(comp.getId())) {
                         eq_vec.add(comp.getId());
 //                        System.out.println("Checking cmp: " + comp.getName() + " CST:" + expr_vector);
                     }
                 }
-                conflicts_.add(new Pair<>(nodeId, eq_vec));
+                Pair<Integer, List<Integer>> conflict = new Pair<>(nodeId, eq_vec);
+                if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
 

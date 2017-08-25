@@ -1,15 +1,22 @@
 package org.genesys.synthesis;
 
+import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
 import org.genesys.decide.AbstractSolver;
 import org.genesys.decide.NeoSolver;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.Grammar;
-import org.genesys.models.Example;
-import org.genesys.models.Node;
-import org.genesys.models.Problem;
+import org.genesys.models.*;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.Z3Utils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by ruben on 7/6/17.
@@ -17,6 +24,8 @@ import org.genesys.utils.LibUtils;
 public class NeoSynthesizer implements Synthesizer {
 
     private AbstractSolver<BoolExpr, Node> solver_;
+
+    private boolean learning_ = true;
 
     private Checker checker_;
 
@@ -28,18 +37,50 @@ public class NeoSynthesizer implements Synthesizer {
 
     private double totalTest = 0.0;
 
-    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter) {
+    private HashMap<Integer, Component> components_ = new HashMap<>();
+
+    private Gson gson = new Gson();
+
+
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, String specLoc) {
         solver_ = new NeoSolver(grammar);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
+
+        File[] files = new File(specLoc).listFiles();
+        for (File file : files) {
+            assert file.isFile() : file;
+            String json = file.getAbsolutePath();
+            Component comp = null;
+            try {
+                comp = gson.fromJson(new FileReader(json), Component.class);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            components_.put(comp.getId(), comp);
+        }
     }
 
-    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth) {
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning){
+        learning_ = learning;
         solver_ = new NeoSolver(grammar, depth);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
+
+        File[] files = new File(specLoc).listFiles();
+        for (File file : files) {
+            assert file.isFile() : file;
+            String json = file.getAbsolutePath();
+            Component comp = null;
+            try {
+                comp = gson.fromJson(new FileReader(json), Component.class);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            components_.put(comp.getId(), comp);
+        }
     }
 
     @Override
@@ -47,13 +88,32 @@ public class NeoSynthesizer implements Synthesizer {
 
         /* retrieve an AST from the solver */
         Node ast = solver_.getModel(null);
+        int total = 0;
+        int prune = 0;
 
         while (ast != null) {
             /* do deduction */
+            total++;
             if (!checker_.check(problem_, ast)) {
                 long start = LibUtils.tick();
-                ast = solver_.getModel(null);
+                if (learning_) {
+                    Z3Utils z3 = Z3Utils.getInstance();
+                    List<Pair<Integer, List<Integer>>> conflicts = z3.getConflicts();
+                    List<Pair<Integer, List<String>>> convert = new ArrayList<>();
+                    for (Pair<Integer, List<Integer>> p : conflicts) {
+                        Pair<Integer, List<String>> new_p = new Pair<>(p.t0, new ArrayList<>());
+                        System.out.println("Core information: Node= " + p.t0 + " Equivalent= " + p.t1);
+                        for (Integer l : p.t1) {
+                            assert components_.containsKey(l);
+                            new_p.t1.add(components_.get(l).getName());
+                        }
+                        convert.add(new_p);
+                    }
+                    ast = solver_.getCoreModel(convert);
+                }
+                else ast = solver_.getModel(null);
                 long end = LibUtils.tick();
+                prune++;
                 totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
@@ -71,6 +131,7 @@ public class NeoSynthesizer implements Synthesizer {
         }
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
+        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 100.0)/total);
 
         return ast;
     }

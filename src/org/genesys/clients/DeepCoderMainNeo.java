@@ -5,9 +5,7 @@ import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.DeepCoderGrammar;
 import org.genesys.models.Problem;
-import org.genesys.synthesis.Checker;
-import org.genesys.synthesis.NeoSynthesizer;
-import org.genesys.synthesis.DummyChecker;
+import org.genesys.synthesis.*;
 import org.genesys.synthesis.NeoSynthesizer;
 
 import java.io.FileNotFoundException;
@@ -19,6 +17,7 @@ import java.io.FileReader;
 public class DeepCoderMainNeo {
 
     public static void main(String[] args) throws FileNotFoundException {
+        String specLoc = "./specs/DeepCoder";
         String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
         Gson gson = new Gson();
@@ -26,14 +25,18 @@ public class DeepCoderMainNeo {
         System.out.println("Run DeepCoder main..." + dcProblem);
 
         DeepCoderGrammar grammar = new DeepCoderGrammar(dcProblem);
-        Checker checker = new DummyChecker();
+        /* Load component specs. */
+        Checker checker = new DeepCoderChecker(specLoc);
+        //Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
         NeoSynthesizer synth;
-        if (args.length == 2) {
+        if (args.length == 3) {
             int depth = Integer.valueOf(args[1]);
-            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, depth);
+            boolean learning = Boolean.valueOf(args[2]);
+
+            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, depth, specLoc, learning);
         } else {
-            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter);
+            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, specLoc);
         }
         synth.synthesize();
     }

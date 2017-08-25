@@ -47,7 +47,11 @@ public class SATUtils {
     public void createVars(int vars) {
 //        for (int i = 0; i < vars; i++)
 //            variablesOccurs.add(false);
-        solver_.newVar(vars);
+        //solver_.newVar(vars);
+        // FIXME: just creating a lot of variables in advance
+        solver_.newVar(1000000);
+
+        nbVars = vars;
 
 //        nbVars = vars;
 //
@@ -105,6 +109,41 @@ public class SATUtils {
         return addClause(clause);
     }
 
+    public boolean learnCore(List<List<Integer>> core){
+        boolean conflict = false;
+
+        // create k auxiliary variables
+        List<Integer> aux = new ArrayList<>();
+        //for (int i = solver_.nVars()+1; i <= solver_.nVars()+core.size(); i++)
+        for (int i = nbVars+1; i <= nbVars+core.size(); i++)
+            aux.add(i);
+        nbVars = nbVars+core.size();
+        assert (aux.size() == core.size());
+
+        assert (nbVars < 1000000);
+
+        // FIXME: problem with increasing the number of variables in SAT4J
+//        solver_.newVar(solver_.nVars() + core.size());
+//        System.out.println("nbVars= " + solver_.nVars());
+
+        // equivalence between auxiliary variables and core variables
+        int pos = 0;
+        for (List<Integer> p : core){
+            for (Integer l : p){
+                addClause(new VecInt(new int[]{-aux.get(pos),l}));
+                addClause(new VecInt(new int[]{aux.get(pos),-l}));
+            }
+            pos++;
+        }
+        VecInt clause = new VecInt();
+        for (Integer l : aux){
+            clause.push(-l);
+        }
+        addClause(clause);
+
+        return conflict;
+    }
+
     public boolean allVariablesAssigned() {
         assert (solver_ != null);
 
@@ -152,6 +191,7 @@ public class SATUtils {
 
     public boolean addAMO(VecInt lits) {
 
+        assert (false);
         assert (lits.size() != 0);
         boolean conflict = false;
 

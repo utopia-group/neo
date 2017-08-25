@@ -69,6 +69,7 @@
       </classpath>
       <arg value="${app}"/>
       <arg value="${depth}"/>
+      <arg value="${learn}"/>
   </java>
   </target>
 
