@@ -247,7 +247,8 @@ public class Z3Utils {
 //                        System.out.println("Checking cmp: " + comp.getName() + " CST:" + expr_vector);
                     }
                 }
-                conflicts_.add(new Pair<>(nodeId, eq_vec));
+                Pair<Integer, List<Integer>> conflict = new Pair<>(nodeId, eq_vec);
+                if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
 
