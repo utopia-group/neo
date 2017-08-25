@@ -97,6 +97,7 @@ class DeepCoderModel:
         # Step 1: Create directory if needed
         if not os.path.isdir(TMP_PATH):
             os.makedirs(TMP_PATH)
+        save_path = TMP_PATH + '/' + params.save_path
         
         # Step 2: Compute number of batches
         num_batches = len(input_values_train)/params.batch_size
@@ -110,9 +111,9 @@ class DeepCoderModel:
             sess.run(tf.global_variables_initializer())
 
             # Step 4b: Load existing model
-            if params.load_prev and tf.train.checkpoint_exists(os.path.abspath(params.save_path)):
-                tf.train.Saver().restore(sess, os.path.abspath(params.save_path))
-                print 'Loaded deep coder model in: %s' % params.save_path
+            if params.load_prev and tf.train.checkpoint_exists(save_path):
+                tf.train.Saver().restore(sess, save_path)
+                print 'Loaded deep coder model in: %s' % save_path
 
             for i in range(params.num_epochs):
                 for j in range(num_batches):
@@ -144,5 +145,5 @@ class DeepCoderModel:
                 print 'Loss: %g' % loss
                 
                 # Step 4g: save model
-                tf.train.Saver().save(sess, os.path.abspath(params.save_path))
-                print 'Saved deep coder neural net in: %s' % params.save_path
+                tf.train.Saver().save(sess, save_path)
+                print 'Saved deep coder neural net in: %s' % save_path

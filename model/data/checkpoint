@@ -1,0 +1,2 @@
+model_checkpoint_path: "/Users/obastani/Documents/workspace/genesys/model/data/deep_coder_model.ckpt"
+all_model_checkpoint_paths: "/Users/obastani/Documents/workspace/genesys/model/data/deep_coder_model.ckpt"
