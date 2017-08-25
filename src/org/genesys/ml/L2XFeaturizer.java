@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.genesys.models.Pair;
+import org.genesys.models.Trio;
 import org.genesys.type.AbstractList;
 import org.genesys.type.Cons;
 import org.genesys.type.EmptyList;
@@ -37,7 +37,7 @@ public class L2XFeaturizer implements XFeaturizer<Object> {
 
 	// (function n-gram, list values)
 	@Override
-	public Pair<List<Integer>,List<Integer>> getFeatures(List<String> ancestors, Object input, Object output) {
+	public Trio<List<Integer>,List<Integer>,List<Integer>> getFeatures(List<String> ancestors, Object input, Object output) {
 		// Step 1: Featurize ancestors
 		List<Integer> functionFeatures = new ArrayList<Integer>();
 		for(int i=0; i<this.parameters.nGramLength; i++) {
@@ -51,18 +51,21 @@ public class L2XFeaturizer implements XFeaturizer<Object> {
 		this.flatten(input, flatInput);
 		this.flatten(output, flatOutput);
 		
-		// Step 3: Featurize input-output example
-		List<Integer> valueFeatures = new ArrayList<Integer>();
+		// Step 3: Featurize input example
+		List<Integer> inputValueFeatures = new ArrayList<Integer>();
 		for(int i=0; i<this.parameters.sampler.maxLength; i++) {
 			Integer curValue = flatInput.size() > i ? flatInput.get(i) : NO_VALUE;
-			valueFeatures.add(this.valueLookup.get(curValue));
-		}
-		for(int i=0; i<this.parameters.sampler.maxLength; i++) {
-			Integer curValue = flatOutput.size() > i ? flatOutput.get(i) : NO_VALUE;
-			valueFeatures.add(this.valueLookup.get(curValue));
+			inputValueFeatures.add(this.valueLookup.get(curValue));
 		}
 		
-		return new Pair<List<Integer>,List<Integer>>(functionFeatures, valueFeatures);
+		// Step 4: Featurize output example
+		List<Integer> outputValueFeatures = new ArrayList<Integer>();
+		for(int i=0; i<this.parameters.sampler.maxLength; i++) {
+			Integer curValue = flatOutput.size() > i ? flatOutput.get(i) : NO_VALUE;
+			outputValueFeatures.add(this.valueLookup.get(curValue));
+		}
+		
+		return new Trio<List<Integer>,List<Integer>,List<Integer>>(functionFeatures, inputValueFeatures, outputValueFeatures);
 	}
 	
 	private void flatten(Object t, List<Integer> result) {

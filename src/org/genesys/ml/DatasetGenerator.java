@@ -7,9 +7,26 @@ import java.util.Stack;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
+import org.genesys.models.Trio;
 
 public class DatasetGenerator {
 	public static <T> List<RawDatapoint<T>> generateDataset(
+			Interpreter<Node,T> interpreter,
+			Sampler<Node> programSampler,
+			Sampler<T> inputSampler,
+			int numIterations) {
+		List<RawDatapoint<T>> dataset = new ArrayList<RawDatapoint<T>>();
+		for(int i=0; i<numIterations; i++) {
+			try {
+				dataset.addAll(generateDatasetSingle(interpreter, programSampler, inputSampler));
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return dataset;
+	}
+	
+	public static <T> List<RawDatapoint<T>> generateDatasetSingle(
 			Interpreter<Node,T> interpreter,
 			Sampler<Node> programSampler,
 			Sampler<T> inputSampler) {
@@ -42,9 +59,9 @@ public class DatasetGenerator {
 			YFeaturizer yFeaturizer) {
 		List<Datapoint> dataset = new ArrayList<Datapoint>();
 		for(RawDatapoint<T> rawDataPoint : rawDataset) {
-			Pair<List<Integer>,List<Integer>> xFeatures = xFeaturizer.getFeatures(rawDataPoint.xFunctions, rawDataPoint.xInput, rawDataPoint.xOutput);
-			List<Double> yFeatures = yFeaturizer.getFeatures(rawDataPoint.yFunction);
-			Datapoint datapoint = new Datapoint(xFeatures.t0, xFeatures.t1, yFeatures);
+			Trio<List<Integer>,List<Integer>,List<Integer>> xFeatures = xFeaturizer.getFeatures(rawDataPoint.xFunctions, rawDataPoint.xInput, rawDataPoint.xOutput);
+			List<Integer> yFeatures = yFeaturizer.getFeatures(rawDataPoint.yFunction);
+			Datapoint datapoint = new Datapoint(xFeatures.t0, xFeatures.t1, xFeatures.t2, yFeatures);
 			dataset.add(datapoint);
 		}
 		return dataset;

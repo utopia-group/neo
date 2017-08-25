@@ -38,6 +38,8 @@ public class L2DatasetMain {
 		int nGramLength = 2;
 		L2XFeaturizerParameters xFeaturizerParameters = new L2XFeaturizerParameters(inputSamplerParameters, nGramLength);
 		
+		int numIterations = 100;
+		
         L2Grammar grammar = new L2Grammar(new ListType(new IntType()), new ListType(new IntType()));
         L2Interpreter interpreter = new L2Interpreter();
         Random random = new Random();
@@ -52,7 +54,7 @@ public class L2DatasetMain {
         Sampler<Node> programSampler = new DefaultProgramSampler<AbstractType>(grammar, programSamplerParameters, random);
         Sampler<Object> inputSampler = new L2InputSampler(grammar.inputType, inputSamplerParameters, random);
         
-		List<RawDatapoint<Object>> rawDataset = DatasetGenerator.generateDataset(interpreter, programSampler, inputSampler);
+		List<RawDatapoint<Object>> rawDataset = DatasetGenerator.generateDataset(interpreter, programSampler, inputSampler, numIterations);
 		for(RawDatapoint<Object> rawDatapoint : rawDataset) {
 			System.out.println(rawDatapoint);
 		}

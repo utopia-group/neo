@@ -11,14 +11,14 @@ public class DefaultYFeaturizer implements YFeaturizer {
 	}
 	
 	@Override
-	public List<Double> getFeatures(String function) {
+	public List<Integer> getFeatures(String function) {
 		return featurize(function, this.functions);
 	}
 	
-	private static List<Double> featurize(String curFunction, List<String> functions) {
-		List<Double> features = new ArrayList<Double>();
+	private static List<Integer> featurize(String curFunction, List<String> functions) {
+		List<Integer> features = new ArrayList<Integer>();
 		for(String function : functions) {
-			features.add(function.equals(curFunction) ? 1.0 : 0.0);
+			features.add(function.equals(curFunction) ? 1 : 0);
 		}
 		return features;
 	}
