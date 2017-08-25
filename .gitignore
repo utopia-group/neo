@@ -2,3 +2,5 @@
 out
 sat4j
 .idea/workspace.xml
+*~
+*.pyc
