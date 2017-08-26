@@ -58,10 +58,8 @@ public class L2DatasetMain {
         Sampler<Object> inputSampler = new L2InputSampler(grammar.inputType, inputSamplerParameters, random);
         
 		List<RawDatapoint<Object>> rawDataset = DatasetGenerator.generateDataset(interpreter, programSampler, inputSampler, numIterations);
-		for(RawDatapoint<Object> rawDatapoint : rawDataset) {
-			System.out.println(rawDatapoint);
-		}
 		Pair<List<Datapoint>,List<String>> dataset = DatasetGenerator.translateDataset(rawDataset, xFeaturizer, yFeaturizer);
+		
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter("model/data/l2.txt"));
 			for(Datapoint datapoint : dataset.t0) {
