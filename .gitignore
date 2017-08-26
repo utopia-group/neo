@@ -8,4 +8,3 @@ sat4j
 .project
 genesys.jar
 classes/*
-model/tmp/*
