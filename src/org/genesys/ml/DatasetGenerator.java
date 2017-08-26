@@ -53,7 +53,7 @@ public class DatasetGenerator {
 		return dataset;
 	}
 	
-	public static <T> List<Datapoint> translateDataset(
+	public static <T> Pair<List<Datapoint>,List<String>> translateDataset(
 			List<RawDatapoint<T>> rawDataset,
 			XFeaturizer<T> xFeaturizer,
 			YFeaturizer yFeaturizer) {
@@ -64,7 +64,7 @@ public class DatasetGenerator {
 			Datapoint datapoint = new Datapoint(xFeatures.t0, xFeatures.t1, xFeatures.t2, yFeatures);
 			dataset.add(datapoint);
 		}
-		return dataset;
+		return new Pair<List<Datapoint>,List<String>>(dataset, yFeaturizer.functions);
 	}
 	
 	public static List<Pair<String,List<String>>> getFunctionData(Node program) {

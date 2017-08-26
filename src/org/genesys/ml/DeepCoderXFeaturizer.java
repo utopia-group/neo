@@ -45,7 +45,7 @@ public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
 		// Step 2: Flatten input and output
 		List<Integer> flatInput = new ArrayList<Integer>();
 		List<Integer> flatOutput = new ArrayList<Integer>();
-		this.flatten(((List)input).get(0), flatInput);
+		this.flatten(((List<Integer>)input).get(0), flatInput);
 		this.flatten(output, flatOutput);
 		
 		// Step 3: Featurize input example
@@ -59,7 +59,7 @@ public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
 		List<Integer> outputValueFeatures = new ArrayList<Integer>();
 		for(int i=0; i<this.parameters.sampler.maxLength; i++) {
 			Integer curValue = flatOutput.size() > i ? flatOutput.get(i) : NO_VALUE;
-			outputValueFeatures.add(this.valueLookup.get(curValue));
+			outputValueFeatures.add(this.valueLookup.getOrDefault(curValue, this.valueLookup.get(NO_VALUE)));
 		}
 		
 		return new Trio<List<Integer>,List<Integer>,List<Integer>>(functionFeatures, inputValueFeatures, outputValueFeatures);

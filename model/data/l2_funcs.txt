@@ -1,0 +1,39 @@
++1
+-
+0
+1
+apply_to_input
+cons
+emp
+false
+filter
+foldLeft
+foldRight
+l(a).(&& a b)
+l(a).(* a b)
+l(a).(+ a b)
+l(a).(- a)
+l(a).(< a b)
+l(a).(<= a b)
+l(a).(== a b)
+l(a).(> a b)
+l(a).(>= a b)
+l(a).(cons a x)
+l(a).(|| a b)
+l(a).(~ a)
+l(a,b).(% a b)
+l(a,b).(&& a b)
+l(a,b).(* a b)
+l(a,b).(+ a b)
+l(a,b).(< a b)
+l(a,b).(<= a b)
+l(a,b).(== a b)
+l(a,b).(> a b)
+l(a,b).(>= a b)
+l(a,b).(|| a b)
+l(a,x).(cons a x)
+l(x).(cons a x)
+l(x,a).(cons a x)
+map
+pair
+true

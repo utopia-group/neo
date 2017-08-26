@@ -31,7 +31,7 @@ def main():
     train_params = DeepCoderTrainParams(num_epochs, batch_size, step_size, save_path, load_prev)
 
     # Step 1f: Dataset parameters
-    l2_dataset_filename = 'l2.txt'
+    l2_dataset_filename = 'deep_coder.txt'
     train_frac = 0.7
 
     # Step 2: Build neural net

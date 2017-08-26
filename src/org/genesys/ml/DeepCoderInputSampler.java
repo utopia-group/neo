@@ -28,9 +28,9 @@ public class DeepCoderInputSampler implements Sampler<Object> {
 	
 	private Object sample(AbstractType type) {
 		if(type instanceof ListType) {
-			int length = random.nextInt(this.parameters.maxLength);
+			int length = this.parameters.minLength + this.random.nextInt(this.parameters.maxLength - this.parameters.minLength);
 			List<Object> list = new ArrayList<Object>();
-			for(int i=0; i<length; i++) {
+			for(int i=0; i<=length; i++) {
 				list.add(this.sample(((ListType)type).type));
 			}
 			return list;

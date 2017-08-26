@@ -1,0 +1,43 @@
+*3
++1
+-
+-1
+0
+1
+count
+false
+filter
+head
+inc3
+input0
+input1
+l(a).(&& a b)
+l(a).(* a b)
+l(a).(+ a b)
+l(a).(- a)
+l(a).(< a b)
+l(a).(== a b)
+l(a).(> a b)
+l(a).(|| a b)
+l(a).(~ a)
+l(a,b).(% a b)
+l(a,b).(&& a b)
+l(a,b).(* a b)
+l(a,b).(+ a b)
+l(a,b).(< a b)
+l(a,b).(== a b)
+l(a,b).(> a b)
+l(a,b).(min a b)
+l(a,b).(|| a b)
+last
+map
+maximum
+minimum
+reverse
+root
+scanl
+sort
+sum
+take
+true
+zipWith
