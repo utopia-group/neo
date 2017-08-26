@@ -103,7 +103,7 @@ class DeepCoderModel:
         num_batches = len(input_values_train)/params.batch_size
 
         # Step 3: Training step
-        train_step = tf.train.RMSPropOptimizer(params.step_size).minimize(self.loss)
+        train_step = tf.train.AdamOptimizer(params.step_size).minimize(self.loss)
 
         # Step 4: Training
         with tf.Session() as sess:
@@ -116,8 +116,8 @@ class DeepCoderModel:
                 print 'Loaded deep coder model in: %s' % save_path
 
             for i in range(params.num_epochs):
+                print 'epoch: %d' % i
                 for j in range(num_batches):
-                    print 'epoch: %d, step: %d' % (i, j)
                     
                     # Step 4c: Compute batch bounds
                     lo = j*params.batch_size

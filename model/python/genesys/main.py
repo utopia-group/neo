@@ -12,7 +12,7 @@ def main():
     output_length = 5         # lengths of output lists
 
     # Step 1b: DSL Operator parameters
-    num_dsl_ops = 40          # number of DSL operators
+    num_dsl_ops = 44          # number of DSL operators
     dsl_op_embedding_dim = 20 # dimension of the vector embedding of DSL operators
     n_gram_length = 2         # length of DSL operator n-grams
 
@@ -23,9 +23,9 @@ def main():
     model_params = DeepCoderModelParams(num_vals, val_embedding_dim, input_length, output_length, num_dsl_ops, dsl_op_embedding_dim, n_gram_length, hidden_layer_dim)
 
     # Step 1e: Train parameters
-    num_epochs = 12
+    num_epochs = 100
     batch_size = 50
-    step_size = 1e-2
+    step_size = 1e-4
     save_path = 'deep_coder_model.ckpt'
     load_prev = True
     train_params = DeepCoderTrainParams(num_epochs, batch_size, step_size, save_path, load_prev)
