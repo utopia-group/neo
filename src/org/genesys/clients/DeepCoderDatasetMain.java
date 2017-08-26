@@ -1,5 +1,7 @@
 package org.genesys.clients;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,12 +11,12 @@ import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.language.DeepCoderGrammar;
 import org.genesys.ml.Datapoint;
 import org.genesys.ml.DatasetGenerator;
+import org.genesys.ml.DeepCoderInputSampler;
+import org.genesys.ml.DeepCoderXFeaturizer;
 import org.genesys.ml.DefaultProgramSampler;
 import org.genesys.ml.DefaultProgramSamplerParameters;
 import org.genesys.ml.DefaultYFeaturizer;
-import org.genesys.ml.L2InputSampler;
 import org.genesys.ml.L2InputSamplerParameters;
-import org.genesys.ml.L2XFeaturizer;
 import org.genesys.ml.L2XFeaturizerParameters;
 import org.genesys.ml.RawDatapoint;
 import org.genesys.ml.Sampler;
@@ -38,7 +40,7 @@ public class DeepCoderDatasetMain {
 		int nGramLength = 2;
 		L2XFeaturizerParameters xFeaturizerParameters = new L2XFeaturizerParameters(inputSamplerParameters, nGramLength);
 		
-		int numIterations = 100;
+		int numIterations = 10000;
 		
         DeepCoderGrammar grammar = new DeepCoderGrammar(new ListType(new IntType()), new IntType());
         DeepCoderInterpreter interpreter = new DeepCoderInterpreter();
@@ -49,18 +51,21 @@ public class DeepCoderDatasetMain {
         	functions.add(function);
         }
         
-        XFeaturizer<Object> xFeaturizer = new L2XFeaturizer(functions, xFeaturizerParameters);
+        XFeaturizer<Object> xFeaturizer = new DeepCoderXFeaturizer(functions, xFeaturizerParameters);
         YFeaturizer yFeaturizer = new DefaultYFeaturizer(functions);
         Sampler<Node> programSampler = new DefaultProgramSampler<AbstractType>(grammar, programSamplerParameters, random);
-        Sampler<Object> inputSampler = new L2InputSampler(grammar.inputType, inputSamplerParameters, random);
+        Sampler<Object> inputSampler = new DeepCoderInputSampler(grammar.inputType, inputSamplerParameters, random);
         
         List<RawDatapoint<Object>> rawDataset = DatasetGenerator.generateDataset(interpreter, programSampler, inputSampler, numIterations);
-		for(RawDatapoint<Object> rawDatapoint : rawDataset) {
-			System.out.println(rawDatapoint);
-		}
 		List<Datapoint> dataset = DatasetGenerator.translateDataset(rawDataset, xFeaturizer, yFeaturizer);
-		for(Datapoint datapoint : dataset) {
-			System.out.println(datapoint);
+		try {
+			PrintWriter pw = new PrintWriter(new FileWriter("model/data/l2.txt"));
+			for(Datapoint datapoint : dataset) {
+				pw.println(datapoint);
+			}
+			pw.close();
+		} catch(Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
