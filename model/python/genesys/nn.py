@@ -41,6 +41,7 @@ class DeepCoderTrainParams:
 # dsl_op_scores: tensorflow tensor of dimension [?, n_gram_length] and values in {0, 1, ..., num_dsl_ops}
 # labels:        tensorflow tensor of dimension [?, num_dsl_ops] and values in {0.0, 1.0}
 # loss:          tensorflow loss function
+# accuracy:      tensorflow accuracy function
 class DeepCoderModel:
     # params: DeepCoderModelParams (parameters for the deep coder model)
     def __init__(self, params):
@@ -83,6 +84,9 @@ class DeepCoderModel:
         # Step 7: Loss layer
         self.labels = tf.placeholder(tf.float32, [None, params.num_dsl_ops])
         self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.labels, logits=dsl_op_logits))
+
+        # Step 8: Accuracy
+        self.accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(dsl_op_logits, 1), tf.argmax(self.labels, 1)), tf.float32))
 
     # input_values_train:  np.array([num_train, input_length])
     # output_values_train: np.array([num_train, output_length])
@@ -143,6 +147,8 @@ class DeepCoderModel:
                 }
                 loss = sess.run(self.loss, feed_dict=feed_dict)
                 print 'Loss: %g' % loss
+                accuracy = sess.run(self.accuracy, feed_dict=feed_dict)
+                print 'Accuracy: %g' % accuracy
                 
                 # Step 4g: save model
                 tf.train.Saver().save(sess, save_path)
