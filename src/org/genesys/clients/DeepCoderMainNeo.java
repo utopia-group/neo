@@ -1,6 +1,8 @@
 package org.genesys.clients;
 
 import com.google.gson.Gson;
+import org.genesys.decide.Decider;
+import org.genesys.decide.FirstDecider;
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.DeepCoderGrammar;
@@ -29,14 +31,15 @@ public class DeepCoderMainNeo {
         Checker checker = new DeepCoderChecker(specLoc);
         //Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
+        Decider decider = new FirstDecider();
         NeoSynthesizer synth;
         if (args.length == 3) {
             int depth = Integer.valueOf(args[1]);
             boolean learning = Boolean.valueOf(args[2]);
 
-            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, depth, specLoc, learning);
+            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, depth, specLoc, learning, decider);
         } else {
-            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, specLoc);
+            synth = new NeoSynthesizer(grammar, dcProblem, checker, interpreter, specLoc, decider);
         }
         synth.synthesize();
     }
