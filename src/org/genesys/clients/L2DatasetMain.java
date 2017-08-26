@@ -29,7 +29,7 @@ import org.genesys.type.ListType;
 
 public class L2DatasetMain {
 	public static void main(String[] args) {
-		int maxDepth = 20;
+		int maxDepth = 4;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
 		
 		int minLength = 3;

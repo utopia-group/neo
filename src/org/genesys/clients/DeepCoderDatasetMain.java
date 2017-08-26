@@ -29,7 +29,7 @@ import org.genesys.type.ListType;
 
 public class DeepCoderDatasetMain {
 	public static void main(String[] args) {
-		int maxDepth = 20;
+		int maxDepth = 4;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
 		
 		int minLength = 3;
@@ -41,7 +41,7 @@ public class DeepCoderDatasetMain {
 		int nGramLength = 2;
 		L2XFeaturizerParameters xFeaturizerParameters = new L2XFeaturizerParameters(inputSamplerParameters, nGramLength);
 		
-		int numIterations = 100;
+		int numIterations = 100000;
 		
         DeepCoderGrammar grammar = new DeepCoderGrammar(new ListType(new IntType()), new IntType());
         DeepCoderInterpreter interpreter = new DeepCoderInterpreter();
