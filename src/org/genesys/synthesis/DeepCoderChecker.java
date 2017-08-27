@@ -116,6 +116,10 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
                 BoolExpr inMaxCst = z3.genEqCst(workerVar2, inMax);
                 cstList.add(inMaxCst);
+                // adding input constraint to the core.
+//                clauseToNodeMap_.put(inCst.toString(), worker.id);
+//                clauseToNodeMap_.put(inMaxCst.toString(), worker.id);
+
             } else {
                 if (!worker.children.isEmpty()) {
                     if (comp != null) {
