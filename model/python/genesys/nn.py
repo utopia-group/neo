@@ -35,6 +35,11 @@ class DeepCoderTrainParams:
         self.step_size = step_size
         self.save_path = save_path
         self.load_prev = load_prev
+
+# save_path:  str (path where the neural net is saved)
+class DeepCoderTestParams:
+    def __init__(self, save_path):
+        self.save_path = save_path
         
 # input_values:  tensorflow tensor of dimension [?, input_length] and values in {0, 1, ..., num_vals}
 # output_values: tensorflow tensor of dimension [?, output_length] and values in {0, 1, ..., num_vals}
@@ -153,3 +158,28 @@ class DeepCoderModel:
                 # Step 4g: save model
                 tf.train.Saver().save(sess, save_path)
                 print 'Saved deep coder neural net in: %s' % save_path
+
+    # input_values:  np.array([num_train, input_length])
+    # output_values: np.array([num_train, output_length])
+    # dsl_ops:       np.array([num_train, n_gram_length])
+    def test(self, input_values, output_values, dsl_ops, params):
+
+        with tf.Session() as sess:
+            # Step 1: Directory path
+            save_path = TMP_PATH + '/' + params.save_path
+
+            # Step 2: Load neural net
+            tf.train.Saver().restore(sess, save_path)
+            print 'Loaded deep coder model in: %s' % save_path
+
+            # Step 3: Build inputs
+            feed_dict = {
+                self.input_values: input_values,
+                self.output_values: output_values,
+                self.dsl_ops: dsl_ops,
+            }
+
+            # Step 4: Run prediction
+            scores = sess.run(self.dsl_op_scores, feed_dict=feed_dict)
+
+        return scores

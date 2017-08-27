@@ -22,3 +22,6 @@ load_prev = True
 # Dataset parameters
 l2_dataset_filename = 'deep_coder.txt'
 train_frac = 0.7
+
+# Test parameters
+l2_test_filename = 'deep_coder.txt'
