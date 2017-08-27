@@ -2,6 +2,7 @@ package org.genesys.synthesis;
 
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
+import org.genesys.decide.Decider;
 import org.genesys.decide.AbstractSolver;
 import org.genesys.decide.NeoSolver;
 import org.genesys.interpreter.Interpreter;
@@ -42,8 +43,8 @@ public class NeoSynthesizer implements Synthesizer {
     private Gson gson = new Gson();
 
 
-    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, String specLoc) {
-        solver_ = new NeoSolver(grammar);
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, String specLoc, Decider decider) {
+        solver_ = new NeoSolver(grammar, decider);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
@@ -62,9 +63,9 @@ public class NeoSynthesizer implements Synthesizer {
         }
     }
 
-    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning){
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider){
         learning_ = learning;
-        solver_ = new NeoSolver(grammar, depth);
+        solver_ = new NeoSolver(grammar, depth, decider);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
@@ -89,11 +90,17 @@ public class NeoSynthesizer implements Synthesizer {
         /* retrieve an AST from the solver */
         Node ast = solver_.getModel(null);
         int total = 0;
-        int prune = 0;
+        int prune_concrete = 0;
+        int prune_partial = 0;
+        int concrete = 0;
+        int partial = 0;
 
         while (ast != null) {
             /* do deduction */
             total++;
+            if (solver_.isPartial()) partial++;
+            else concrete++;
+
             if (!checker_.check(problem_, ast)) {
                 long start = LibUtils.tick();
                 if (learning_) {
@@ -102,7 +109,7 @@ public class NeoSynthesizer implements Synthesizer {
                     List<Pair<Integer, List<String>>> convert = new ArrayList<>();
                     for (Pair<Integer, List<Integer>> p : conflicts) {
                         Pair<Integer, List<String>> new_p = new Pair<>(p.t0, new ArrayList<>());
-                        System.out.println("Core information: Node= " + p.t0 + " Equivalent= " + p.t1);
+                        //System.out.println("Core information: Node= " + p.t0 + " Equivalent= " + p.t1);
                         for (Integer l : p.t1) {
                             assert components_.containsKey(l);
                             new_p.t1.add(components_.get(l).getName());
@@ -113,25 +120,36 @@ public class NeoSynthesizer implements Synthesizer {
                 }
                 else ast = solver_.getModel(null);
                 long end = LibUtils.tick();
-                prune++;
+                if (solver_.isPartial()) prune_partial++;
+                else prune_concrete++;
                 totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
 
-            /* check input-output using the interpreter */
-            if (verify(ast)) {
-                System.out.println("Synthesized PROGRAM: " + ast);
-                break;
-            } else {
-                long start = LibUtils.tick();
+
+            if (solver_.isPartial()){
                 ast = solver_.getModel(null);
-                long end = LibUtils.tick();
-                totalDecide += LibUtils.computeTime(start, end);
+                continue;
+            } else {
+            /* check input-output using the interpreter */
+                if (verify(ast)) {
+                    System.out.println("Synthesized PROGRAM: " + ast);
+                    break;
+                } else {
+                    long start = LibUtils.tick();
+                    ast = solver_.getModel(null);
+                    long end = LibUtils.tick();
+                    totalDecide += LibUtils.computeTime(start, end);
+                }
             }
         }
+        System.out.println("Concrete programs=: " + concrete);
+        System.out.println("Partial programs=: " + partial);
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
-        System.out.println("total: " + total + " prune:" + prune + " %:" + (prune * 100.0)/total);
+        System.out.println("Total=:" + total);
+        System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial*100.0/partial);
+        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete*100.0/partial);
 
         return ast;
     }

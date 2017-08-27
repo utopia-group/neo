@@ -12,4 +12,6 @@ public interface AbstractSolver<C, T> {
 
     T getCoreModel(List<Pair<Integer, List<String>>> core);
 
+    boolean isPartial();
+
 }

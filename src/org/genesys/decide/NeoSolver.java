@@ -20,6 +20,8 @@ import java.util.*;
  */
 public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
+    private Decider decider_;
+
     private SATUtils satUtils_;
 
     private Grammar grammar_;
@@ -72,20 +74,24 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private int currentLevel_ = 0;
 
+    private boolean partial_ = false;
+
     private Node ast_ = null;
 
     private List<Integer> currentSATLevel_ = new ArrayList<>();
 
-    public NeoSolver(Grammar g) {
+    public NeoSolver(Grammar g, Decider decider) {
         satUtils_ = SATUtils.getInstance();
         grammar_ = g;
+        decider_ = decider;
         Object start = grammar_.start();
     }
 
-    public NeoSolver(Grammar g, int depth) {
+    public NeoSolver(Grammar g, int depth, Decider decider) {
         satUtils_ = SATUtils.getInstance();
         maxLen_ = depth;
         grammar_ = g;
+        decider_ = decider;
         Object start = grammar_.start();
     }
 
@@ -103,8 +109,6 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 bfs.add(node.children.get(i));
         }
 
-        // FIXME: sometimes the equivalence class will contain the same operator twice
-        // FIXME: sometimes the equivalence class  is repeated
         List<List<Integer>> eqClauses = new ArrayList<>();
         String learnt = "";
         for (Pair<Integer,List<String>> p : core){
@@ -125,8 +129,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 eq.add(coreNodes_.get(id2));
                 learnt = learnt + " , " + l;
             }
-            if (eq.size() > 1)
-                eqClauses.add(eq);
+            eqClauses.add(eq);
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
@@ -145,9 +148,11 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             loadGrammar();
             initDataStructures();
         } else {
-            boolean conflict = blockModel();
-            if (conflict)
-                return null;
+            if (!partial_) {
+                boolean conflict = blockModel();
+                if (conflict)
+                    return null;
+            } else partial_ = false;
         }
 
         Node node = search();
@@ -180,7 +185,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 //        System.out.println("Domain = " + domain.toString());
 
         // Choose your favorite statistical heuristic here!
-        String decision = domain.get(0);
+        String decision = decider_.decide(ancestors,domain);
+        //String decision = domain.get(0);
 
 //        System.out.println("Decision = " + decision);
 
@@ -303,6 +309,10 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         }
     }
 
+    public boolean isPartial(){
+        return partial_;
+    }
+
     private boolean backtrack(int lvl) {
 
 //        System.out.println("Backtracking to lvl = " + lvl);
@@ -388,6 +398,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         while (!unsat) {
             while (!trail_.isEmpty()) {
 
+                if (partial_) break;
+
                 if (unsat) break;
                 Constr conflict = propagate();
 
@@ -414,8 +426,13 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                             }
                         }
                     }
+                    if (inputsUsed()){
+                        partial_ = true;
+                    }
                 }
             }
+
+            if (partial_) break;
 
             if (unsat) break;
 
