@@ -103,10 +103,8 @@ class DeepCoderModel:
     # labels_test:         np.array([num_test, num_dsl_ops])
     # params:              DeepCoderTrainParams
     def train(self, input_values_train, output_values_train, dsl_ops_train, labels_train, input_values_test, output_values_test, dsl_ops_test, labels_test, params):
-        # Step 1: Create directory if needed
-        if not os.path.isdir(TMP_PATH):
-            os.makedirs(TMP_PATH)
-        save_path = TMP_PATH + '/' + params.save_path
+        # Step 1: Save path
+        save_path = self.save_path(params)
         
         # Step 2: Compute number of batches
         num_batches = len(input_values_train)/params.batch_size
@@ -166,7 +164,7 @@ class DeepCoderModel:
 
         with tf.Session() as sess:
             # Step 1: Directory path
-            save_path = TMP_PATH + '/' + params.save_path
+            save_path = self.save_path(params)
 
             # Step 2: Load neural net
             tf.train.Saver().restore(sess, save_path)
@@ -183,3 +181,7 @@ class DeepCoderModel:
             scores = sess.run(self.dsl_op_scores, feed_dict=feed_dict)
 
         return scores
+
+    # params: DeepCoderTrainParams | DeepCoderTestParams
+    def save_path(self, params):
+        return DATA_PATH + '/' + params.save_path
