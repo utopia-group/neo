@@ -7,10 +7,7 @@ import org.genesys.type.Cons;
 import org.genesys.type.EmptyList;
 import org.genesys.type.Maybe;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * interpreter for L2 tool. Can be used in Deepcoder
@@ -232,5 +229,10 @@ public class L2Interpreter implements Interpreter<Node, Object> {
         }
 
         return this.executors.get(node.function).execute(arglist, input);
+    }
+
+    @Override
+    public Set<String> getExeKeys() {
+        throw new UnsupportedOperationException("Unsupported interpreter: Default.");
     }
 }

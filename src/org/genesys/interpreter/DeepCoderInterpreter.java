@@ -14,7 +14,8 @@ import java.util.*;
  */
 public class DeepCoderInterpreter implements Interpreter<Node, Object> {
 
-    public final Map<String, Executor> executors = new HashMap<String, Executor>();
+    public final Map<String, Executor> executors = new HashMap<>();
+
 
     public DeepCoderInterpreter() {
         executors.put("root", (objects, input) -> {
@@ -107,5 +108,10 @@ public class DeepCoderInterpreter implements Interpreter<Node, Object> {
         assert arglist.size() == node.children.size();
 
         return this.executors.get(node.function).execute(arglist, input);
+    }
+
+    @Override
+    public Set<String> getExeKeys() {
+        return this.executors.keySet();
     }
 }

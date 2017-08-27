@@ -7,13 +7,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.genesys.decide.Decider;
+import org.genesys.interpreter.Interpreter;
+import org.genesys.language.Grammar;
+import org.genesys.models.Example;
+import org.genesys.models.Problem;
 import org.genesys.models.Trio;
+import org.genesys.utils.LibUtils;
 
 public class DeepCoderPythonDecider implements Decider {
 	private static final String FILENAME = "./model/tmp/deep_coder.txt";
@@ -39,6 +41,36 @@ public class DeepCoderPythonDecider implements Decider {
 	private final Object output;
 	
 	private final Map<String,double[]> probabilities = new HashMap<String,double[]>();
+
+	public DeepCoderPythonDecider(Problem problem, Interpreter interpreter) {
+		// parameters
+		int minLength = 3;
+		int maxLength = 5;
+		int minValue = -10;
+		int maxValue = 10;
+		int nGramLength = 2;
+
+		L2InputSamplerParameters inputSamplerParameters = new L2InputSamplerParameters(minLength, maxLength, maxValue, minValue);
+		L2XFeaturizerParameters xFeaturizerParameters = new L2XFeaturizerParameters(inputSamplerParameters, nGramLength);
+
+		// functions
+		List<String> functions = new ArrayList<>();
+		for(String function : new TreeSet<String>(interpreter.getExeKeys())) {
+			functions.add(function);
+		}
+
+		// featurizers
+		this.xFeaturizer = new DeepCoderXFeaturizer(functions, xFeaturizerParameters);
+		this.yFeaturizer  = new YFeaturizer(functions);
+
+		//FIXME: Osbert is assuming we only have one input from ONE example.
+		Example example = problem.getExamples().get(0);
+		input = LibUtils.fixGsonBug(example.getInput());
+		// Always one output table
+		output = LibUtils.fixGsonBug(example.getOutput());
+
+		this.build();
+	}
 	
 	public DeepCoderPythonDecider(XFeaturizer<Object> xFeaturizer, YFeaturizer yFeaturizer, Object input, Object output) {
 		this.xFeaturizer = xFeaturizer;

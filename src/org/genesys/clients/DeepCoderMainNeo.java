@@ -6,6 +6,7 @@ import org.genesys.decide.FirstDecider;
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.DeepCoderGrammar;
+import org.genesys.ml.DeepCoderPythonDecider;
 import org.genesys.models.Problem;
 import org.genesys.synthesis.*;
 import org.genesys.synthesis.NeoSynthesizer;
@@ -19,6 +20,7 @@ import java.io.FileReader;
 public class DeepCoderMainNeo {
 
     public static void main(String[] args) throws FileNotFoundException {
+        boolean useStat = true;
         String specLoc = "./specs/DeepCoder";
         String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
@@ -32,6 +34,10 @@ public class DeepCoderMainNeo {
         //Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
         Decider decider = new FirstDecider();
+
+        if(useStat)
+            decider = new DeepCoderPythonDecider(dcProblem, interpreter);
+
         NeoSynthesizer synth;
         if (args.length == 3) {
             int depth = Integer.valueOf(args[1]);
