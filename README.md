@@ -10,3 +10,20 @@ With learning
 ant neodeep -Dapp=./problem/DeepCoder/prog2.json -Ddepth=3 -Dlearn=true
 
 Note: Neo depth is -1 than deep (e.g. if deep depth is 4, neo depth is 3)
+
+# Set up neural net model
+#
+# requires:
+# - Python 2.7
+# - NumPy and Tensorflow
+#
+# The latter can be installed using the following commands:
+
+pip install numpy
+pip install tensorflow
+
+# Then, run org.genesys.clients.DeepCoderDeciderMain to test the Python decider.
+#
+# If a python interpreter other than the default should be used, then create
+# a text file ./model/tmp/python_path.txt and include the path. For example,
+# to use /usr/local/bin/python, include "/usr/local/bin/" in this file.
