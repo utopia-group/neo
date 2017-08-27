@@ -222,7 +222,12 @@ public class Z3Utils {
                 }
                 String[] items = subCore.split(" ");
                 // right now only handle easy cores.
-                if(items.length != 3) continue;
+                if(items.length != 3) {
+                    Pair<Integer, List<Integer>> conflict = new Pair<>(nodeId, new ArrayList<>());
+//                    System.out.println("adding missing core:" + core);
+                    if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
+                    continue;
+                }
                 String core_str = core.replace(items[1], inExpr);
                 core_str = core_str.replace(items[2], outExpr);
                 String core_cst_str = "(declare-const " + inExpr + " Int)" + "(declare-const "
