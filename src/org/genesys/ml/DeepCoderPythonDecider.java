@@ -71,7 +71,12 @@ public class DeepCoderPythonDecider implements Decider {
 		// Step 1: Build the test set
 		List<String> nGrams = new ArrayList<String>();
 		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(FILENAME));
+			File file = new File(FILENAME);
+			if(!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
+			
+			PrintWriter pw = new PrintWriter(new FileWriter(file));
 			
 			for(String function0 : this.yFeaturizer.functions) {
 				for(String function1 : this.yFeaturizer.functions) {
