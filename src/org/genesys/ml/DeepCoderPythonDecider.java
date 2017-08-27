@@ -1,6 +1,8 @@
 package org.genesys.ml;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,8 +17,21 @@ import org.genesys.models.Trio;
 
 public class DeepCoderPythonDecider implements Decider {
 	private static final String FILENAME = "./model/tmp/deep_coder.txt";
-	private static final String COMMAND = "/usr/local/bin/python -m model.genesys.test";
+	private static final String PYTHON_PATH_FILENAME = "./model/tmp/python_path.txt";
+	private static final String COMMAND;
 	private static final int N_GRAM_LENGTH = 2;
+	
+	static {
+		String pythonPath = "";
+		if(new File(PYTHON_PATH_FILENAME).exists()) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(PYTHON_PATH_FILENAME));
+				pythonPath = br.readLine();
+				br.close();
+			} catch(IOException e) {}
+		}
+		COMMAND = pythonPath + "python -m model.genesys.test";
+	}
 	
 	private final XFeaturizer<Object> xFeaturizer;
 	private final YFeaturizer yFeaturizer;
@@ -105,8 +120,6 @@ public class DeepCoderPythonDecider implements Decider {
 				}
 			}
 			br.close();
-			
-			// Step 2c: Append the output
 			
 			// Step 2c: Wait for the process to finish
 			p.waitFor();
