@@ -7,11 +7,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import org.genesys.decide.Decider;
 import org.genesys.interpreter.Interpreter;
-import org.genesys.language.Grammar;
 import org.genesys.models.Example;
 import org.genesys.models.Problem;
 import org.genesys.models.Trio;
@@ -100,8 +105,19 @@ public class DeepCoderPythonDecider implements Decider {
 	}
 	
 	private void build() {
-		// Step 1: Build the test set
-		List<String> nGrams = new ArrayList<String>();
+		// Step 1: Build the n-grams
+		List<List<String>> nGrams = new ArrayList<List<String>>();
+		nGrams.add(Collections.emptyList());
+		for(String function : this.yFeaturizer.functions) {
+			nGrams.add(Collections.singletonList(function));
+		}
+		for(String function0 : this.yFeaturizer.functions) {
+			for(String function1 : this.yFeaturizer.functions) {
+				nGrams.add(Arrays.asList(new String[]{function0, function1}));
+			}
+		}
+		
+		// Step 2: Build the test set
 		try {
 			File file = new File(FILENAME);
 			if(!file.getParentFile().exists()) {
@@ -110,23 +126,13 @@ public class DeepCoderPythonDecider implements Decider {
 			
 			PrintWriter pw = new PrintWriter(new FileWriter(file));
 			
-			for(String function0 : this.yFeaturizer.functions) {
-				for(String function1 : this.yFeaturizer.functions) {
-					// Step 1a: Build the n-gram
-					List<String> nGram = new ArrayList<String>();
-					nGram.add(function0);
-					nGram.add(function1);
-					
-					// Step 1b: Build the datapoint
-					Trio<List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(nGram, this.input, this.output);
-					String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + ")";
-					
-					// Step 1c: Print to test set file
-					pw.println(datapoint);
-					
-					// Step 1d: Add the n-gram to the list
-					nGrams.add(Utils.toString(nGram));
-				}
+			for(List<String> nGram : nGrams) {
+				// Step 1a: Build the datapoint
+				Trio<List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(nGram, this.input, this.output);
+				String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + ")";
+				
+				// Step 1b: Print to test set file
+				pw.println(datapoint);
 			}
 			
 			pw.close();
@@ -169,7 +175,11 @@ public class DeepCoderPythonDecider implements Decider {
 			throw new RuntimeException();
 		}
 		for(int i=0; i<nGrams.size(); i++) {
-			this.probabilities.put(nGrams.get(i), rawResults.get(i));
+			List<String> nGram = new ArrayList<String>(nGrams.get(i));
+			while(nGram.size() < 2) {
+				nGram.add(DeepCoderXFeaturizer.NO_FUNCTION);
+			}
+			this.probabilities.put(Utils.toString(nGram), rawResults.get(i));
 		}
 	}
 }

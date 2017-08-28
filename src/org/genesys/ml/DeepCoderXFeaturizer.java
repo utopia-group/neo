@@ -8,7 +8,7 @@ import java.util.Map;
 import org.genesys.models.Trio;
 
 public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
-	private static final String NO_FUNCTION = "";
+	public static final String NO_FUNCTION = "";
 	private static final Integer NO_VALUE = null;
 	
 	private final Map<String,Integer> functionLookup = new HashMap<String,Integer>();
