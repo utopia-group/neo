@@ -73,13 +73,13 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     public boolean isPartial() { return false; }
 
     @Override
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core) {
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
         return null;
     }
 
 
         @Override
-    public Node getModel(BoolExpr core) {
+    public Node getModel(BoolExpr core, boolean block) {
         if (model_ != null) {
             boolean hasNext = z3Utils.blockSolution();
             if (!hasNext) return null;

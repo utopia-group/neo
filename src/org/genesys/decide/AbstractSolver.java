@@ -8,9 +8,9 @@ import org.genesys.models.Pair;
  */
 public interface AbstractSolver<C, T> {
 
-    T getModel(C core);
+    T getModel(C core, boolean block);
 
-    T getCoreModel(List<Pair<Integer, List<String>>> core);
+    T getCoreModel(List<Pair<Integer, List<String>>> core, boolean block);
 
     boolean isPartial();
 

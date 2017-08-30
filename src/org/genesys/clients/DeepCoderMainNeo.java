@@ -3,6 +3,7 @@ package org.genesys.clients;
 import com.google.gson.Gson;
 import org.genesys.decide.Decider;
 import org.genesys.decide.FirstDecider;
+import org.genesys.decide.RandomDecider;
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.DeepCoderGrammar;
@@ -20,7 +21,7 @@ import java.io.FileReader;
 public class DeepCoderMainNeo {
 
     public static void main(String[] args) throws FileNotFoundException {
-        boolean useStat = true;
+        boolean useStat = false;
         String specLoc = "./specs/DeepCoder";
         String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
@@ -34,6 +35,7 @@ public class DeepCoderMainNeo {
         //Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
         Decider decider = new FirstDecider();
+        //Decider decider = new RandomDecider();
 
         if(useStat)
             decider = new DeepCoderPythonDecider(dcProblem, interpreter);
