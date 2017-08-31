@@ -30,6 +30,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private int nodeId_ = 1;
 
+    private int learnts_ = 0;
+
     private boolean init_ = false;
 
     /* Maps types to productions */
@@ -135,6 +137,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + learnt);
             conflict = SATUtils.getInstance().learnCore(eqClauses);
+            //learnts_++;
         }
         return conflict;
 
@@ -172,9 +175,10 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             if (conflict)
                 return null;
             else {
-                boolean ok = learnCore(core);
-                assert(!ok);
+                boolean confl = learnCore(core);
+                assert(!confl);
             }
+            partial_ = false;
         }
 
         Node node = search();

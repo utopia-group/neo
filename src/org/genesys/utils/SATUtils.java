@@ -136,12 +136,17 @@ public class SATUtils {
         // equivalence between auxiliary variables and core variables
         int pos = 0;
         for (List<Integer> p : core){
+            VecInt eqclause = new VecInt();
             for (Integer l : p){
-                conflict = conflict || addClause(new VecInt(new int[]{-aux.get(pos),l}));
+                //conflict = conflict || addClause(new VecInt(new int[]{-aux.get(pos),l}));
                 conflict = conflict || addClause(new VecInt(new int[]{aux.get(pos),-l}));
+                eqclause.push(l);
             }
+            eqclause.push(-aux.get(pos));
+            conflict = conflict || addClause(eqclause);
             pos++;
         }
+
         VecInt clause = new VecInt();
         for (Integer l : aux){
             clause.push(-l);
