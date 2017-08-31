@@ -98,7 +98,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     public boolean learnCore(List<Pair<Integer, List<String>>> core) {
-        boolean conflict = true;
+        boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
         List<Node> bfs = new ArrayList<>();
@@ -123,21 +123,23 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             assert (coreNodes_.containsKey(id));
             eq.add(coreNodes_.get(id));
             //System.out.println("function= " + node2function.get(p.t0));
-            for (String l : p.t1){
-                Pair<Integer, String> id2 = new Pair<>(p.t0,l);
-                if (!coreNodes_.containsKey(id2))
-                    continue;
-                //assert (coreNodes_.containsKey(id2));
-                eq.add(coreNodes_.get(id2));
-                learnt = learnt + " , " + l;
+            // FIXME : this should not hapen!
+            if (!node2function.get(p.t0).contains("input")) {
+                for (String l : p.t1) {
+                    Pair<Integer, String> id2 = new Pair<>(p.t0, l);
+                    if (!coreNodes_.containsKey(id2))
+                        continue;
+                    //assert (coreNodes_.containsKey(id2));
+                    eq.add(coreNodes_.get(id2));
+                    learnt = learnt + " , " + l;
+                }
             }
             eqClauses.add(eq);
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + learnt);
-            conflict = SATUtils.getInstance().learnCore(eqClauses);
-            //learnts_++;
+                conflict = SATUtils.getInstance().learnCore(eqClauses);
         }
         return conflict;
 
@@ -176,7 +178,10 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 return null;
             else {
                 boolean confl = learnCore(core);
-                assert(!confl);
+                if (confl){
+                    System.out.println("s UNSATISFIABLE - learning core");
+                    return null;
+                }
             }
             partial_ = false;
         }
@@ -193,7 +198,18 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 //        System.out.println("Domain = " + domain.toString());
 
         // Choose your favorite statistical heuristic here!
-        String decision = decider_.decide(ancestors,domain);
+
+        String decision = "";
+        for (String d : domain){
+            if (d.contains("input")) {
+                decision = d;
+                break;
+            }
+        }
+
+        if (decision.equals("")) {
+            decision = decider_.decide(ancestors, domain);
+        }
         //String decision = domain.get(0);
 
 //        System.out.println("Decision = " + decision);

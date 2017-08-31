@@ -173,11 +173,6 @@ public class SATUtils {
     public boolean addClause(VecInt clause) {
         assert (solver_ != null);
 
-//        for (int i = 0; i < clause.size(); i++){
-//            System.out.print(clause.get(i) + " ");
-//        }
-//        System.out.println("0");
-
         boolean conflict = false;
         try {
             solver_.addClause(clause);
