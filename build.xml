@@ -6,6 +6,7 @@
 		<pathelement location="lib/com.microsoft.z3.jar"/>
 		<pathelement location="lib/gson-2.3.1.jar"/>
 		<pathelement location="lib/sat4j-genesys.jar"/>
+		<pathelement location="lib/krangl-0.5-SNAPSHOT.jar"/>
 	  </classpath>
     </javac>
 
@@ -70,6 +71,7 @@
       <arg value="${app}"/>
       <arg value="${depth}"/>
       <arg value="${learn}"/>
+      <arg value="${stat}"/>
   </java>
   </target>
 

@@ -21,7 +21,7 @@ import java.io.FileReader;
 public class DeepCoderMainNeo {
 
     public static void main(String[] args) throws FileNotFoundException {
-        boolean useStat = false;
+        boolean useStat;
         String specLoc = "./specs/DeepCoder";
         String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
@@ -35,13 +35,13 @@ public class DeepCoderMainNeo {
         //Checker checker = new DummyChecker();
         Interpreter interpreter = new DeepCoderInterpreter();
         Decider decider = new FirstDecider();
-        //Decider decider = new RandomDecider();
-
-        if(useStat)
-            decider = new DeepCoderPythonDecider(dcProblem, interpreter);
 
         NeoSynthesizer synth;
-        if (args.length == 3) {
+        if (args.length == 4) {
+            useStat = Boolean.valueOf(args[3]);
+            if(useStat)
+                decider = new DeepCoderPythonDecider(dcProblem, interpreter);
+
             int depth = Integer.valueOf(args[1]);
             boolean learning = Boolean.valueOf(args[2]);
 
