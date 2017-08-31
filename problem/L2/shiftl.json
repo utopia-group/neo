@@ -1,35 +1,32 @@
 {
-  "name": "multlast",
+  "name": "shiftl",
   "examples": [
     {
       "input": [
         [
-          1,0
+          1,2,3,4
         ]
       ],
-      "output": [
-        0,0
-      ]
+      "output":
+      [2,3,4,1]
     },
     {
       "input": [
         [
-          0,1,0
+          5,2,3
         ]
       ],
-      "output": [
-        0,0,0
-      ]
+      "output":
+      [2,3,5]
     },
     {
       "input": [
         [
-          2,0,2,3
+          1,2
         ]
       ],
-      "output": [
-        3,3,3,3
-      ]
+      "output":
+      [2,1]
     }
   ]
 }

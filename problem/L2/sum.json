@@ -1,5 +1,5 @@
 {
-  "name": "dupli",
+  "name": "sum",
   "examples": [
     {
       "input": [
@@ -21,7 +21,16 @@
       ],
       "output":
         9
-
+    },
+    {
+      "input": [
+        [
+          1,
+          5
+        ]
+      ],
+      "output":
+      6
     }
   ]
 }

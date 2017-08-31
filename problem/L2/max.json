@@ -1,35 +1,32 @@
 {
-  "name": "multlast",
+  "name": "max",
   "examples": [
     {
       "input": [
         [
-          1,0
+          1, 6,2,5
         ]
       ],
-      "output": [
-        0,0
-      ]
+      "output":
+      6
     },
     {
       "input": [
         [
-          0,1,0
+          1, 6,7,5
         ]
       ],
-      "output": [
-        0,0,0
-      ]
+      "output":
+      7
     },
     {
       "input": [
         [
-          2,0,2,3
+          100, 25, 7, 9, 18
         ]
       ],
-      "output": [
-        3,3,3,3
-      ]
+      "output":
+      100
     }
   ]
 }
