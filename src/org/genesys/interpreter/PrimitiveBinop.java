@@ -35,6 +35,8 @@ public class PrimitiveBinop implements Binop {
             return (int) first % (int) second;
         } else if (this.op.equals("==")) {
             return (int) first == (int) second;
+        }else if(this.op.equals("%!=2")) {
+            return (((int) first) % 2) != (int) second;
         } else {
             throw new RuntimeException();
         }

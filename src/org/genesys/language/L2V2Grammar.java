@@ -9,9 +9,9 @@ import java.util.List;
 
 /**
  * Created by yufeng on 5/31/17.
- * Grammar for deepCoder.
+ * Grammar for L2 in deepcode style.
  */
-public class DeepCoderGrammar implements Grammar<AbstractType> {
+public class L2V2Grammar implements Grammar<AbstractType> {
 
     public AbstractType inputType;
 
@@ -19,13 +19,13 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
 
     private List<InputType> inputTypes = new ArrayList<>();
 
-    public DeepCoderGrammar(AbstractType inputType, AbstractType outputType) {
+    public L2V2Grammar(AbstractType inputType, AbstractType outputType) {
         this.inputType = inputType;
         inputTypes.add(new InputType(0, inputType));
         this.outputType = outputType;
     }
 
-    public DeepCoderGrammar(Problem p) {
+    public L2V2Grammar(Problem p) {
         assert !p.getExamples().isEmpty();
         Example example = p.getExamples().get(0);
         List input = example.getInput();
@@ -96,9 +96,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         // IntType
         productions.add(new Production<>(new IntType(), "0"));
         productions.add(new Production<>(new IntType(), "1"));
-        //productions.add(new Production<>(new IntType(), "+1", new IntType()));
-        //productions.add(new Production<>(new IntType(), "-1", new IntType()));
-        //productions.add(new Production<>(new IntType(), "*3", new IntType()));
+        productions.add(new Production<>(new IntType(), "2"));
         productions.add(new Production<>(new IntType(), "maximum", new ListType(new IntType())));
         productions.add(new Production<>(new IntType(), "minimum", new ListType(new IntType())));
         productions.add(new Production<>(new IntType(), "sum", new ListType(new IntType())));
@@ -117,8 +115,16 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new ListType(new IntType()), "sort", new ListType(new IntType())));
         productions.add(new Production<>(new ListType(new IntType()), "reverse", new ListType(new IntType())));
         productions.add(new Production<>(new ListType(new IntType()), "take", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(new ListType(new IntType()), "scanl", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), new ListType(new IntType())))
-        ;
+
+
+        AbstractType I = new IntType();
+        AbstractType O = new IntType();
+        AbstractType O2 = new ListType(new IntType());
+//        productions.add(new Production<>(O, "foldRight", new FunctionType(new PairType(I, O), O), O, new ListType(I)));
+        productions.add(new Production<>(O2, "foldRight", new FunctionType(new PairType(I, O2), O2), O2, new ListType(I)));
+        productions.add(new Production<>(new FunctionType(new PairType(I, O2), O2), "l(a,x).(cons a x)"));
+
+//        productions.add(new Production<>(new ListType(new IntType()), "foldRight", new FunctionType(new PairType(I, O), O), O));
 
         //FunctionType
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(+ a b)"));
@@ -133,14 +139,12 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(|| a b)"));
         productions.add(new Production<>(new FunctionType(new PairType(new BoolType(), new BoolType()), new BoolType()), "l(a,b).(&& a b)"));
 
-        //productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(+ a b)", new IntType()));
-        //productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(* a b)", new IntType()));
-
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "inc3"));
+        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "l(a).(+ a b)", new IntType()));
 
         productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(> a b)", new IntType()));
         productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(< a b)", new IntType()));
         productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(== a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(%!=2 a b)", new IntType()));
 
         return productions;
     }
@@ -185,9 +189,6 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             productions.add(new Production<>(symbol, "sort", new ListType(new IntType())));
             productions.add(new Production<>(symbol, "reverse", new ListType(new IntType())));
             productions.add(new Production<>(symbol, "take", new ListType(new IntType()), new IntType()));
-//            productions.add(new Production<>(symbol, "drop", new ListType(new IntType()), new IntType()));
-            productions.add(new Production<>(symbol, "scanl", new FunctionType(new PairType(T, T), T),
-                    new ListType(new IntType())));
         } else if (symbol instanceof FunctionType) {
             FunctionType type = (FunctionType) symbol;
             // l(a,b).(+ a b) ::= ((Integer, Integer) -> Integer)
