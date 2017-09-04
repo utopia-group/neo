@@ -214,6 +214,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
 //        System.out.println("Decision = " + decision);
 
+        assert (!decision.equals(""));
         return decision;
 
     }
