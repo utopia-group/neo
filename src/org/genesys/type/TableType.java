@@ -25,6 +25,6 @@ public class TableType implements AbstractType {
 
     @Override
     public String toString() {
-        return "Table<" + this.toString() + ">";
+        return "Table<>";
     }
 }

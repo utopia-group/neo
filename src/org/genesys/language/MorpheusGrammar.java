@@ -35,7 +35,6 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
     }
 
 
-
     private String getNeoString() {
         return "";
     }
