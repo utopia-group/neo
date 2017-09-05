@@ -30,6 +30,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private int nodeId_ = 1;
 
+    private int learnts_ = 0;
+
     private boolean init_ = false;
 
     /* Maps types to productions */
@@ -96,7 +98,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     public boolean learnCore(List<Pair<Integer, List<String>>> core) {
-        boolean conflict = true;
+        boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
         List<Node> bfs = new ArrayList<>();
@@ -121,38 +123,42 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             assert (coreNodes_.containsKey(id));
             eq.add(coreNodes_.get(id));
             //System.out.println("function= " + node2function.get(p.t0));
-            for (String l : p.t1){
-                Pair<Integer, String> id2 = new Pair<>(p.t0,l);
-                if (!coreNodes_.containsKey(id2))
-                    continue;
-                //assert (coreNodes_.containsKey(id2));
-                eq.add(coreNodes_.get(id2));
-                learnt = learnt + " , " + l;
+            // FIXME : this should not hapen!
+            if (!node2function.get(p.t0).contains("input")) {
+                for (String l : p.t1) {
+                    Pair<Integer, String> id2 = new Pair<>(p.t0, l);
+                    if (!coreNodes_.containsKey(id2))
+                        continue;
+                    //assert (coreNodes_.containsKey(id2));
+                    eq.add(coreNodes_.get(id2));
+                    learnt = learnt + " , " + l;
+                }
             }
             eqClauses.add(eq);
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + learnt);
-            conflict = SATUtils.getInstance().learnCore(eqClauses);
+                conflict = SATUtils.getInstance().learnCore(eqClauses);
         }
         return conflict;
 
     }
 
     @Override
-    public Node getModel(BoolExpr core) {
+    public Node getModel(BoolExpr core, boolean block) {
 
         if (!init_) {
             init_ = true;
             loadGrammar();
             initDataStructures();
         } else {
-            if (!partial_) {
+            if (block) {
                 boolean conflict = blockModel();
                 if (conflict)
                     return null;
-            } else partial_ = false;
+            }
+            partial_ = false;
         }
 
         Node node = search();
@@ -160,7 +166,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     @Override
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core) {
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
 
         if (!init_) {
             init_ = true;
@@ -168,9 +174,16 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             initDataStructures();
         } else {
             boolean conflict = blockModel();
-            conflict = learnCore(core);
             if (conflict)
                 return null;
+            else {
+                boolean confl = learnCore(core);
+                if (confl){
+                    System.out.println("s UNSATISFIABLE - learning core");
+                    return null;
+                }
+            }
+            partial_ = false;
         }
 
         Node node = search();
@@ -185,26 +198,41 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 //        System.out.println("Domain = " + domain.toString());
 
         // Choose your favorite statistical heuristic here!
-        String decision = decider_.decide(ancestors,domain);
+
+        String decision = "";
+        for (String d : domain){
+            if (d.contains("input")) {
+                decision = d;
+                break;
+            }
+        }
+
+        if (decision.equals("")) {
+            decision = decider_.decide(ancestors, domain);
+        }
         //String decision = domain.get(0);
 
 //        System.out.println("Decision = " + decision);
 
+        assert (!decision.equals(""));
         return decision;
 
     }
 
     private boolean blockModel() {
 
-        boolean unsat = false;
         //System.out.println("trail_.size = " + trailNeo_.size());
-        while (backtrack(currentLevel_ - 1)) {
-            if (currentLevel_ == 0) {
-                System.out.println("s UNSATISFIABLE : backtracking block model");
-                unsat = true;
-                break;
-            }
-        }
+        boolean unsat = false;
+//        while (backtrack(currentLevel_ - 1)) {
+//            if (currentLevel_ == 0) {
+//                System.out.println("s UNSATISFIABLE : backtracking block model");
+//                unsat = true;
+//                break;
+//            }
+//        }
+        unsat = backtrack(0, true);
+        if (unsat)
+            System.out.println("s UNSATISFIABLE : backtracking block model");
         assert (trailNeo_.size() == currentLevel_);
         return unsat;
     }
@@ -313,27 +341,33 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         return partial_;
     }
 
-    private boolean backtrack(int lvl) {
+    private boolean backtrack(int lvl, boolean block) {
 
-//        System.out.println("Backtracking to lvl = " + lvl);
+        // There is a disparity between the level in Neo and the level in the SAT solvers
+        // Several decisions in Neo may be in the same internal level in the SAT solver
+        // When backtracking, we need to take into consideration the internals of the SAT solver
+        int backtrack_lvl = lvl;
+        while (currentSATLevel_.get(currentLevel_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
+            backtrack_lvl--;
+        }
+
         assert (trailNeo_.size() > 0 && trailSAT_.size() > 0);
-
         int size = trailNeo_.size();
 
         for (Iterator<Pair<Node, Integer>> iter = trail_.iterator(); iter.hasNext(); ) {
             Pair<Node, Integer> p = iter.next();
-            if (p.t1 >= lvl)
+            if (p.t1 >= backtrack_lvl)
                 iter.remove();
         }
-        trail_.add(new Pair<Node, Integer>(trailNeo_.get(trailNeo_.size() - 1), lvl));
+        if (backtrack_lvl == 0)
+            trail_.add(new Pair<Node, Integer>(root_,0));
 
-//        System.out.println("lvl = " + lvl);
-//        System.out.println("SAT solver backtrack to = " + currentSATLevel_.get(lvl));
+        satUtils_.getSolver().cancelUntil(currentSATLevel_.get(backtrack_lvl));
 
-        satUtils_.getSolver().cancelUntil(currentSATLevel_.get(lvl));
-        boolean conflict = satUtils_.blockTrail(trailSAT_);
+        boolean conflict = false;
+        if (block) conflict = satUtils_.blockTrail(trailSAT_);
 
-        for (int i = size; i > lvl; i--) {
+        for (int i = size; i > backtrack_lvl; i--) {
             // undo
             trailNeo_.get(trailNeo_.size() - 1).function = "";
             trailNeo_.get(trailNeo_.size() - 1).decision = null;
@@ -342,9 +376,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             trailNeo_.remove(trailNeo_.size() - 1);
             trailSAT_.remove(trailSAT_.size() - 1);
         }
-        currentLevel_ = lvl;
-        for (int i = currentLevel_; i < currentSATLevel_.size() - 1; i++)
-            currentSATLevel_.remove(currentSATLevel_.size() - 1);
+        currentLevel_ = backtrack_lvl;
+        currentSATLevel_.subList(backtrack_lvl+1,currentSATLevel_.size()).clear();
         assert (currentSATLevel_.size() == currentLevel_ + 1);
 
         return conflict;
@@ -389,6 +422,28 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         return used;
     }
 
+    private int naiveAnalyzeSATConflict(Constr conflict) {
+
+        int backjumpLevel = currentLevel_;
+
+        if (currentLevel_ == 0) {
+            // unsat
+            backjumpLevel = -1;
+        } else {
+            while (backtrack(currentLevel_ - 1, true)) {
+                if (currentLevel_ == 0) {
+                    System.out.println("s UNSATISFIABLE : naive analyze SAT conflict");
+                    backjumpLevel = -1;
+                    break;
+                }
+            }
+        }
+
+        if (backjumpLevel != -1)
+            backjumpLevel = currentLevel_;
+        return backjumpLevel;
+    }
+
 
     public Node search() {
 
@@ -401,24 +456,27 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 if (partial_) break;
 
                 if (unsat) break;
+
                 Constr conflict = propagate();
 
                 if (conflict != null) {
-                    //System.out.println("SAT Conflict");
                     int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
-                    backtrack(backjumpLevel);
+                    if (backjumpLevel == -1){
+                        System.out.println("s UNSATISFIABLE : SAT Conflict");
+                        unsat = true;
+                        break;
+                    } else backtrack(backjumpLevel, false);
                 } else {
                     // No conflict
                     Node decision = decide(trail_);
                     if (decision == null) {
-                        //System.out.println("Conflict in the decision!");
                         if (currentLevel_ == 0) {
                             System.out.println("s UNSATISFIABLE : lvl = 0");
                             unsat = true;
                             break;
                         }
 
-                        while (backtrack(currentLevel_ - 1)) {
+                        while (backtrack(currentLevel_ - 1,true)) {
                             if (currentLevel_ == 0) {
                                 System.out.println("s UNSATISFIABLE : backtracking");
                                 unsat = true;
@@ -432,7 +490,11 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 }
             }
 
-            if (partial_) break;
+            if (partial_) {
+                if (!orphanParent())
+                    partial_ = false;
+                break;
+            }
 
             if (unsat) break;
 
@@ -442,17 +504,24 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                     //System.out.println("s SATISFIABLE");
                     break;
                 } else {
-                    // Conflict
-//                System.out.println("level= " + currentLevel_);
-//                for (Node n : trailNeo_) {
-//                    System.out.println(n.function);
-//                }
-//                System.out.println("INPUTS NOT USED");
-                    while (backtrack(currentLevel_ - 1)) {
-                        if (currentLevel_ == 0) {
-                            System.out.println("s UNSATISFIABLE : backtracking inputs");
-                            unsat = true;
-                            break;
+                //System.out.println("INPUTS NOT USED");
+                    Constr conflict = propagate();
+                    if (conflict != null) {
+                            //System.out.println("SAT Conflict");
+                            int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                            //int backjumpLevel = naiveAnalyzeSATConflict(conflict);
+                            if (backjumpLevel == -1){
+                                System.out.println("s UNSATISFIABLE : SAT Conflict");
+                                unsat = true;
+                                break;
+                            } else backtrack(backjumpLevel, false);
+                    } else {
+                        while (backtrack(currentLevel_ - 1,true)) {
+                            if (currentLevel_ == 0) {
+                                System.out.println("s UNSATISFIABLE : backtracking inputs");
+                                unsat = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -548,12 +617,18 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         List<String> decideDomain = new ArrayList<>();
         for (Production p : node.domain) {
             int var = varNodes_.get(new Pair<Integer, Production>(node.id, p));
+
             if (satUtils_.getSolver().truthValue(var) == Lbool.UNDEFINED ||
                     satUtils_.getSolver().truthValue(var) == Lbool.TRUE) {
+                //System.out.println("var= " + var + " value=" + satUtils_.getSolver().truthValue(var));
                 decideMap.put(p.function, new Pair<Production, Integer>(p, var));
                 decideDomain.add(p.function);
             }
         }
+
+//        for (int i = 1; i <= satUtils_.getNbVars(); i++){
+//            System.out.println("v= " + i + " value= " + satUtils_.getSolver().truthValue(i));
+//        }
 
 
 //        System.out.println("level= " + currentLevel_);

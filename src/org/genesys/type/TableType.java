@@ -5,4 +5,26 @@ package org.genesys.type;
  */
 public class TableType implements AbstractType {
 
+
+    public TableType() {
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TableType)) {
+            return false;
+        }
+        return this.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return 11 * this.hashCode() + 1;
+    }
+
+    @Override
+    public String toString() {
+        return "Table<>";
+    }
 }

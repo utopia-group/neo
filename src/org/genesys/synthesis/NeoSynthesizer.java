@@ -26,6 +26,8 @@ public class NeoSynthesizer implements Synthesizer {
 
     private AbstractSolver<BoolExpr, Node> solver_;
 
+    private boolean silent_ = false;
+
     private boolean learning_ = true;
 
     private Checker checker_;
@@ -88,7 +90,7 @@ public class NeoSynthesizer implements Synthesizer {
     public Node synthesize() {
 
         /* retrieve an AST from the solver */
-        Node ast = solver_.getModel(null);
+        Node ast = solver_.getModel(null, false);
         int total = 0;
         int prune_concrete = 0;
         int prune_partial = 0;
@@ -109,16 +111,14 @@ public class NeoSynthesizer implements Synthesizer {
                     List<Pair<Integer, List<String>>> convert = new ArrayList<>();
                     for (Pair<Integer, List<Integer>> p : conflicts) {
                         Pair<Integer, List<String>> new_p = new Pair<>(p.t0, new ArrayList<>());
-                        //System.out.println("Core information: Node= " + p.t0 + " Equivalent= " + p.t1);
                         for (Integer l : p.t1) {
                             assert components_.containsKey(l);
                             new_p.t1.add(components_.get(l).getName());
                         }
                         convert.add(new_p);
                     }
-                    ast = solver_.getCoreModel(convert);
-                }
-                else ast = solver_.getModel(null);
+                    ast = solver_.getCoreModel(convert, true);
+                } else ast = solver_.getModel(null, true);
                 long end = LibUtils.tick();
                 if (solver_.isPartial()) prune_partial++;
                 else prune_concrete++;
@@ -128,7 +128,8 @@ public class NeoSynthesizer implements Synthesizer {
 
 
             if (solver_.isPartial()){
-                ast = solver_.getModel(null);
+                //System.out.println("Partial Program: " + ast);
+                ast = solver_.getModel(null, false);
                 continue;
             } else {
             /* check input-output using the interpreter */
@@ -137,7 +138,7 @@ public class NeoSynthesizer implements Synthesizer {
                     break;
                 } else {
                     long start = LibUtils.tick();
-                    ast = solver_.getModel(null);
+                    ast = solver_.getModel(null, true);
                     long end = LibUtils.tick();
                     totalDecide += LibUtils.computeTime(start, end);
                 }
@@ -158,7 +159,7 @@ public class NeoSynthesizer implements Synthesizer {
     private boolean verify(Node program) {
         long start = LibUtils.tick();
         boolean passed = true;
-        System.out.println("Program: " + program);
+        if (!silent_)  System.out.println("Program: " + program);
         for (Example example : problem_.getExamples()) {
             //FIXME:lets assume we only have at most two input tables for now.
             Object input = LibUtils.fixGsonBug(example.getInput());
@@ -172,7 +173,7 @@ public class NeoSynthesizer implements Synthesizer {
                     break;
                 }
             } catch (Exception e) {
-                System.out.println("Exception= " + e);
+                if (!silent_) System.out.println("Exception= " + e);
                 passed = false;
                 break;
             }

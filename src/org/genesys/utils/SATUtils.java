@@ -102,11 +102,18 @@ public class SATUtils {
         assert (solver_ != null);
         assert (!trail.isEmpty());
 
+//        System.out.println("block trail= " + trail);
+//        System.out.println("lvl = " + solver_.decisionLevel());
+
         VecInt clause = new VecInt();
         for (int i = 0; i < trail.size(); i++) {
             clause.push(-trail.get(i));
         }
-        return addClause(clause);
+        boolean conflict = false;
+        if (solver_.decisionLevel() == 0) conflict = addClause(clause);
+        else conflict = addClauseOnTheFly(clause);
+
+        return conflict;
     }
 
     public boolean learnCore(List<List<Integer>> core){
@@ -129,17 +136,23 @@ public class SATUtils {
         // equivalence between auxiliary variables and core variables
         int pos = 0;
         for (List<Integer> p : core){
+            VecInt eqclause = new VecInt();
             for (Integer l : p){
-                addClause(new VecInt(new int[]{-aux.get(pos),l}));
-                addClause(new VecInt(new int[]{aux.get(pos),-l}));
+                //conflict = conflict || addClause(new VecInt(new int[]{-aux.get(pos),l}));
+                conflict = conflict || addClause(new VecInt(new int[]{aux.get(pos),-l}));
+                eqclause.push(l);
             }
+            eqclause.push(-aux.get(pos));
+            conflict = conflict || addClause(eqclause);
             pos++;
         }
+
         VecInt clause = new VecInt();
         for (Integer l : aux){
             clause.push(-l);
         }
-        addClause(clause);
+        conflict = conflict || addClause(clause);
+        assert (!conflict);
 
         return conflict;
     }
@@ -160,11 +173,6 @@ public class SATUtils {
     public boolean addClause(VecInt clause) {
         assert (solver_ != null);
 
-//        for (int i = 0; i < clause.size(); i++){
-//            System.out.print(clause.get(i) + " ");
-//        }
-//        System.out.println("0");
-
         boolean conflict = false;
         try {
             solver_.addClause(clause);
@@ -172,6 +180,41 @@ public class SATUtils {
             conflict = true;
         }
         return conflict;
+    }
+
+    public boolean addClauseOnTheFly(VecInt clause) {
+        assert (solver_ != null);
+
+            boolean conflict = false;
+
+            int [] c = new int[clause.size()];
+            int asserting = 0;
+            int nb_asserting = 0;
+            boolean satisfied = false;
+            for (int i = 0; i < clause.size(); i++) {
+                c[i] = clause.get(i);
+                int var = c[i];
+                if (asserting == 0 && solver_.truthValue(var) == Lbool.UNDEFINED){
+                    nb_asserting++;
+                    asserting = var;
+                }
+            }
+
+            solver_.addClauseOnTheFly(c);
+            solver_.qhead = solver_.trail.size(); // Why doesn't SAT4J does this?
+            System.out.println("current ctr= " + solver_.getIthConstr(solver_.nConstraints()-1));
+//            System.out.println("assuming = " + asserting);
+            Constr ctr = solver_.propagate();
+            if (ctr != null || nb_asserting == 0) {
+                conflict = true;
+                assert(false);
+            } else {
+                assert (nb_asserting == 1);
+                if (asserting < 0) solver_.assume(negLit(-asserting));
+                else solver_.assume((posLit(asserting)));
+            }
+
+            return conflict;
     }
 
     public int posLit(int var) {
@@ -187,6 +230,10 @@ public class SATUtils {
             instance = new SATUtils();
         }
         return instance;
+    }
+
+    public void printTrail(){
+        System.out.println("SAT4J trail= " + solver_.trail);
     }
 
     public boolean addAMO(VecInt lits) {
@@ -236,8 +283,9 @@ public class SATUtils {
     }
 
     public int analyzeSATConflict(Constr conflict) {
-        System.out.println("conflict= " + conflict.toString());
-        System.out.println("trail= " + solver_.trail.toString());
+
+//        System.out.println("conflict= " + conflict.toString());
+//        System.out.println("trail= " + solver_.trail.toString());
         org.sat4j.minisat.core.Pair analysisResult = new org.sat4j.minisat.core.Pair();
         int backjumpLevel = -1;
         int rootLevel = 0;
@@ -264,10 +312,10 @@ public class SATUtils {
                 return backjumpLevel;
             }
 
-            System.out.println("backjumplevel= " + backjumpLevel);
+            //System.out.println("backjumplevel= " + backjumpLevel);
             assert (analysisResult.reason != null);
 
-            System.out.println("clause learnt= " + analysisResult.reason.toString());
+            //System.out.println("clause learnt= " + analysisResult.reason.toString());
             solver_.record(analysisResult.reason);
             analysisResult.reason = null;
         }
