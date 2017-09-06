@@ -9,7 +9,7 @@ import org.genesys.models.Node;
 import org.genesys.models.Pair;
 
 public class NGramDecider implements Decider {
-	private static final String NO_FUNCTION = "";
+	public static final String NO_FUNCTION = "";
 	
 	private final int nGramLength;
 	private final Counter<Pair<String,String>> counts = new Counter<Pair<String,String>>();
