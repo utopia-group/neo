@@ -17,6 +17,6 @@ public class AggrType implements AbstractType {
 
     @Override
     public String toString() {
-        return "String";
+        return "AggrType";
     }
 }
