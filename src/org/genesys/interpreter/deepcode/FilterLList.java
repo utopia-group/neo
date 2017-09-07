@@ -35,6 +35,6 @@ public class FilterLList implements Unop {
     }
 
     public String toString() {
-        return "l(x).(filter " + this.unop.toString() + " x)";
+        return "FILTER";
     }
 }

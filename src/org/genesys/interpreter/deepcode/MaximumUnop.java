@@ -19,6 +19,6 @@ public class MaximumUnop implements Unop {
     }
 
     public String toString() {
-        return "maximum ( " + ")";
+        return "MAXIMUM";
     }
 }

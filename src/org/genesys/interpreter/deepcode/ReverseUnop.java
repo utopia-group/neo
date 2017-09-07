@@ -19,6 +19,6 @@ public class ReverseUnop implements Unop {
     }
 
     public String toString() {
-        return "reverse ( " + ")";
+        return "REVERSE";
     }
 }

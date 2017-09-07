@@ -33,6 +33,6 @@ public class MapLList implements Unop {
     }
 
     public String toString() {
-        return "l(x).(map " + this.unop.toString() + " x)";
+        return "MAP";
     }
 }

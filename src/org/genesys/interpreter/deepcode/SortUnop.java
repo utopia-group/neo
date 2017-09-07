@@ -20,6 +20,6 @@ public class SortUnop implements Unop {
     }
 
     public String toString() {
-        return "sort ( " + ")";
+        return "SORT";
     }
 }

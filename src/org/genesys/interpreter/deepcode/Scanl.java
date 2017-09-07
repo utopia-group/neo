@@ -33,6 +33,6 @@ public class Scanl implements Unop {
     }
 
     public String toString() {
-        return "l(x).(scanl " + this.binop.toString() + " x)";
+        return "SCANL1";
     }
 }

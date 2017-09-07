@@ -43,6 +43,6 @@ public class ZipWith implements Unop {
     }
 
     public String toString() {
-        return "l(x).(zipWith " + this.binop.toString() + " x)";
+        return "ZIPWITH";
     }
 }

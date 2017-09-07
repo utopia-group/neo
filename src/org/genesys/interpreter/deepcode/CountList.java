@@ -31,6 +31,6 @@ public class CountList implements Unop {
     }
 
     public String toString() {
-        return "l(x).(count " + this.unop.toString() + " x)";
+        return "COUNT";
     }
 }

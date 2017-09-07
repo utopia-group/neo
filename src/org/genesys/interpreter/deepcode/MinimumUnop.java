@@ -19,6 +19,6 @@ public class MinimumUnop implements Unop {
     }
 
     public String toString() {
-        return "minimum ( " + ")";
+        return "MINIMUM";
     }
 }

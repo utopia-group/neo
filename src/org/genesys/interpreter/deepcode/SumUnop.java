@@ -19,6 +19,6 @@ public class SumUnop implements Unop {
     }
 
     public String toString() {
-        return "sum ( " + ")";
+        return "SUM";
     }
 }

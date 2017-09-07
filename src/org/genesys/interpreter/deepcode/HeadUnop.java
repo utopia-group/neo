@@ -18,6 +18,6 @@ public class HeadUnop implements Unop {
     }
 
     public String toString() {
-        return "head ( " + ")";
+        return "HEAD";
     }
 }

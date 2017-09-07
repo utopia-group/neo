@@ -32,6 +32,6 @@ public class TakeUnop implements Unop {
     }
 
     public String toString() {
-        return "l(x).(take " + " x)";
+        return "TAKE";
     }
 }

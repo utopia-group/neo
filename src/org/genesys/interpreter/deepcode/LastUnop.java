@@ -19,6 +19,6 @@ public class LastUnop implements Unop {
     }
 
     public String toString() {
-        return "last ( " + ")";
+        return "LAST";
     }
 }
