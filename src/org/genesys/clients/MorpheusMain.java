@@ -16,10 +16,7 @@ import org.genesys.ml.DeepCoderPythonDecider;
 import org.genesys.ml.MorpheusNGramDecider;
 import org.genesys.models.Example;
 import org.genesys.models.Problem;
-import org.genesys.synthesis.Checker;
-import org.genesys.synthesis.DeepCoderChecker;
-import org.genesys.synthesis.DummyChecker;
-import org.genesys.synthesis.NeoSynthesizer;
+import org.genesys.synthesis.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -69,7 +66,7 @@ public class MorpheusMain {
 
         Grammar grammar = new MorpheusGrammar(tableProblem);
         /* Load component specs. */
-        Checker checker = new DummyChecker();
+        Checker checker = new MorpheusChecker(specLoc);
         Interpreter interpreter = new MorpheusInterpreter();
         Decider decider = new FirstDecider();
 
