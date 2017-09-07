@@ -42,7 +42,14 @@ public class MorpheusNGramDecider implements Decider {
 		double curWeight = 0.0;
 		String parent = ancestors.size() == 0 ? NGramDecider.NO_FUNCTION : ancestors.get(ancestors.size()-1);
 		for(String function : functionChoices) {
-			double weight = this.weights.get(parent).get(function);
+			double weight;
+			if(!this.weights.containsKey(parent)) {
+				weight = Double.MIN_VALUE;
+			} else if(!this.weights.get(parent).containsKey(function)) {
+				weight = Double.MIN_VALUE;
+			} else {
+				weight = this.weights.get(parent).get(function);
+			}
 			if(curFunction == null || weight > curWeight) {
 				curFunction = function;
 				curWeight = weight;
