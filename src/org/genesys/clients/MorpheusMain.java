@@ -13,6 +13,7 @@ import org.genesys.language.DeepCoderGrammar;
 import org.genesys.language.Grammar;
 import org.genesys.language.MorpheusGrammar;
 import org.genesys.ml.DeepCoderPythonDecider;
+import org.genesys.ml.MorpheusNGramDecider;
 import org.genesys.models.Example;
 import org.genesys.models.Problem;
 import org.genesys.synthesis.Checker;
@@ -66,7 +67,7 @@ public class MorpheusMain {
         }
         tableProblem.setExamples(tgtExamples);
 
-        Grammar grammar = new MorpheusGrammar(problem);
+        Grammar grammar = new MorpheusGrammar(tableProblem);
         /* Load component specs. */
         Checker checker = new DummyChecker();
         Interpreter interpreter = new MorpheusInterpreter();
@@ -77,7 +78,7 @@ public class MorpheusMain {
         if (args.length == 4) {
             useStat = Boolean.valueOf(args[3]);
             if(useStat)
-                decider = new DeepCoderPythonDecider(problem, interpreter);
+                decider = new MorpheusNGramDecider();
 
             int depth = Integer.valueOf(args[1]);
             boolean learning = Boolean.valueOf(args[2]);

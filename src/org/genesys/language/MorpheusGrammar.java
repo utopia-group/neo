@@ -41,8 +41,6 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         }
         List<Set<Integer>> cols = MorpheusUtil.getInstance().getSubsets(allCols, 1);
         cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, 2));
-
-        assert false : cols;
     }
 
     private String getNeoList() {
