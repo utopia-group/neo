@@ -13,9 +13,7 @@ import java.util.*;
  * interpreter for L2 tool. Can be used in Deepcoder
  * Created by yufeng on 5/31/17.
  */
-public class L2Interpreter implements Interpreter<Node, Object> {
-
-    public final Map<String, Executor> executors = new HashMap<String, Executor>();
+public class L2Interpreter extends BaseInterpreter {
 
     public L2Interpreter() {
         executors.put("apply_to_input", new Executor() {
@@ -215,24 +213,4 @@ public class L2Interpreter implements Interpreter<Node, Object> {
         });
     }
 
-
-    @Override
-    public Maybe<Object> execute(Node node, Object input) {
-        List<Object> arglist = new ArrayList<Object>();
-
-        for (Node child : node.children) {
-            Maybe<Object> object = this.execute(child, input);
-            if (!object.has()) {
-                return object;
-            }
-            arglist.add(object.get());
-        }
-
-        return this.executors.get(node.function).execute(arglist, input);
-    }
-
-    @Override
-    public Set<String> getExeKeys() {
-        throw new UnsupportedOperationException("Unsupported interpreter: Default.");
-    }
 }

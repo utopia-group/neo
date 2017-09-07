@@ -13,10 +13,7 @@ import java.util.*;
  * interpreter for L2 tool. Can be used in Deepcoder
  * Created by yufeng on 5/31/17.
  */
-public class L2V2Interpreter implements Interpreter<Node, Object> {
-
-    public final Map<String, Executor> executors = new HashMap<>();
-
+public class L2V2Interpreter extends BaseInterpreter {
 
     public L2V2Interpreter() {
         executors.put("root", (objects, input) -> {
@@ -90,27 +87,6 @@ public class L2V2Interpreter implements Interpreter<Node, Object> {
 
         executors.put("l(a,x).(cons a x)", (objects, input) -> new Maybe<>(new ConsV2Binop()));
         executors.put("foldRight", (objects, input) -> new Maybe<Object>(new Foldr((Binop) objects.get(0), objects.get(1), objects.get(2))));
-    }
-
-
-    @Override
-    public Maybe<Object> execute(Node node, Object input) {
-        List<Object> arglist = new ArrayList<>();
-
-        for (Node child : node.children) {
-            Maybe<Object> object = this.execute(child, input);
-            if (!object.has()) {
-                return object;
-            }
-            arglist.add(object.get());
-        }
-
-        if (!this.executors.containsKey(node.function)) {
-            throw new UnsupportedOperationException("Invalid argument." + node.function);
-        }
-        assert arglist.size() == node.children.size();
-
-        return this.executors.get(node.function).execute(arglist, input);
     }
 
     @Override

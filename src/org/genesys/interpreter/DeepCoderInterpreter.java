@@ -12,10 +12,7 @@ import java.util.*;
  * interpreter for L2 tool. Can be used in Deepcoder
  * Created by yufeng on 5/31/17.
  */
-public class DeepCoderInterpreter implements Interpreter<Node, Object> {
-
-    public final Map<String, Executor> executors = new HashMap<>();
-
+public class DeepCoderInterpreter extends BaseInterpreter {
 
     public DeepCoderInterpreter() {
         executors.put("root", (objects, input) -> {
@@ -87,27 +84,6 @@ public class DeepCoderInterpreter implements Interpreter<Node, Object> {
         executors.put("l(a).(&& a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("&&", objects.get(0))));
         executors.put("l(a).(- a)", (objects, input) -> new Maybe<>(new PrimitiveUnop("-", null)));
         executors.put("l(a).(~ a)", (objects, input) -> new Maybe<>(new PrimitiveUnop("~", null)));
-    }
-
-
-    @Override
-    public Maybe<Object> execute(Node node, Object input) {
-        List<Object> arglist = new ArrayList<>();
-
-        for (Node child : node.children) {
-            Maybe<Object> object = this.execute(child, input);
-            if (!object.has()) {
-                return object;
-            }
-            arglist.add(object.get());
-        }
-
-        if (!this.executors.containsKey(node.function)) {
-            throw new UnsupportedOperationException("Invalid argument." + node.function);
-        }
-        assert arglist.size() == node.children.size();
-
-        return this.executors.get(node.function).execute(arglist, input);
     }
 
     @Override

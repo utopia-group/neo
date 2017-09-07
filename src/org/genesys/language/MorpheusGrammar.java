@@ -3,10 +3,12 @@ package org.genesys.language;
 import org.genesys.models.Example;
 import org.genesys.models.Problem;
 import org.genesys.type.*;
+import org.genesys.utils.MorpheusUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by yufeng on 5/26/17.
@@ -17,30 +19,32 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     public AbstractType outputType;
 
-    private List<InputType> inputTypes = new ArrayList<>();
-
-    public MorpheusGrammar(AbstractType inputType, AbstractType outputType) {
-        this.inputType = inputType;
-        inputTypes.add(new InputType(0, inputType));
-        this.outputType = outputType;
-    }
+    // maximum column number we need to consider
+    private int maxCol = 5;
 
     public MorpheusGrammar(Problem p) {
         assert !p.getExamples().isEmpty();
+        //FIXME: assume we always only have one example in table domain.
         Example example = p.getExamples().get(0);
+        // Rules for inputs
         inputType = new TableType();
 
-        //output is either an integer or list.
+        // Rule for output.
         this.outputType = new TableType();
-    }
 
+        // Rules for int constants
 
-    private String getNeoString() {
-        return "string";
+        // Rules for column list
+        List<Integer> allCols = new ArrayList<>();
+        for(int i = 0; i < maxCol; i++) {
+            allCols.add(i);
+        }
+        List<Set<Integer>> cols = MorpheusUtil.getInstance().getSubsets(allCols, 1);
+        cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, 2));
     }
 
     private String getNeoList() {
-        Integer[] dummy = {1,2,3};
+        Integer[] dummy = {1, 2, 3};
         return Arrays.asList(dummy).toString();
     }
 
@@ -52,7 +56,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     @Override
     public String getName() {
-        return null;
+        return "MorpheusGrammar";
     }
 
     @Override
@@ -62,18 +66,18 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new TableType(), "select", new TableType(), new ListType(new IntType())));
         productions.add(new Production<>(new TableType(), "group_by", new TableType(), new ListType(new IntType())));
         productions.add(new Production<>(new TableType(), "inner_join", new TableType(), new TableType()));
-        productions.add(new Production<>(new TableType(), "gather",  new TableType(), new StringType(), new StringType(), new ListType(new IntType())));
-        productions.add(new Production<>(new TableType(), "spread", new TableType(), new IntType(), new IntType()));
-        productions.add(new Production<>(new TableType(), "unite", new TableType(), new StringType(), new IntType(), new IntType()));
-        productions.add(new Production<>(new TableType(), "summarize", new TableType(), new StringType(), new AggrType(), new IntType()));
-        productions.add(new Production<>(new TableType(), "separate", new TableType(), new IntType(), new StringType(), new StringType()));
-        productions.add(new Production<>(new TableType(), "filter", new TableType(), new FunctionType(new IntType(), new BoolType())));
-        productions.add(new Production<>(new TableType(), "mutate", new TableType(), new StringType(),new FunctionType(new PairType(new IntType(), new IntType()), new IntType())));
+        productions.add(new Production<>(new TableType(), "gather", new TableType(), new ListType(new IntType())));
+        productions.add(new Production<>(new TableType(), "spread", new TableType(), new ColIndexType(), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "unite", new TableType(), new ColIndexType(), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "separate", new TableType(), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "filter", new TableType(),
+                new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), new ColIndexType(), new IntType()));
+        productions.add(new Production<>(new TableType(), "mutate", new TableType(), new ColIndexType(),
+                new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), new ColIndexType()));
 
         //FunctionType
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(+ a b)"));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(* a b)"));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(min a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(/ a b)"));
 
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(> a b)"));
         productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(< a b)"));
@@ -85,19 +89,20 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(== a b)", new IntType()));
 
         // Aggregator Type
-        productions.add(new Production<>(new AggrType(), "max"));
+        productions.add(new Production<>(new AggrType(), "mean"));
         productions.add(new Production<>(new AggrType(), "min"));
         productions.add(new Production<>(new AggrType(), "sum"));
 
-        // IntType
+        // FIXME: IntType
         productions.add(new Production<>(new IntType(), "0"));
         productions.add(new Production<>(new IntType(), "1"));
 
-        //ListType
-        productions.add(new Production<>(new ListType(new IntType()), getNeoList()));
+        // FIXME: ColIndexType
+        productions.add(new Production<>(new ColIndexType(), "0"));
+        productions.add(new Production<>(new ColIndexType(), "1"));
 
-        // String Type
-        productions.add(new Production<>(new StringType(), getNeoString()));
+        // FIXME: ListType
+        productions.add(new Production<>(new ListType(new IntType()), getNeoList()));
 
         return productions;
     }
