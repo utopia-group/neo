@@ -110,6 +110,10 @@ public class MorpheusInterpreter extends BaseInterpreter {
         executors.put("l(a).(< a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("<", objects.get(0))));
         executors.put("l(a).(== a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("==", objects.get(0))));
 
+        executors.put("sum", (objects, input) -> new Maybe<>("sum"));
+        executors.put("mean", (objects, input) -> new Maybe<>("mean"));
+        executors.put("min", (objects, input) -> new Maybe<>("min"));
+
         //FIXME: should be generated dynamically
         executors.put("0", (objects, input) -> new Maybe<>(0));
         executors.put("1", (objects, input) -> new Maybe<>(1));

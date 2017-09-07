@@ -31,6 +31,10 @@ public class Filter implements Unop {
         DataFrame res = df.filter((df1, df2) -> {
             if (op.equals("l(a,b).(> a b)")) {
                 return ColumnsKt.gt(df.get(colName), rhs);
+            } else if (op.equals("l(a,b).(< a b)")) {
+                return ColumnsKt.lt(df.get(colName), rhs);
+            } else if (op.equals("l(a,b).(== a b)")) {
+                return ColumnsKt.eq(df.get(colName), rhs);
             } else {
                 throw new UnsupportedOperationException("Unsupported operator:" + op);
             }

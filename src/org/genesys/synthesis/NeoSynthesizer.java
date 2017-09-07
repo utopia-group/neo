@@ -167,7 +167,7 @@ public class NeoSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
-//                System.out.println("result target:\n" + tgt.get());
+                System.out.println("result target:\n" + tgt.get());
 
                 if (!tgt.get().equals(output)) {
                     passed = false;

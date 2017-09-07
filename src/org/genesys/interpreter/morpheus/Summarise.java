@@ -53,6 +53,6 @@ public class Summarise implements Unop {
     }
 
     public String toString() {
-        return "l(x).(select " + " x)";
+        return "l(x).(summarise " + " x)";
     }
 }
