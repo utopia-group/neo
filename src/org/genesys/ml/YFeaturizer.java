@@ -25,8 +25,6 @@ public class YFeaturizer {
 		for(String function : functions) {
 			features.add(function.equals(curFunction) ? 1 : 0);
 		}
-		// handle the "no function" case
-		features.add(0);
 		return features;
 	}
 }
