@@ -43,7 +43,9 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         // Rules for int constants
         for (Object o : constSet) {
             if (o instanceof Number) {
-                initProductions.add(new Production<>(new IntType(), o.toString()));
+                Production prod = new Production<>(new IntType(), o.toString());
+                prod.setValue(o);
+                initProductions.add(prod);
             }
         }
 
@@ -54,13 +56,17 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         List<Integer> allCols = new ArrayList<>();
         for (int i = 0; i < maxCol; i++) {
             // Rule for possible column name.
-            initProductions.add(new Production<>(new ColIndexType(), i + ""));
+            Production prod = new Production<>(new ColIndexType(), i + "");
+            prod.setValue(i);
+            initProductions.add(prod);
             allCols.add(i);
         }
         List<Set<Integer>> cols = MorpheusUtil.getInstance().getSubsets(allCols, 1);
         cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, 2));
         for (Set<Integer> col : cols) {
-            initProductions.add(new Production<>(new ListType(new IntType()), col.toString()));
+            Production prod = new Production<>(new ListType(new IntType()), col.toString());
+            prod.setValue(new ArrayList(col));
+            initProductions.add(prod);
         }
     }
 
