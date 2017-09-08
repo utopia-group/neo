@@ -27,16 +27,19 @@ public class DeepCoderInterpreter extends BaseInterpreter {
         executors.put("0", (objects, input) -> new Maybe<>(0));
         executors.put("1", (objects, input) -> new Maybe<>(1));
 
-        executors.put("INC", (objects, input) -> new Maybe<>((int) objects.get(0) + 1));
-        executors.put("DEC", (objects, input) -> new Maybe<>((int) objects.get(0) - 1));
-        executors.put("SHL", (objects, input) -> new Maybe<>((int) objects.get(0) * 2));
-        executors.put("MUL3", (objects, input) -> new Maybe<>((int) objects.get(0) * 3));
-        executors.put("MUL4", (objects, input) -> new Maybe<>((int) objects.get(0) * 4));
-        executors.put("SHR", (objects, input) -> new Maybe<>((int) objects.get(0) / 2));
-        executors.put("DIV3", (objects, input) -> new Maybe<>((int) objects.get(0) / 3));
-        executors.put("DIV4", (objects, input) -> new Maybe<>((int) objects.get(0) / 4));
+        executors.put("INC", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("+"), 1)));
+        executors.put("DEC", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("-"), 1)));
+        executors.put("SHL", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("*"), 2)));
+        executors.put("MUL3", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("*"), 3)));
+        executors.put("MUL4", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("*"), 4)));
+
+        executors.put("SHR", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("/"), 2)));
+        executors.put("DIV3", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("/"), 3)));
+        executors.put("DIV4", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("/"), 4)));
+        executors.put("SQR", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("**"), 2)));
+        executors.put("doNEG", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("*"), -1)));
+
         executors.put("SQR", (objects, input) -> new Maybe<>((int) objects.get(0) * (int) objects.get(0)));
-        executors.put("doNEG", (objects, input) -> new Maybe<>(-(int) objects.get(0)));
 
         executors.put("MAXIMUM", (objects, input) -> new Maybe<>(new MaximumUnop().apply(objects.get(0))));
         executors.put("MINIMUM", (objects, input) -> new Maybe<>(new MinimumUnop().apply(objects.get(0))));

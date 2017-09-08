@@ -64,10 +64,12 @@ public class MorpheusMain {
         }
         tableProblem.setExamples(tgtExamples);
 
-        Grammar grammar = new MorpheusGrammar(tableProblem);
+        MorpheusGrammar grammar = new MorpheusGrammar(tableProblem);
         /* Load component specs. */
         Checker checker = new MorpheusChecker(specLoc);
-        Interpreter interpreter = new MorpheusInterpreter();
+        MorpheusInterpreter interpreter = new MorpheusInterpreter();
+        // init constants in Morpheus.
+        interpreter.initMorpheusConstants(grammar.getInitProductions());
         Decider decider = new FirstDecider();
 
         boolean useStat;

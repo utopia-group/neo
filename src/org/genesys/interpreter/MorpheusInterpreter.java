@@ -1,7 +1,10 @@
 package org.genesys.interpreter;
 
 import org.genesys.interpreter.morpheus.*;
+import org.genesys.language.Production;
 import org.genesys.models.Node;
+import org.genesys.models.Problem;
+import org.genesys.type.AbstractType;
 import org.genesys.type.Maybe;
 
 import java.util.*;
@@ -101,10 +104,6 @@ public class MorpheusInterpreter extends BaseInterpreter {
         executors.put("l(a,b).(> a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop(">")));
         executors.put("l(a,b).(< a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("<")));
         executors.put("l(a,b).(== a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("==")));
-        executors.put("l(a,b).(|| a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("||")));
-        executors.put("l(a,b).(&& a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("&&")));
-        executors.put("l(a).(+ a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("+", objects.get(0))));
-        executors.put("l(a).(* a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("*", objects.get(0))));
         executors.put("l(a).(> a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop(">", objects.get(0))));
         executors.put("l(a).(< a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("<", objects.get(0))));
         executors.put("l(a).(== a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("==", objects.get(0))));
@@ -116,11 +115,18 @@ public class MorpheusInterpreter extends BaseInterpreter {
         //FIXME: should be generated dynamically
         executors.put("0", (objects, input) -> new Maybe<>(0));
         executors.put("1", (objects, input) -> new Maybe<>(1));
-        executors.put("1", (objects, input) -> new Maybe<>(1));
         List<Integer> arg = new ArrayList<>();
         arg.add(1);
         arg.add(2);
         arg.add(3);
         executors.put("[1, 2, 3]", (objects, input) -> new Maybe<>(arg));
+    }
+
+    public void initMorpheusConstants(List<Production<AbstractType>> inits) {
+        for(Production<AbstractType> prod : inits) {
+
+            System.out.println(prod);
+        }
+        assert false;
     }
 }

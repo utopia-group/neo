@@ -22,6 +22,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     private List<Production<AbstractType>> initProductions = new ArrayList<>();
 
+    private List<Production<AbstractType>> inputProductions = new ArrayList<>();
+
     public MorpheusGrammar(Problem p) {
         assert !p.getExamples().isEmpty();
         //FIXME: assume we always only have one example in table domain.
@@ -31,7 +33,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         Set constSet = new HashSet();
         for (int i = 0; i < example.getInput().size(); i++) {
             DataFrame input = (DataFrame) example.getInput().get(i);
-            initProductions.add(new Production<>(new TableType(), "input" + i));
+            //initProductions.add(new Production<>(new TableType(), "input" + i));
+            inputProductions.add(new Production<>(new TableType(), "input" + i));
             for (Map<String, Object> row : input.getRows()) {
                 constSet.addAll(row.values());
             }
@@ -56,7 +59,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         }
         List<Set<Integer>> cols = MorpheusUtil.getInstance().getSubsets(allCols, 1);
         cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, 2));
-        for(Set<Integer> col : cols) {
+        for (Set<Integer> col : cols) {
             initProductions.add(new Production<>(new ListType(new IntType()), col.toString()));
         }
     }
@@ -133,10 +136,10 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     @Override
     public List<Production<AbstractType>> getInputProductions() {
-        List<Production<AbstractType>> productions = new ArrayList<>();
+        return inputProductions;
+    }
 
-        ///Quick hack assuming we only have one input table.
-        productions.add(new Production<>(new TableType(), "input0"));
-        return productions;
+    public List<Production<AbstractType>> getInitProductions() {
+        return initProductions;
     }
 }
