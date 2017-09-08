@@ -1,0 +1,10 @@
+{
+  "id":3,
+  "name":"ACCESS",
+  "constraint":
+  [
+    "(declare-const IN0_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= OUT_LEN_SPEC 1))(assert (> IN0_LEN_SPEC 1))",
+    "(declare-const IN0_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert (>= IN0_MAX_SPEC OUT_MAX_SPEC))",
+    "(declare-const IN0_ARG0_LEN_SPEC_CHILD Int)(declare-const IN0_ARG1_MAX_SPEC_CHILD Int)(assert (< IN0_ARG1_MAX_SPEC_CHILD IN0_ARG0_LEN_SPEC_CHILD))"
+  ]
+}

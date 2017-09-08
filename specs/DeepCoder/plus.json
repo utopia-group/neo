@@ -1,6 +1,6 @@
 {
-  "id":19,
-  "name":"l(a,b).(+ a b)",
+  "id":17,
+  "name":"+",
   "constraint":
   [
     "(declare-const IN0_MAX_SPEC Int)(declare-const IN1_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert (= (+ IN0_MAX_SPEC IN1_MAX_SPEC) OUT_MAX_SPEC))"

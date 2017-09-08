@@ -1,0 +1,9 @@
+{
+  "id":24,
+  "name":"doNEG",
+  "constraint":
+  [
+    "(declare-const IN0_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)",
+    "(declare-const IN0_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)"
+  ]
+}

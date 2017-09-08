@@ -1,0 +1,8 @@
+{
+  "id":27,
+  "name":"DEC",
+  "constraint":
+  [
+    "(declare-const IN0_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert (= (- IN0_MAX_SPEC 1) OUT_MAX_SPEC))"
+  ]
+}
