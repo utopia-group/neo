@@ -1,4 +1,3 @@
-
 # Path to store temporary values
 TMP_PATH = './model/tmp'
 

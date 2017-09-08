@@ -8,20 +8,16 @@ from consts import *
 # val_embedding_dim:    int (dimension of the vector embedding of values)
 # input_length:         int (length of input lists)
 # output_length:        int (length of output lists)
-# num_dsl_ops:          int (number of DSL operators)
-# dsl_op_embedding_dim: int (dimension of the vector embedding of DSL operators)
-# n_gram_length:        int (length of DSL operator n-grams)
 # hidden_layer_dim:     int (number of nodes in each hidden layer)
+# num_dsl_ops:          int (number of dsl ops)
 class DeepCoderModelParams:
-    def __init__(self, num_vals, val_embedding_dim, input_length, output_length, num_dsl_ops, dsl_op_embedding_dim, n_gram_length, hidden_layer_dim):
+    def __init__(self, num_vals, val_embedding_dim, input_length, output_length, hidden_layer_dim, num_dsl_ops):
         self.num_vals = num_vals
         self.val_embedding_dim = val_embedding_dim
         self.input_length = input_length
         self.output_length = output_length
-        self.num_dsl_ops = num_dsl_ops
-        self.dsl_op_embedding_dim = dsl_op_embedding_dim
-        self.n_gram_length = n_gram_length
         self.hidden_layer_dim = hidden_layer_dim
+        self.num_dsl_ops = num_dsl_ops
 
 # num_epochs: int (number of training epochs)
 # batch_size: int (number of datapoints per batch)
@@ -53,27 +49,21 @@ class DeepCoderModel:
         # Step 1: Inputs (input list, output list, DSL operator n-gram)
         self.input_values = tf.placeholder(tf.int32, [None, params.input_length])
         self.output_values = tf.placeholder(tf.int32, [None, params.output_length])
-        self.dsl_ops = tf.placeholder(tf.int32, [None, params.n_gram_length])
 
         # Step 2: Embedding layers
         
         # input value embedding
-        input_value_embeddings = tf.get_variable('input_value_embeddings', [params.num_vals, params.val_embedding_dim])
+        input_value_embeddings = tf.get_variable('input_value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
         embedded_input_values = tf.nn.embedding_lookup(input_value_embeddings, self.input_values)
         embedded_input_values_flat = tf.reshape(embedded_input_values, [-1, params.input_length * params.val_embedding_dim])
 
         # output value embedding
-        output_value_embeddings = tf.get_variable('output_value_embeddings', [params.num_vals, params.val_embedding_dim])
+        output_value_embeddings = tf.get_variable('output_value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
         embedded_output_values = tf.nn.embedding_lookup(output_value_embeddings, self.output_values)
         embedded_output_values_flat = tf.reshape(embedded_output_values, [-1, params.output_length * params.val_embedding_dim])
 
-        # dsl op n-gram embedding
-        dsl_op_embeddings = tf.get_variable('dsl_op_embeddings', [params.num_dsl_ops, params.dsl_op_embedding_dim])
-        embedded_dsl_ops = tf.nn.embedding_lookup(dsl_op_embeddings, self.dsl_ops)
-        embedded_dsl_ops_flat = tf.reshape(embedded_dsl_ops, [-1, params.n_gram_length * params.dsl_op_embedding_dim])
-
         # Step 3: Concatenation layer
-        merged = tf.concat([embedded_input_values_flat, embedded_output_values_flat, embedded_dsl_ops_flat], 1)
+        merged = tf.concat([embedded_input_values_flat, embedded_output_values_flat], 1)
 
         # Step 4: Hidden layer
         hidden0 = tf.layers.dense(inputs=merged, units=params.hidden_layer_dim, activation=tf.nn.relu)
@@ -95,14 +85,12 @@ class DeepCoderModel:
 
     # input_values_train:  np.array([num_train, input_length])
     # output_values_train: np.array([num_train, output_length])
-    # dsl_ops_train:       np.array([num_train, n_gram_length])
     # labels_train:        np.array([num_train, num_dsl_ops])
     # input_values_test:   np.array([num_test, input_length])
     # output_values_test:  np.array([num_test, output_length])
-    # dsl_ops_test:        np.array([num_test, n_gram_length])
     # labels_test:         np.array([num_test, num_dsl_ops])
     # params:              DeepCoderTrainParams
-    def train(self, input_values_train, output_values_train, dsl_ops_train, labels_train, input_values_test, output_values_test, dsl_ops_test, labels_test, params):
+    def train(self, input_values_train, output_values_train, labels_train, input_values_test, output_values_test, labels_test, params):
         # Step 1: Save path
         save_path = self.save_path(params)
         
@@ -125,6 +113,9 @@ class DeepCoderModel:
             for i in range(params.num_epochs):
                 print 'epoch: %d' % i
                 for j in range(num_batches):
+
+                    if j%1000 == 0:
+                        print 'Batch:', j
                     
                     # Step 4c: Compute batch bounds
                     lo = j*params.batch_size
@@ -134,7 +125,6 @@ class DeepCoderModel:
                     feed_dict = {
                         self.input_values: input_values_train[lo:hi],
                         self.output_values: output_values_train[lo:hi],
-                        self.dsl_ops: dsl_ops_train[lo:hi],
                         self.labels: labels_train[lo:hi],
                     }
 
@@ -145,7 +135,6 @@ class DeepCoderModel:
                 feed_dict = {
                     self.input_values: input_values_test,
                     self.output_values: output_values_test,
-                    self.dsl_ops: dsl_ops_test,
                     self.labels: labels_test,
                 }
                 loss = sess.run(self.loss, feed_dict=feed_dict)
@@ -159,8 +148,7 @@ class DeepCoderModel:
 
     # input_values:  np.array([num_train, input_length])
     # output_values: np.array([num_train, output_length])
-    # dsl_ops:       np.array([num_train, n_gram_length])
-    def test(self, input_values, output_values, dsl_ops, params):
+    def test(self, input_values, output_values, params):
 
         with tf.Session() as sess:
             # Step 1: Directory path
@@ -174,7 +162,6 @@ class DeepCoderModel:
             feed_dict = {
                 self.input_values: input_values,
                 self.output_values: output_values,
-                self.dsl_ops: dsl_ops,
             }
 
             # Step 4: Run prediction

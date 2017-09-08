@@ -1,43 +1,34 @@
-*3
-+1
+HEAD
+LAST
+ACCESS
+MINIMUM
+MAXIMUM
+TAKE
+DROP
+FILTER
+isPOS
+isNEG
+isODD
+isEVEN
+COUNT
+MAP
+MIN
+MAX
++
 -
--1
-0
-1
-count
-false
-filter
-head
-inc3
-input0
-input1
-l(a).(&& a b)
-l(a).(* a b)
-l(a).(+ a b)
-l(a).(- a)
-l(a).(< a b)
-l(a).(== a b)
-l(a).(> a b)
-l(a).(|| a b)
-l(a).(~ a)
-l(a,b).(% a b)
-l(a,b).(&& a b)
-l(a,b).(* a b)
-l(a,b).(+ a b)
-l(a,b).(< a b)
-l(a,b).(== a b)
-l(a,b).(> a b)
-l(a,b).(min a b)
-l(a,b).(|| a b)
-last
-map
-maximum
-minimum
-reverse
-root
-scanl
-sort
-sum
-take
-true
-zipWith
+*
+ZIPWITH
+SCANL1
+SORT
+REVERSE
+doNEG
+SQR
+INC
+DEC
+SHL
+MUL3
+MUL4
+SHR
+DIV3
+DIV4
+SUM

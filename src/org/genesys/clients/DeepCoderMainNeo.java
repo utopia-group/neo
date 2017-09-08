@@ -40,7 +40,7 @@ public class DeepCoderMainNeo {
         if (args.length == 4) {
             useStat = Boolean.valueOf(args[3]);
             if(useStat)
-                decider = new DeepCoderPythonDecider(dcProblem, interpreter);
+                decider = new DeepCoderPythonDecider(dcProblem);
 
             int depth = Integer.valueOf(args[1]);
             boolean learning = Boolean.valueOf(args[2]);

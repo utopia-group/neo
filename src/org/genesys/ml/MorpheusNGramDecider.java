@@ -10,6 +10,7 @@ import java.util.Map;
 import org.genesys.decide.Decider;
 
 public class MorpheusNGramDecider implements Decider {
+	private static final String NO_FUNCTION = "";
 	private static final String N_GRAM_FILENAME = "./model/data/morpheus_ngram_weights.txt";
 	private final Map<String,Map<String,Double>> weights = new HashMap<String,Map<String,Double>>();
 	
@@ -21,7 +22,7 @@ public class MorpheusNGramDecider implements Decider {
 				String[] tokens = line.trim().split("\\s+");
 				for(int i=1; i<=2; i++) {
 					if(tokens[i].equals("<s>") || tokens[i].equals("</s>")) {
-						tokens[i] = NGramDecider.NO_FUNCTION;
+						tokens[i] = NO_FUNCTION;
 					}
 				}
 				double weight = Double.parseDouble(tokens[0]);
@@ -40,7 +41,7 @@ public class MorpheusNGramDecider implements Decider {
 	public String decide(List<String> ancestors, List<String> functionChoices) {
 		String curFunction = null;
 		double curWeight = 0.0;
-		String parent = ancestors.size() == 0 ? NGramDecider.NO_FUNCTION : ancestors.get(ancestors.size()-1);
+		String parent = ancestors.size() == 0 ? NO_FUNCTION : ancestors.get(ancestors.size()-1);
 		for(String function : functionChoices) {
 			double weight;
 			if(!this.weights.containsKey(parent)) {

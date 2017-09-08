@@ -8,25 +8,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 import org.genesys.decide.Decider;
-import org.genesys.interpreter.Interpreter;
 import org.genesys.models.Example;
+import org.genesys.models.Pair;
 import org.genesys.models.Problem;
-import org.genesys.models.Trio;
 import org.genesys.utils.LibUtils;
 
 public class DeepCoderPythonDecider implements Decider {
 	private static final String FILENAME = "./model/tmp/deep_coder.txt";
+	private static final String FUNC_FILENAME = "./model/data/deep_coder_funcs.txt";
 	private static final String PYTHON_PATH_FILENAME = "./model/tmp/python_path.txt";
 	private static final String COMMAND;
-	private static final int N_GRAM_LENGTH = 2;
 	
 	static {
 		String pythonPath = "";
@@ -45,27 +39,32 @@ public class DeepCoderPythonDecider implements Decider {
 	private final Object input;
 	private final Object output;
 	
-	private final Map<String,double[]> probabilities = new HashMap<String,double[]>();
+	private final double[] probabilities;
 
-	public DeepCoderPythonDecider(Problem problem, Interpreter interpreter) {
+	public DeepCoderPythonDecider(Problem problem) {
 		// parameters
-		int minLength = 3;
-		int maxLength = 5;
-		int minValue = -10;
-		int maxValue = 10;
-		int nGramLength = 2;
-
-		L2InputSamplerParameters inputSamplerParameters = new L2InputSamplerParameters(minLength, maxLength, maxValue, minValue);
-		L2XFeaturizerParameters xFeaturizerParameters = new L2XFeaturizerParameters(inputSamplerParameters, nGramLength);
+		int minLength = 1;
+		int maxLength = 20;
+		int minValue = -256;
+		int maxValue = 255;
+		
+		DeepCoderInputSamplerParameters inputSamplerParameters = new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
 
 		// functions
 		List<String> functions = new ArrayList<>();
-		for(String function : new TreeSet<String>(interpreter.getExeKeys())) {
-			functions.add(function);
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(FUNC_FILENAME));
+			String line;
+			while((line = br.readLine()) != null) {
+				functions.add(line);
+			}
+			br.close();
+		} catch(IOException e) {
+			throw new RuntimeException(e);
 		}
 
 		// featurizers
-		this.xFeaturizer = new DeepCoderXFeaturizer(functions, xFeaturizerParameters);
+		this.xFeaturizer = new DeepCoderXFeaturizer(inputSamplerParameters);
 		this.yFeaturizer  = new YFeaturizer(functions);
 
 		//FIXME: Osbert is assuming we only have one input from ONE example.
@@ -74,7 +73,7 @@ public class DeepCoderPythonDecider implements Decider {
 		// Always one output table
 		output = LibUtils.fixGsonBug(example.getOutput());
 
-		this.build();
+		this.probabilities = this.build();
 	}
 	
 	public DeepCoderPythonDecider(XFeaturizer<Object> xFeaturizer, YFeaturizer yFeaturizer, Object input, Object output) {
@@ -83,41 +82,26 @@ public class DeepCoderPythonDecider implements Decider {
 		this.input = input;
 		this.output = output;
 		
-		this.build();
+		this.probabilities = this.build();
 	}
 	
 	@Override
 	public String decide(List<String> ancestors, List<String> functionChoices) {
-		// Step 1: Get the probabilities
-		double[] probabilities = this.probabilities.get(NGramDecider.getNGram(ancestors, N_GRAM_LENGTH));
-		
-		// Step 2: Get the most likely function
+		// get the most likely function
 		String maxFunction = null;
 		double maxProbability = -1.0;
 		for(String function : functionChoices) {
-			if(maxProbability <= probabilities[this.yFeaturizer.functionIndices.get(function)]) {
+			if(maxProbability <= this.probabilities[this.yFeaturizer.functionIndices.get(function)]) {
 				maxFunction = function;
-				maxProbability = probabilities[this.yFeaturizer.functionIndices.get(function)];
+				maxProbability = this.probabilities[this.yFeaturizer.functionIndices.get(function)];
 			}
 		}
 		
 		return maxFunction;
 	}
 	
-	private void build() {
-		// Step 1: Build the n-grams
-		List<List<String>> nGrams = new ArrayList<List<String>>();
-		nGrams.add(Collections.emptyList());
-		for(String function : this.yFeaturizer.functions) {
-			nGrams.add(Collections.singletonList(function));
-		}
-		for(String function0 : this.yFeaturizer.functions) {
-			for(String function1 : this.yFeaturizer.functions) {
-				nGrams.add(Arrays.asList(new String[]{function0, function1}));
-			}
-		}
-		
-		// Step 2: Build the test set
+	private double[] build() {
+		// Step 1: Build the test set
 		try {
 			File file = new File(FILENAME);
 			if(!file.getParentFile().exists()) {
@@ -126,14 +110,12 @@ public class DeepCoderPythonDecider implements Decider {
 			
 			PrintWriter pw = new PrintWriter(new FileWriter(file));
 			
-			for(List<String> nGram : nGrams) {
-				// Step 1a: Build the datapoint
-				Trio<List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(nGram, this.input, this.output);
-				String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + ")";
-				
-				// Step 1b: Print to test set file
-				pw.println(datapoint);
-			}
+			// Step 1a: Build the datapoint
+			Pair<List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(this.input, this.output);
+			String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ")";
+			
+			// Step 1b: Print to test set file
+			pw.println(datapoint);
 			
 			pw.close();
 		} catch(IOException e) {
@@ -141,7 +123,6 @@ public class DeepCoderPythonDecider implements Decider {
 		}
 		
 		// Step 2: Get the neural net output
-		List<double[]> rawResults = new ArrayList<double[]>();
 		try {
 			// Step 2a: Execute the Python script
 			Process p = Runtime.getRuntime().exec(COMMAND);
@@ -149,37 +130,32 @@ public class DeepCoderPythonDecider implements Decider {
 			// Step 2b: Read the output
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
+			double[] probabilities = null;
 			while((line = br.readLine()) != null) {
 				if(line.startsWith("RESULT: ")) {
 					String[] tokens = line.substring(9, line.length()-1).split(", ");
-					double[] rawResult = new double[tokens.length];
+					probabilities = new double[tokens.length];
 					for(int i=0; i<tokens.length; i++) {
-						rawResult[i] = Double.parseDouble(tokens[i]);
+						probabilities[i] = Double.parseDouble(tokens[i]);
 					}
-					if(rawResult.length != this.yFeaturizer.functions.size() + 1) {
+					if(probabilities.length != this.yFeaturizer.functions.size() + 1) {
 						throw new RuntimeException("Invalid number of probabilities!");
 					}
-					rawResults.add(rawResult);
 				}
 			}
 			br.close();
 			
 			// Step 2c: Wait for the process to finish
 			p.waitFor();
+			
+			// Step 2d: Make sure we read the results
+			if(probabilities == null) {
+				throw new RuntimeException();
+			}
+			
+			return probabilities;
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException(e);
-		}
-		
-		// Step 3: Build the mapping
-		if(nGrams.size() != rawResults.size()) {
-			throw new RuntimeException();
-		}
-		for(int i=0; i<nGrams.size(); i++) {
-			List<String> nGram = new ArrayList<String>(nGrams.get(i));
-			while(nGram.size() < 2) {
-				nGram.add(DeepCoderXFeaturizer.NO_FUNCTION);
-			}
-			this.probabilities.put(Utils.toString(nGram), rawResults.get(i));
 		}
 	}
 }

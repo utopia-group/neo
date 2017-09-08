@@ -12,10 +12,10 @@ import org.genesys.type.ListType;
 public class DeepCoderInputSampler implements Sampler<Object> {
 	
 	private final AbstractType type;
-	private final L2InputSamplerParameters parameters;
+	private final DeepCoderInputSamplerParameters parameters;
 	private final Random random;
 	
-	public DeepCoderInputSampler(AbstractType type, L2InputSamplerParameters parameters, Random random) {
+	public DeepCoderInputSampler(AbstractType type, DeepCoderInputSamplerParameters parameters, Random random) {
 		this.type = type;
 		this.parameters = parameters;
 		this.random = random;
