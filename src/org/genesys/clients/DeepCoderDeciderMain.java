@@ -3,7 +3,6 @@ package org.genesys.clients;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.TreeSet;
 
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.language.DeepCoderGrammar;
@@ -24,7 +23,7 @@ import org.genesys.type.ListType;
 public class DeepCoderDeciderMain {
 	public static void main(String[] args) {
 		// parameters
-		int maxDepth = 3;
+		int maxDepth = 4;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
 		
 		int minLength = 10;
