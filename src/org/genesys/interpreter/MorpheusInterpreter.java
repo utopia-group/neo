@@ -124,9 +124,8 @@ public class MorpheusInterpreter extends BaseInterpreter {
 
     public void initMorpheusConstants(List<Production<AbstractType>> inits) {
         for(Production<AbstractType> prod : inits) {
-
-            System.out.println(prod);
+//            System.out.println(prod + ":" + prod.getValue());
+            executors.put(prod.function, (objects, input) -> new Maybe<>(prod.getValue()));
         }
-        assert false;
     }
 }
