@@ -24,7 +24,7 @@ import org.genesys.type.ListType;
 public class DeepCoderDeciderMain {
 	public static void main(String[] args) {
 		// parameters
-		int maxDepth = 4;
+		int maxDepth = 3;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
 		
 		int minLength = 10;
@@ -43,10 +43,7 @@ public class DeepCoderDeciderMain {
         DeepCoderInterpreter interpreter = new DeepCoderInterpreter();
         
         // functions
-        List<String> functions = new ArrayList<String>();
-        for(String function : new TreeSet<String>(interpreter.executors.keySet())) {
-        	functions.add(function);
-        }
+        List<String> functions = DeepCoderPythonDecider.getDeepCoderFunctions();
         
         // featurizers
         XFeaturizer<Object> xFeaturizer = new DeepCoderXFeaturizer(inputSamplerParameters);
@@ -69,12 +66,12 @@ public class DeepCoderDeciderMain {
         
         // test decider
         List<String> ancestors = new ArrayList<>();
-        ancestors.add("last");
-        ancestors.add("sort");
+        ancestors.add("HEAD");
+        ancestors.add("LAST");
         List<String> functionChoices = new ArrayList<>();
-        functionChoices.add("last");
-        functionChoices.add("filter");
-        functionChoices.add("sum");
+        functionChoices.add("LAST");
+        functionChoices.add("ACCESS");
+        functionChoices.add("SUM");
         String nextChoice = decider.decide(ancestors, functionChoices);
         System.out.println("Previous: " + ancestors + " Next decision: " + nextChoice);
 	}

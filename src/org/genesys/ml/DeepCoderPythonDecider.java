@@ -40,6 +40,21 @@ public class DeepCoderPythonDecider implements Decider {
 	private final Object output;
 	
 	private final double[] probabilities;
+	
+	public static List<String> getDeepCoderFunctions() {
+		List<String> functions = new ArrayList<>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(FUNC_FILENAME));
+			String line;
+			while((line = br.readLine()) != null) {
+				functions.add(line);
+			}
+			br.close();
+			return functions;
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public DeepCoderPythonDecider(Problem problem) {
 		// parameters
@@ -49,20 +64,10 @@ public class DeepCoderPythonDecider implements Decider {
 		int maxValue = 255;
 		
 		DeepCoderInputSamplerParameters inputSamplerParameters = new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
-
+		
 		// functions
-		List<String> functions = new ArrayList<>();
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(FUNC_FILENAME));
-			String line;
-			while((line = br.readLine()) != null) {
-				functions.add(line);
-			}
-			br.close();
-		} catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-
+		List<String> functions = getDeepCoderFunctions();
+		
 		// featurizers
 		this.xFeaturizer = new DeepCoderXFeaturizer(inputSamplerParameters);
 		this.yFeaturizer  = new YFeaturizer(functions);
@@ -91,10 +96,17 @@ public class DeepCoderPythonDecider implements Decider {
 		String maxFunction = null;
 		double maxProbability = -1.0;
 		for(String function : functionChoices) {
+			if(!this.yFeaturizer.functionIndices.containsKey(function)) {
+				continue;
+			}
 			if(maxProbability <= this.probabilities[this.yFeaturizer.functionIndices.get(function)]) {
 				maxFunction = function;
 				maxProbability = this.probabilities[this.yFeaturizer.functionIndices.get(function)];
 			}
+		}
+		
+		if(maxFunction == null) {
+			throw new RuntimeException();
 		}
 		
 		return maxFunction;
@@ -138,7 +150,7 @@ public class DeepCoderPythonDecider implements Decider {
 					for(int i=0; i<tokens.length; i++) {
 						probabilities[i] = Double.parseDouble(tokens[i]);
 					}
-					if(probabilities.length != this.yFeaturizer.functions.size() + 1) {
+					if(probabilities.length != this.yFeaturizer.functions.size()) {
 						throw new RuntimeException("Invalid number of probabilities!");
 					}
 				}
