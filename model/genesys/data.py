@@ -28,10 +28,10 @@ def read_train_dataset(filename, funcs_filename, num_vals, max_len):
     counter = 0
     for line in f:
 
-        if counter > 100000:
+        if counter > 500000:
             break
 
-        if counter%1000 == 0:
+        if counter%10000 == 0:
             print 'Reading:', counter
         counter += 1
         
@@ -59,14 +59,15 @@ def read_train_dataset(filename, funcs_filename, num_vals, max_len):
                 label[funcs[func]] = 1.0
 
                 # construct the input value
-                input_value = np.array(io_examples[0][0][0]) + num_vals/2
+                input_value_partial = np.array(io_examples[0][0][0]) + num_vals/2
+                input_value = np.zeros(max_len) + num_vals
+                input_value[:len(input_value_partial)] = input_value_partial
 
                 # construct the output value
-                output_value = np.array(io_examples[0][1]) + num_vals/2
-
                 try:
-                    if len(output_value) != max_len:
-                        continue
+                    output_value_partial = np.array(io_examples[0][1]) + num_vals/2
+                    output_value = np.zeros(max_len) + num_vals
+                    output_value[:len(output_value_partial)] = output_value_partial
                 except:
                     continue
                 

@@ -202,7 +202,7 @@ def compiler(source_code, V, L, min_input_range_length=0):
                                               min(limits[p][1], new_lims[a][1]))
                     #print('t=%d: New limit for %d is %s' % (t, p, limits[pointers[t][a]]))
             elif min_input_range_length >= limits[t][1] - limits[t][0]:
-                print 'Program with no valid inputs: %s' % source_code
+                #print 'Program with no valid inputs: %s' % source_code
                 return None
     # for t in xrange(input_length, program_length):
     #     print('%s (%s)' % (functions[t].src, ' '.join([chr(ord('a') + p) for p in pointers[t]])))
