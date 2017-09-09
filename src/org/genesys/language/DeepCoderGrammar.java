@@ -142,10 +142,10 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "doNEG"));
 
 
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isPOS", new IntType()));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isNEG", new IntType()));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isODD", new IntType()));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isEVEN", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isPOS"));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isNEG"));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isODD"));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isEVEN"));
 
         return productions;
     }
