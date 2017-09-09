@@ -10,6 +10,8 @@ import org.genesys.language.Production;
  */
 public class Node {
 
+    private boolean pe_ = false;
+
     private Object symbol;
 
     public int id = -1;
@@ -54,6 +56,10 @@ public class Node {
         }
         domain = productions;
     }
+
+    public boolean isConcrete() { return pe_; }
+
+    public void setConcrete(boolean value) { pe_ = value; }
 
     public void addChild(Node node) {
         children.add(node);

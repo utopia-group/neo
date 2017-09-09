@@ -55,6 +55,9 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     private final Map<Pair<Integer, Production>, Integer> varNodes_ = new HashMap<>();
     private final Map<Pair<Integer, String>, Integer> coreNodes_ = new HashMap<>();
 
+    /* String to production */
+    private Map<String, Production> prodName_ = new HashMap<>();
+
     /* Nodes */
     private final List<Node> leafNodes_ = new ArrayList<>();
     private final List<Node> nodes_ = new ArrayList<>();
@@ -572,9 +575,16 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         child.id=node.id;
         root.addChild(child);
 
+        int children = 0;
         for (Node c : node.children) {
-            worklist.add(new Pair<Node, Node>(c, child));
+            if (!c.function.equals("")) {
+                children++;
+                worklist.add(new Pair<Node, Node>(c, child));
+            }
         }
+
+        if (prodName_.get(node.function).inputs.length == children)
+            node.setConcrete(true);
 
         while (!worklist.isEmpty()) {
             Pair<Node, Node> p = worklist.pollFirst();
@@ -584,9 +594,15 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                 ch.id=p.t0.id;
                 ch.setSymbol(prodSymbols_.get(ch.function));
                 p.t1.addChild(ch);
+                children = 0;
                 for (Node c : p.t0.children) {
-                    worklist.add(new Pair<Node, Node>(c, ch));
+                    if (!c.function.equals("")) {
+                        worklist.add(new Pair<Node, Node>(c, ch));
+                        children++;
+                    }
                 }
+                if (prodName_.get(ch.function).inputs.length == children)
+                    ch.setConcrete(true);
             }
         }
 
@@ -807,6 +823,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             prodTypes_.get(prod.source.toString()).add(prod);
 
             prodSymbols_.put(prod.function, prod.source);
+
+            prodName_.put(prod.function, prod);
 
             if (prod.inputs.length > maxChildren_)
                 maxChildren_ = prod.inputs.length;
