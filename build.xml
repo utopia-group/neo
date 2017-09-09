@@ -83,6 +83,7 @@
           failonerror="true">
         <jvmarg value="-ea" />
       <env key="DYLD_LIBRARY_PATH" value="lib"/>
+      <env key="LD_LIBRARY_PATH" value="lib"/>
       <classpath>
     <pathelement location="./genesys.jar"/>
     <pathelement location="lib/com.microsoft.z3.jar"/>
