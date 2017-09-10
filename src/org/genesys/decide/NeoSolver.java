@@ -331,7 +331,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         bfs.add(root);
         while (!bfs.isEmpty()) {
             Node node = bfs.remove(bfs.size() - 1);
-            assert (!node.domain.isEmpty());
+            //assert (!node.domain.isEmpty());
+            System.out.println("Node " + node.id + " concrete= " + node.isConcrete());
             for (Production p : node.domain) {
                 System.out.println("Node " + node.id + " | Production= " + p.function);
             }
@@ -586,7 +587,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         if (prodName_.get(node.function).inputs.length == children)
-            node.setConcrete(true);
+            child.setConcrete(true);
 
         while (!worklist.isEmpty()) {
             Pair<Node, Node> p = worklist.pollFirst();
@@ -607,6 +608,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
                     ch.setConcrete(true);
             }
         }
+
+        //printTree(root);
 
         return root;
     }
