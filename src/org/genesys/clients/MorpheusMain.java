@@ -66,7 +66,7 @@ public class MorpheusMain {
 
         MorpheusGrammar grammar = new MorpheusGrammar(tableProblem);
         /* Load component specs. */
-        Checker checker = new MorpheusChecker(specLoc);
+        Checker checker = new MorpheusChecker(specLoc, grammar);
         MorpheusInterpreter interpreter = new MorpheusInterpreter();
         // init constants in Morpheus.
         interpreter.initMorpheusConstants(grammar.getInitProductions());

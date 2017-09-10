@@ -2,7 +2,9 @@ package org.genesys.interpreter;
 
 import org.genesys.interpreter.morpheus.Select;
 import org.genesys.interpreter.morpheus.Spread;
+import org.genesys.language.Production;
 import org.genesys.models.Pair;
+import org.genesys.type.AbstractType;
 import org.genesys.type.Maybe;
 
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 public class MorpheusValidator extends BaseValidatorDriver {
 
-    public MorpheusValidator() {
+    public MorpheusValidator(List<Production<AbstractType>> inits) {
 
         validators.put("root", (objects, input) -> {
             Object obj = objects.get(0);
@@ -51,5 +53,10 @@ public class MorpheusValidator extends BaseValidatorDriver {
 //            return new Maybe<>(new Select().apply(args));
             return new Select().verify(objects);
         });
+
+        for(Production<AbstractType> prod : inits) {
+            validators.put(prod.function, (objects, input) -> new Pair<>(true, new Maybe<>(prod.getValue())));
+        }
     }
+
 }

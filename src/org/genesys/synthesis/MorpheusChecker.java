@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
 import krangl.DataFrame;
 import org.genesys.interpreter.MorpheusValidator;
+import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.*;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
@@ -26,8 +27,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
     private MorpheusValidator validator_;
 
-
-    public MorpheusChecker(String specLoc) throws FileNotFoundException {
+    public MorpheusChecker(String specLoc, MorpheusGrammar g) throws FileNotFoundException {
         File[] files = new File(specLoc).listFiles();
         for (File file : files) {
             assert file.isFile() : file;
@@ -35,7 +35,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
             Component comp = gson.fromJson(new FileReader(json), Component.class);
             components_.put(comp.getName(), comp);
         }
-        validator_ = new MorpheusValidator();
+        validator_ = new MorpheusValidator(g.getInitProductions());
     }
 
     /**

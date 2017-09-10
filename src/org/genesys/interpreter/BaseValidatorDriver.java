@@ -23,17 +23,13 @@ public class BaseValidatorDriver implements ValidatorDriver<Node, Object> {
     public Pair<Boolean, Maybe<Object>> validate(Node node, Object input) {
         List<Pair<Boolean, Maybe<Object>>> arglist = new ArrayList<>();
 
-        if(!node.isConcrete()) return new Pair<>(true, new Maybe());
+        if (!node.isConcrete()) return new Pair<>(true, new Maybe());
 
         for (Node child : node.children) {
             Pair<Boolean, Maybe<Object>> childObj = validate(child, input);
-            Maybe<Object> object = childObj.t1;
             boolean childFlag = childObj.t0;
             if (!childFlag) return new Pair<>(false, new Maybe<>());
 
-            if (!object.has()) {
-                assert false : child.function + " flag: " + node.isConcrete() + " child:" + child.isConcrete();
-            }
             arglist.add(childObj);
         }
 
