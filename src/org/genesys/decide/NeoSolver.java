@@ -569,11 +569,13 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         root.setSymbol(startNode);
         root.function = "root";
         root.id=0;
+        root.setConcrete(true);
         Node child = new Node();
         child.function = node.function;
         child.setSymbol(prodSymbols_.get(child.function));
         child.id=node.id;
         root.addChild(child);
+
 
         int children = 0;
         for (Node c : node.children) {
