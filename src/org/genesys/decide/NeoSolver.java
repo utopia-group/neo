@@ -404,26 +404,41 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 
     private boolean inputsUsed() {
 
-        boolean used = true;
+        boolean used = false;
         for (Production p : inputProductions_) {
             ArrayList<Integer> clause = new ArrayList<>();
             for (Node node : nodes_) {
-                Pair<Integer, Production> pair = new Pair<Integer, Production>(node.id, p);
-                if (varNodes_.containsKey(pair)) {
-                    clause.add(varNodes_.get(pair));
-                }
-            }
-            boolean ok = false;
-            for (Integer var : clause) {
-                if (satUtils_.getSolver().truthValue(var) == Lbool.TRUE) {
-                    ok = true;
+                if (node.function.contains("input")){
+                    used = true;
                     break;
                 }
-            }
-            used = used && ok;
-        }
 
+            }
+            if (used)
+                break;
+        }
         return used;
+
+//        boolean used = true;
+//        for (Production p : inputProductions_) {
+//            ArrayList<Integer> clause = new ArrayList<>();
+//            for (Node node : nodes_) {
+//                Pair<Integer, Production> pair = new Pair<Integer, Production>(node.id, p);
+//                if (varNodes_.containsKey(pair)) {
+//                    clause.add(varNodes_.get(pair));
+//                }
+//            }
+//            boolean ok = false;
+//            for (Integer var : clause) {
+//                if (satUtils_.getSolver().truthValue(var) == Lbool.TRUE) {
+//                    ok = true;
+//                    break;
+//                }
+//            }
+//            used = used && ok;
+//        }
+
+//        return used;
     }
 
     private int naiveAnalyzeSATConflict(Constr conflict) {
