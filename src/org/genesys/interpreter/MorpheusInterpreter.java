@@ -111,15 +111,6 @@ public class MorpheusInterpreter extends BaseInterpreter {
         executors.put("sum", (objects, input) -> new Maybe<>("sum"));
         executors.put("mean", (objects, input) -> new Maybe<>("mean"));
         executors.put("min", (objects, input) -> new Maybe<>("min"));
-
-        //FIXME: should be generated dynamically
-        executors.put("0", (objects, input) -> new Maybe<>(0));
-        executors.put("1", (objects, input) -> new Maybe<>(1));
-        List<Integer> arg = new ArrayList<>();
-        arg.add(1);
-        arg.add(2);
-        arg.add(3);
-        executors.put("[1, 2, 3]", (objects, input) -> new Maybe<>(arg));
     }
 
     public void initMorpheusConstants(List<Production<AbstractType>> inits) {

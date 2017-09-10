@@ -3,7 +3,9 @@ package org.genesys.synthesis;
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
 import krangl.DataFrame;
+import org.genesys.interpreter.MorpheusValidator;
 import org.genesys.models.*;
+import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
 import org.genesys.utils.Z3Utils;
 
@@ -22,6 +24,8 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
     private Gson gson = new Gson();
 
+    private MorpheusValidator validator_;
+
 
     public MorpheusChecker(String specLoc) throws FileNotFoundException {
         File[] files = new File(specLoc).listFiles();
@@ -31,6 +35,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
             Component comp = gson.fromJson(new FileReader(json), Component.class);
             components_.put(comp.getName(), comp);
         }
+        validator_ = new MorpheusValidator();
     }
 
     /**
@@ -46,6 +51,13 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
         assert output instanceof DataFrame;
         DataFrame outDf = (DataFrame) output;
         List inputs = example.getInput();
+
+        // Perform type-checking and PE.
+        validator_.cleanPEMap();
+        System.out.println("Verifying.... " + node);
+        Pair<Boolean, Maybe<Object>> validRes = validator_.validate(node, example.getInput());
+        System.out.println("validation***********" + validRes);
+        assert validRes.t0;
 
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
@@ -127,6 +139,9 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
                             BoolExpr expr = z3.convertStrToExpr(targetCst);
                             cstList.add(expr);
                             clauseToNodeMap_.put(expr.toString(), worker.id);
+                            if (worker.isConcrete()) {
+                                System.out.println(node.isConcrete() + " " + node + "  Concrete element=========: " + worker);
+                            }
                         }
                     }
                 }
