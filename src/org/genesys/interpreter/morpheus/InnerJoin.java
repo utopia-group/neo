@@ -4,6 +4,7 @@ import kotlin.Pair;
 import krangl.DataFrame;
 import krangl.JoinsKt;
 import org.genesys.interpreter.Unop;
+import org.genesys.type.Maybe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,27 @@ public class InnerJoin implements Unop {
         DataFrame df2 = (DataFrame) pair.get(1);
         List<String> commons = new ArrayList<>(df.getNames());
         commons.retainAll(df2.getNames());
-        DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("",""));
+        DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
         return res;
     }
 
+    public org.genesys.models.Pair<Boolean, Maybe<Object>> verify(Object obj) {
+        List<org.genesys.models.Pair<Boolean, Maybe<Object>>> args = (List<org.genesys.models.Pair<Boolean, Maybe<Object>>>) obj;
+        org.genesys.models.Pair<Boolean, Maybe<Object>> arg0 = args.get(0);
+        org.genesys.models.Pair<Boolean, Maybe<Object>> arg1 = args.get(1);
+
+        if (!arg0.t1.has() || !arg1.t1.has()) return new org.genesys.models.Pair<>(true, new Maybe<>());
+
+        DataFrame df = (DataFrame) arg0.t1.get();
+        DataFrame df2 = (DataFrame) arg1.t1.get();
+        if ((df.getNcol() == 0) || (df2.getNcol() == 0) || (df2.getNrow() == 0))
+            return new org.genesys.models.Pair<>(false, new Maybe<>());
+
+        List<String> commons = new ArrayList<>(df.getNames());
+        commons.retainAll(df2.getNames());
+        DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
+        return new org.genesys.models.Pair<>(true, new Maybe<>(res));
+    }
 
     public String toString() {
         return "l(x).(select " + " x)";
