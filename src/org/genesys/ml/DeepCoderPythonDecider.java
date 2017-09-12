@@ -55,15 +55,20 @@ public class DeepCoderPythonDecider implements Decider {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static DeepCoderInputSamplerParameters getDeepCoderParameters() {
+		// parameters
+		int minLength = 3;
+		int maxLength = 5;
+		int minValue = -10;
+		int maxValue = 10;
+		
+		return new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
+	}
 
 	public DeepCoderPythonDecider(Problem problem) {
 		// parameters
-		int minLength = 1;
-		int maxLength = 20;
-		int minValue = -256;
-		int maxValue = 255;
-		
-		DeepCoderInputSamplerParameters inputSamplerParameters = new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
+		DeepCoderInputSamplerParameters inputSamplerParameters  = getDeepCoderParameters();
 		
 		// functions
 		List<String> functions = getDeepCoderFunctions();

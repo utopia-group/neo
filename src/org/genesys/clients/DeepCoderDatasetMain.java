@@ -29,12 +29,7 @@ public class DeepCoderDatasetMain {
 	public static void main(String[] args) {
 		int maxDepth = 4;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
-		
-		int minLength = 5;
-		int maxLength = 20;
-		int minValue = -256;
-		int maxValue = 255;
-        DeepCoderInputSamplerParameters inputSamplerParameters = new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
+        DeepCoderInputSamplerParameters inputSamplerParameters = DeepCoderPythonDecider.getDeepCoderParameters();
 		
 		int numIterations = 100000;
 		

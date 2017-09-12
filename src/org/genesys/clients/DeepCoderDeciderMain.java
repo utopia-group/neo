@@ -25,12 +25,7 @@ public class DeepCoderDeciderMain {
 		// parameters
 		int maxDepth = 4;
 		DefaultProgramSamplerParameters programSamplerParameters = new DefaultProgramSamplerParameters(maxDepth);
-		
-		int minLength = 10;
-		int maxLength = 20;
-		int minValue = -256;
-		int maxValue = 255;
-        DeepCoderInputSamplerParameters inputSamplerParameters = new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
+        DeepCoderInputSamplerParameters inputSamplerParameters = DeepCoderPythonDecider.getDeepCoderParameters();
 		
 		// grammar
         DeepCoderGrammar grammar = new DeepCoderGrammar(new ListType(new IntType()), new IntType());
