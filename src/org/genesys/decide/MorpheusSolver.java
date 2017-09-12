@@ -355,7 +355,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             for (Production l : lineProductions_.get(i)) {
                                 assert (varNodes_.containsKey(new Pair<Integer, Production>(n.id, l)));
                                 int lineVar = varNodes_.get(new Pair<Integer, Production>(n.id, l));
-                                if (!p.source.toString().equals(l.source.toString())) {
+                                if (!p.source.equals(l.source)) {
                                     VecInt clause = new VecInt(new int[]{-productionVar, -lineVar});
                                     satUtils_.addClause(clause);
                                 }
@@ -373,7 +373,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             for (Production l : lineProductions_.get(i)) {
                                 assert (varNodes_.containsKey(new Pair<Integer, Production>(n.id, l)));
                                 int lineVar = varNodes_.get(new Pair<Integer, Production>(n.id, l));
-                                if (!p.source.toString().equals(l.source.toString())) {
+                                if (!p.source.equals(l.source)) {
                                     VecInt clause = new VecInt(new int[]{-productionVar, -lineVar});
                                     satUtils_.addClause(clause);
                                 }
