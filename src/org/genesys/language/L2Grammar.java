@@ -41,6 +41,10 @@ public class L2Grammar implements Grammar<AbstractType> {
     @Override
     public List<Production<AbstractType>> getInputProductions() { return null; }
 
+
+    @Override
+    public List<Production<AbstractType>> getLineProductions(int size) { return null; }
+
     @Override
     public List<Production<AbstractType>> productionsFor(AbstractType symbol) {
         List<Production<AbstractType>> productions = new ArrayList<>();

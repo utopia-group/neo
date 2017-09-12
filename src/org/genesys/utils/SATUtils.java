@@ -170,6 +170,30 @@ public class SATUtils {
         return ok;
     }
 
+    public boolean addAMK(VecInt clause, int k){
+        assert (solver_ != null);
+
+        boolean conflict = false;
+        try {
+            solver_.addAtMost(clause, k);
+        } catch (ContradictionException e) {
+            conflict = true;
+        }
+        return conflict;
+    }
+
+    public boolean addEO(VecInt clause, int k){
+        assert (solver_ != null);
+
+        boolean conflict = false;
+        try {
+            solver_.addExactly(clause, k);
+        } catch (ContradictionException e) {
+            conflict = true;
+        }
+        return conflict;
+    }
+
     public boolean addClause(VecInt clause) {
         assert (solver_ != null);
 
@@ -315,7 +339,6 @@ public class SATUtils {
             //System.out.println("backjumplevel= " + backjumpLevel);
             assert (analysisResult.reason != null);
 
-            //System.out.println("clause learnt= " + analysisResult.reason.toString());
             solver_.record(analysisResult.reason);
             analysisResult.reason = null;
         }

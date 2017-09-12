@@ -68,6 +68,9 @@ public class L2V2Grammar implements Grammar<AbstractType> {
     }
 
     @Override
+    public List<Production<AbstractType>> getLineProductions(int size) { return null; }
+
+    @Override
     public List<Production<AbstractType>> getInputProductions() {
         List<Production<AbstractType>> productions = new ArrayList<>();
 

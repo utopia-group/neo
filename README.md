@@ -12,6 +12,11 @@ ant neodeep -Dapp=./problem/DeepCoder/prog7.json -Ddepth=4 -Dlearn=true -Dstat=t
 
 Note: Neo depth is -1 than deep (e.g. if deep depth is 4, neo depth is 3)
 
+New version of Neo:
+ant neodeep -Dapp=./problem/DeepCoder/prog2.json -Ddepth=2 -Dlearn=false -Dstat=false
+
+Note: Neo2 searches by number of lines. Still experimental version that only enumerates partial programs.
+
 # Set up neural net model
 #
 # requires:

@@ -145,6 +145,12 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         return inputProductions;
     }
 
+
+    @Override
+    public List<Production<AbstractType>> getLineProductions(int size) {
+        return null;
+    }
+
     public List<Production<AbstractType>> getInitProductions() {
         return initProductions;
     }

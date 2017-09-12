@@ -438,7 +438,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
 //            used = used && ok;
 //        }
 
-//        return used;
+//          return used;
     }
 
     private int naiveAnalyzeSATConflict(Constr conflict) {

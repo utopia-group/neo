@@ -68,6 +68,18 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
     }
 
     @Override
+    public List<Production<AbstractType>> getLineProductions(int size) {
+        List<Production<AbstractType>> productions = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            productions.add(new Production<>(new IntType(), "line" + i + "int"));
+            productions.add(new Production<>(new ListType(new IntType()), "line" + i + "list"));
+        }
+
+        return productions;
+    }
+
+    @Override
     public List<Production<AbstractType>> getInputProductions() {
         List<Production<AbstractType>> productions = new ArrayList<>();
 
@@ -85,6 +97,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         return productions;
     }
 
+
     @Override
     public List<Production<AbstractType>> getProductions() {
         List<Production<AbstractType>> productions = new ArrayList<>();
@@ -92,30 +105,30 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
 //        productions.add(new Production<>(new IntType(), "0"));
 //        productions.add(new Production<>(new IntType(), "1"));
 
-        productions.add(new Production<>(new IntType(), "MAXIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(new IntType(), "MINIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(new IntType(), "SUM", new ListType(new IntType())));
-        productions.add(new Production<>(new IntType(), "HEAD", new ListType(new IntType())));
-        productions.add(new Production<>(new IntType(), "LAST", new ListType(new IntType())));
-        productions.add(new Production<>(new IntType(), "COUNT", new FunctionType(new IntType(), new BoolType()),
+        productions.add(new Production<>(true, new IntType(), "MAXIMUM", new ListType(new IntType())));
+        productions.add(new Production<>(true, new IntType(), "MINIMUM", new ListType(new IntType())));
+        productions.add(new Production<>(true, new IntType(), "SUM", new ListType(new IntType())));
+        productions.add(new Production<>(true,new IntType(), "HEAD", new ListType(new IntType())));
+        productions.add(new Production<>(true,new IntType(), "LAST", new ListType(new IntType())));
+            productions.add(new Production<>(true,new IntType(), "COUNT", new FunctionType(new IntType(), new BoolType()),
                 new ListType(new IntType())));
-        productions.add(new Production<>(new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         // ListType -- only considering lists of IntType
-        productions.add(new Production<>(new ListType(new IntType()), "FILTER", new FunctionType(new IntType(), new BoolType()),
+        productions.add(new Production<>(true,new ListType(new IntType()), "FILTER", new FunctionType(new IntType(), new BoolType()),
                 new ListType(new IntType())));
-        productions.add(new Production<>(new ListType(new IntType()), "MAP", new FunctionType(new IntType(), new IntType()),
+        productions.add(new Production<>(true,new ListType(new IntType()), "MAP", new FunctionType(new IntType(), new IntType()),
                 new ListType(new IntType())));
-        productions.add(new Production<>(new ListType(new IntType()), "ZIPWITH", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
+        productions.add(new Production<>(true,new ListType(new IntType()), "ZIPWITH", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
                 new ListType(new IntType()), new ListType(new IntType())));
-        productions.add(new Production<>(new ListType(new IntType()), "SORT", new ListType(new IntType())));
-        productions.add(new Production<>(new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
-        productions.add(new Production<>(new ListType(new IntType()), "SCANL1", new FunctionType(new PairType(new IntType(),
+        productions.add(new Production<>(true,new ListType(new IntType()), "SORT", new ListType(new IntType())));
+        productions.add(new Production<>(true,new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
+        productions.add(new Production<>(true,new ListType(new IntType()), "SCANL1", new FunctionType(new PairType(new IntType(),
                 new IntType()), new IntType()), new ListType(new IntType())));
 
 
-        productions.add(new Production<>(new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(new ListType(new IntType()), "DROP", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,new ListType(new IntType()), "DROP", new ListType(new IntType()), new IntType()));
 
 
         //FunctionType
