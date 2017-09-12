@@ -1,6 +1,7 @@
 package org.genesys.interpreter.morpheus;
 
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.ReshapeKt;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
@@ -32,7 +33,10 @@ public class Gather implements Unop {
         assert !colArgs.isEmpty();
         String key = MorpheusUtil.getInstance().getMorpheusString();
         String value = MorpheusUtil.getInstance().getMorpheusString();
-        DataFrame res = ReshapeKt.gather(df, key, value, colArgs, false);
+        DataFrame res = ReshapeKt.gather(df, key, value, colArgs, true);
+        System.out.println("----------------Gather------------------");
+        Extensions.print(df);
+        Extensions.print(res);
         return res;
     }
 
@@ -52,14 +56,16 @@ public class Gather implements Unop {
             List<String> colArgs = new ArrayList<>();
             for (Object o : cols) {
                 Integer index = (Integer) o;
-                if (nCol <= index) return new Pair<>(false, new Maybe<>());
+                if (nCol <= index) {
+                    return new Pair<>(false, new Maybe<>());
+                }
                 String arg = df.getNames().get(index);
                 colArgs.add(arg);
             }
             assert !colArgs.isEmpty();
             String key = MorpheusUtil.getInstance().getMorpheusString();
             String value = MorpheusUtil.getInstance().getMorpheusString();
-            DataFrame res = ReshapeKt.gather(df, key, value, colArgs, false);
+            DataFrame res = ReshapeKt.gather(df, key, value, colArgs, true);
             return new Pair<>(true, new Maybe<>(res));
         }
     }

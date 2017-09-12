@@ -1,9 +1,6 @@
 package org.genesys.interpreter.morpheus;
 
-import krangl.DataCol;
-import krangl.DataFrame;
-import krangl.ReshapeKt;
-import krangl.StringCol;
+import krangl.*;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
@@ -35,7 +32,10 @@ public class Spread implements Unop {
         assert df.getNcol() > value;
         String keyCol = df.getNames().get(key);
         String valCol = df.getNames().get(value);
-        DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
+        DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, true);
+        System.out.println("----------------SPREAD------------------");
+        Extensions.print(df);
+        Extensions.print(res);
         return res;
     }
 
@@ -54,13 +54,13 @@ public class Spread implements Unop {
         } else {
             String keyCol = df.getNames().get(k);
             String valCol = df.getNames().get(v);
-            if(!(df.get(keyCol) instanceof StringCol)) return new Pair<>(false, new Maybe<>());
-            System.out.println(" \ntable:\n" + df );
-            for(DataCol dc : df.getCols()) {
-                System.out.println(dc + " " + dc.getClass());
+            if(!(df.get(keyCol) instanceof StringCol))  {
+                return new Pair<>(false, new Maybe<>());
             }
-            DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
-            if(res.getNcol() == 0) return new Pair<>(false, new Maybe<>());
+            DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, true);
+            if(res.getNcol() == 0) {
+                return new Pair<>(false, new Maybe<>());
+            }
             return new Pair<>(true, new Maybe<>(res));
         }
     }

@@ -54,9 +54,11 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-        System.out.println("Verifying.... " + node);
+//        System.out.println("Verifying.... " + node);
         Pair<Boolean, Maybe<Object>> validRes = validator_.validate(node, example.getInput());
-        if(!validRes.t0) return false;
+        if(!validRes.t0) {
+            return false;
+        }
 
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();

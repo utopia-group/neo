@@ -1,6 +1,7 @@
 package org.genesys.interpreter.morpheus;
 
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.ReshapeKt;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
@@ -17,7 +18,7 @@ public class Unite implements Unop {
 
     private String sep_ = "_";
 
-    private boolean remove = false;
+    private boolean remove = true;
 
     private int lhs;
 
@@ -43,6 +44,9 @@ public class Unite implements Unop {
         colList.add(rhsCol);
         String colName = MorpheusUtil.getInstance().getMorpheusString();
         DataFrame res = ReshapeKt.unite(df, colName, colList, sep_, remove);
+        System.out.println("----------------UNITE------------------");
+        Extensions.print(df);
+        Extensions.print(res);
         return res;
     }
 
@@ -58,7 +62,9 @@ public class Unite implements Unop {
         int lhs = (int) arg1.t1.get();
         int rhs = (int) arg2.t1.get();
         int nCol = df.getNcol();
-        if ((nCol <= lhs) || (nCol <= rhs) || (lhs == rhs)) return new Pair<>(false, new Maybe<>());
+        if ((nCol <= lhs) || (nCol <= rhs) || (lhs == rhs)) {
+            return new Pair<>(false, new Maybe<>());
+        }
         String lhsCol = df.getNames().get(lhs);
         String rhsCol = df.getNames().get(rhs);
         List<String> colList = new ArrayList<>();
