@@ -203,7 +203,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private void buildSATFormula() {
 
-
         // If a production is used in a parent node then this implies restrictions on the children
         for (Node node : nodes_) {
             for (Production p : node.domain) {
