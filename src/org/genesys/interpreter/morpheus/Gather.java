@@ -34,9 +34,9 @@ public class Gather implements Unop {
         String key = MorpheusUtil.getInstance().getMorpheusString();
         String value = MorpheusUtil.getInstance().getMorpheusString();
         DataFrame res = ReshapeKt.gather(df, key, value, colArgs, true);
-        System.out.println("----------------Gather------------------");
-        Extensions.print(df);
-        Extensions.print(res);
+//        System.out.println("----------------Gather------------------");
+//        Extensions.print(df);
+//        Extensions.print(res);
         return res;
     }
 

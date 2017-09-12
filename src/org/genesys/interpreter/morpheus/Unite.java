@@ -44,9 +44,9 @@ public class Unite implements Unop {
         colList.add(rhsCol);
         String colName = MorpheusUtil.getInstance().getMorpheusString();
         DataFrame res = ReshapeKt.unite(df, colName, colList, sep_, remove);
-        System.out.println("----------------UNITE------------------");
-        Extensions.print(df);
-        Extensions.print(res);
+//        System.out.println("----------------UNITE------------------");
+//        Extensions.print(df);
+//        Extensions.print(res);
         return res;
     }
 

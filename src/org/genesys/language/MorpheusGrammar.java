@@ -17,8 +17,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     public AbstractType outputType;
 
-    // maximum column number we need to consider
-    private int maxCol = 5;
+    // maximum column numbe we need to consider
+    private int maxCol = 4;
 
     private List<Production<AbstractType>> initProductions = new ArrayList<>();
 

@@ -33,9 +33,9 @@ public class Spread implements Unop {
         String keyCol = df.getNames().get(key);
         String valCol = df.getNames().get(value);
         DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, true);
-        System.out.println("----------------SPREAD------------------");
-        Extensions.print(df);
-        Extensions.print(res);
+//        System.out.println("----------------SPREAD------------------");
+//        Extensions.print(df);
+//        Extensions.print(res);
         return res;
     }
 

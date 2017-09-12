@@ -2,6 +2,10 @@ package org.genesys.synthesis;
 
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
+import krangl.DataFrame;
+import krangl.ReshapeKt;
+import krangl.SimpleDataFrame;
+import krangl.SimpleDataFrameKt;
 import org.genesys.decide.Decider;
 import org.genesys.decide.AbstractSolver;
 import org.genesys.decide.NeoSolver;
@@ -65,7 +69,7 @@ public class NeoSynthesizer implements Synthesizer {
         }
     }
 
-    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider){
+    public NeoSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider) {
         learning_ = learning;
         solver_ = new NeoSolver(grammar, depth, decider);
         checker_ = checker;
@@ -127,7 +131,7 @@ public class NeoSynthesizer implements Synthesizer {
             }
 
 
-            if (solver_.isPartial()){
+            if (solver_.isPartial()) {
                 //System.out.println("Partial Program: " + ast);
                 ast = solver_.getModel(null, false);
                 continue;
@@ -149,8 +153,8 @@ public class NeoSynthesizer implements Synthesizer {
         System.out.println("Decide time=:" + (totalDecide));
         System.out.println("Test time=:" + (totalTest));
         System.out.println("Total=:" + total);
-        System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial*100.0/partial);
-        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete*100.0/partial);
+        System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
+        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / partial);
 
         return ast;
     }
@@ -159,7 +163,7 @@ public class NeoSynthesizer implements Synthesizer {
     private boolean verify(Node program) {
         long start = LibUtils.tick();
         boolean passed = true;
-        if (!silent_)  System.out.println("Program: " + program);
+        if (!silent_) System.out.println("Program: " + program);
         for (Example example : problem_.getExamples()) {
             //FIXME:lets assume we only have at most two input tables for now.
             Object input = LibUtils.fixGsonBug(example.getInput());
@@ -168,10 +172,20 @@ public class NeoSynthesizer implements Synthesizer {
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
 //                System.out.println("result target:\n" + tgt.get());
+//                System.out.println("expect target:\n" + output);
+//                System.out.println("expect equal:\n" + ReshapeKt.hasSameContents((DataFrame) tgt.get(), (SimpleDataFrame) output));
 
-                if (!tgt.get().equals(output)) {
-                    passed = false;
-                    break;
+                if (output instanceof DataFrame) {
+                    boolean flag = ReshapeKt.hasSameContents((DataFrame) tgt.get(), (SimpleDataFrame) output);
+                    if (!flag) {
+                        passed = false;
+                        break;
+                    }
+                } else {
+                    if (!tgt.get().equals(output)) {
+                        passed = false;
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 if (!silent_) System.out.println("Exception= " + e);
