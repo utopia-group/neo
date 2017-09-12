@@ -58,7 +58,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             String workerVar2 = "V_MAX" + worker.id;
             //Get component spec.
             Component comp = components_.get(func);
-//            System.out.println("working on : " + func + " id:" + workerVar);
             if ("root".equals(func)) {
                 //attach output
                 int outSize = 1;
@@ -141,9 +140,9 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
                             Node fstChild = worker.children.get(0);
                             Component fstComp = components_.get(fstChild.function);
-                            if(fstComp!= null && comp.isHigh()) {
+                            if (fstComp != null && comp.isHigh()) {
                                 List<String> childSpecs = fstComp.getConstraint();
-                                for(String childCst : childSpecs) {
+                                for (String childCst : childSpecs) {
                                     String fstChildVar = "V_MAX" + fstChild.id;
                                     childCst = childCst.replace("OUT_MAX_SPEC", fstChildVar);
                                     String postfix = "_" + worker.id;
@@ -154,7 +153,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                                 }
                             }
 
-                            if(targetCst.contains("IN0_ARG")) {
+                            if (targetCst.contains("IN0_ARG")) {
                                 targetCst = targetCst.replace("0_ARG", "");
                                 targetCst = targetCst.replace("CHILD", String.valueOf(worker.id));
                             }
@@ -167,14 +166,16 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                 }
             }
 
-            for (int i = 0 ; i < worker.children.size(); i++) {
+            for (int i = 0; i < worker.children.size(); i++) {
                 Node child = worker.children.get(i);
-                if((comp != null) && comp.isHigh() && (i == 0)) continue;
+                //FIXME: this code is ugly!!!
+                if ((comp != null) && comp.isHigh() && (i == 0) && !child.toString().contains("input")) continue;
                 queue.add(child);
             }
         }
         boolean sat = z3.isSat(cstList, clauseToNodeMap_, components_.values());
-        if(!sat) System.out.println("Prune program:" + node);
+        if (!sat) System.out.println("Prune program:" + node);
+
         return sat;
     }
 
