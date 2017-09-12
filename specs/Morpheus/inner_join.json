@@ -1,6 +1,7 @@
 {
   "id":12,
   "name":"inner_join",
+  "high":true,
   "arguments":
   [
     "Table", 

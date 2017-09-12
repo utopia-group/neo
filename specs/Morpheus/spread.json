@@ -1,6 +1,7 @@
 {
   "id":1,
   "name":"spread",
+  "high":true,
   "arguments":
   [
     "Table", 

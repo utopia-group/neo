@@ -1,6 +1,7 @@
 {
   "id":2,
   "name":"gather",
+  "high":true,
   "arguments":
   [
     "Table", 

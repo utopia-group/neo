@@ -426,20 +426,19 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
             domainProductions_.add(prod);
 
-            if (prod.higher){
+            if (prod.higher) {
                 domainHigher_.add(prod);
 
                 if (grammar_.getOutputType().toString().compareTo(prod.source.toString()) == 0)
                     domainOutput_.add(prod);
 
-                for (Production<T> p : (List<Production<T>>) grammar_.getInputProductions()){
-                    if (prod.source.toString().compareTo(p.source.toString())==0) {
+                for (Production<T> p : (List<Production<T>>) grammar_.getInputProductions()) {
+                    if (prod.source.toString().compareTo(p.source.toString()) == 0) {
                         domainInput_.add(prod);
                         break;
                     }
                 }
-            }
-            else {
+            } else {
                 domainFirst_.add(prod);
             }
 

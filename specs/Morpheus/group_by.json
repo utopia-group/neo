@@ -1,6 +1,7 @@
 {
   "id":7,
   "name":"group_by",
+  "high":true,
   "arguments":
   [
     "Table", 
