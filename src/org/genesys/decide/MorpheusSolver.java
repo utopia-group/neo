@@ -203,7 +203,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private void buildSATFormula() {
 
-
         // If a production is used in a parent node then this implies restrictions on the children
         for (Node node : nodes_) {
             for (Production p : node.domain) {
@@ -356,7 +355,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             for (Production l : lineProductions_.get(i)) {
                                 assert (varNodes_.containsKey(new Pair<Integer, Production>(n.id, l)));
                                 int lineVar = varNodes_.get(new Pair<Integer, Production>(n.id, l));
-                                if (!p.source.equals(l.source)) {
+                                if (!p.source.toString().equals(l.source.toString())) {
                                     VecInt clause = new VecInt(new int[]{-productionVar, -lineVar});
                                     satUtils_.addClause(clause);
                                 }
@@ -374,7 +373,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             for (Production l : lineProductions_.get(i)) {
                                 assert (varNodes_.containsKey(new Pair<Integer, Production>(n.id, l)));
                                 int lineVar = varNodes_.get(new Pair<Integer, Production>(n.id, l));
-                                if (!p.source.equals(l.source)) {
+                                if (!p.source.toString().equals(l.source.toString())) {
                                     VecInt clause = new VecInt(new int[]{-productionVar, -lineVar});
                                     satUtils_.addClause(clause);
                                 }
