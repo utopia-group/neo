@@ -2,6 +2,8 @@ package org.genesys.interpreter.morpheus;
 
 import krangl.DataFrame;
 import org.genesys.interpreter.Unop;
+import org.genesys.models.Pair;
+import org.genesys.type.Maybe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,31 @@ public class GroupBy implements Unop {
         assert colArgs.length > 0;
         DataFrame res = df.groupBy(colArgs);
         return res;
+    }
+
+    public Pair<Boolean, Maybe<Object>> verify(Object obj) {
+        List<Pair<Boolean, Maybe<Object>>> args = (List<Pair<Boolean, Maybe<Object>>>) obj;
+        Pair<Boolean, Maybe<Object>> arg0 = args.get(0);
+        Pair<Boolean, Maybe<Object>> arg1 = args.get(1);
+        if (!arg0.t1.has()) return new Pair<>(true, new Maybe<>());
+        DataFrame df = (DataFrame) arg0.t1.get();
+        List cols = (List) arg1.t1.get();
+
+        int nCol = df.getNcol();
+        if (nCol <= cols.size()) {
+            return new Pair<>(false, new Maybe<>());
+        } else {
+            String[] colArgs = new String[cols.size()];
+            for (int i = 0; i < cols.size(); i++) {
+                Integer index = (Integer) cols.get(i);
+                if (nCol <= index) return new Pair<>(false, new Maybe<>());
+                String arg = df.getNames().get(index);
+                colArgs[i] = arg;
+            }
+            assert colArgs.length > 0;
+            DataFrame res = df.groupBy(colArgs);
+            return new Pair<>(true, new Maybe<>(res));
+        }
     }
 
     public String toString() {
