@@ -56,8 +56,10 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
         validator_.cleanPEMap();
 //        System.out.println("Verifying.... " + node);
         Pair<Boolean, Maybe<Object>> validRes = validator_.validate(node, example.getInput());
-        if(!validRes.t0) {
+        if (!validRes.t0) {
             return false;
+        } else {
+            //System.out.println("Verifying.... " + node);
         }
 
         /* Generate SMT formula for current AST node. */
@@ -65,6 +67,23 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
         Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
         Map<String, Integer> clauseToNodeMap_ = new HashMap<>();
+
+        // Generate constraints from PE.
+        for (int i : validator_.getPeMap().keySet()) {
+            Object o = validator_.getPE(i);
+            if( o instanceof DataFrame) {
+                DataFrame peDf = (DataFrame) o;
+                int peRow = peDf.getNrow();
+                int peCol = peDf.getNcol();
+                String peRowVar = "V_ROW" + i;
+                String peColVar = "V_COL" + i;
+                BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
+                BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
+
+                cstList.add(peRowCst);
+                cstList.add(peColCst);
+            }
+        }
 
         queue.add(node);
         while (!queue.isEmpty()) {
@@ -147,7 +166,6 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
             for (int i = 0; i < worker.children.size(); i++) {
                 Node child = worker.children.get(i);
-                if ((comp != null) && comp.isHigh() && (i == 0)) continue;
                 queue.add(child);
             }
         }
