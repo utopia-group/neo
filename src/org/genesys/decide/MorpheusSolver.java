@@ -56,6 +56,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private int programs_ = 0;
     private int step_ = 1;
+    private int step2lvl_ = 1;
 
     //private int line_ = 0;
     private int currentLine_ = 0;
@@ -78,7 +79,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     private int level_ = 0;
     private int currentChild_ = 0;
 
-    private boolean partial_ = false;
+    private boolean partial_ = true;
 
     public MorpheusSolver(Grammar g, Decider decider) {
         satUtils_ = SATUtils.getInstance();
@@ -108,14 +109,19 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             loadGrammar();
             initDataStructures();
         } else {
-            if (block) {
+            System.out.println("step = " + step_ + " partial_ = " + partial_);
+            if (step_ == 4 && partial_){
+                // continue the search
+                step_ = 3;
+            } else if (block || !partial_) {
                 boolean conflict = blockModel();
                 if (conflict) {
                     System.out.println("programs=" + programs_);
                     return null;
                 }
             }
-            partial_ = false;
+            System.out.println("current step = " + step_);
+            partial_ = true;
         }
 
         Node node = search();
@@ -140,7 +146,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 //                    return null;
 //                }
             }
-            partial_ = false;
+            partial_ = true;
         }
 
         Node node = search();
@@ -149,7 +155,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     @Override
     public boolean isPartial(){
-        return true;
+        return partial_;
     }
 
     private Node createNode(List<Production> root, List<Production> children) {
@@ -548,6 +554,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         if (!decideDomain.isEmpty()) {
+            System.out.println("domain = " + decideDomain);
             String decision = nextDecision(decideDomain);
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
@@ -642,6 +649,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
     }
 
+
     private boolean blockModel() {
 
         //System.out.println("trail_.size = " + trailNeo_.size());
@@ -671,6 +679,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
 
         unsat = backtrackStep2(0, true);
+        step_ = 1;
         if (unsat)
             System.out.println("s UNSATISFIABLE : backtracking block model");
 
@@ -859,7 +868,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         Node result = null;
 
         boolean unsat = false;
-        step_ = 1;
+        //step_ = 1;
+        System.out.println("step = " + step_);
 
         while (!unsat) {
 
@@ -868,7 +878,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 // STEP 1. Decide all higher-order components
                 while (level_ < highTrail_.size()) {
                     //System.out.println("level_ " + level_);
-                    if (partial_) break;
+                    //if (partial_) break;
 
                     if (unsat) break;
 
@@ -916,6 +926,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                 while (currentLine_ < trail_.size()) {
                     boolean children_assigned = false;
+                    System.out.println("trail_.get(currentLine_).size() = " + trail_.get(currentLine_).size());
                     while (currentChild_ < trail_.get(currentLine_).size()) {
 
                         Constr conflict = satUtils_.getSolver().propagate();
@@ -985,7 +996,82 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                     assert (conflict == null);
                     step_ = 3;
+
+                    currentChild_ = 0;
+                    currentLine_ = 0;
+                    step2lvl_ = level_;
+
+                    System.out.println("trail size = " + trail_.size());
+                    for (int i = 0 ; i < trail_.size(); i++)
+                        System.out.println("child = " + trail_.get(i).size());
+
+//                    if (unsat) {
+//                        System.out.println("programs=" + programs_);
+//                        break;
+//                    }
+
+                    programs_++;
+                    Node ast = translate();
+                    return ast;
                 }
+            }
+
+
+            if (step_ == 3) {
+
+                System.out.println("currentLine_ = " + currentLine_);
+                System.out.println("currentChild_ = " + currentChild_);
+
+                // Fill line-by-line and only ask the deduction system after we have a full line
+//                while (currentLine_ < trail_.size()) {
+//                    System.out.println("currentLine_ = " + currentLine_);
+                    while (currentChild_ < trail_.get(currentLine_).size()) {
+                        System.out.println("currentChild_ = " + currentChild_);
+                        Constr conflict = satUtils_.getSolver().propagate();
+                        if (conflict != null) {
+                            assert (false);
+
+                        } else {
+                            if (highTrail_.get(currentLine_).t0.children.get(currentChild_).function.equals("")) {
+                                Node decision = decideFirst();
+                                System.out.println("decision = " + decision.function);
+                                currentChild_++;
+
+                                if (decision == null) {
+                                    assert (false);
+                                }
+                            } else
+                                currentChild_++;
+
+                        }
+                    }
+//                    currentLine_++;
+//
+//                }
+
+                // Check that we are in a consistent state
+                Constr conflict = satUtils_.getSolver().propagate();
+                if (conflict != null) {
+                    int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                    assert(false);
+                }
+
+                // Go to the next line of code
+                currentLine_++;
+                currentChild_ = 0;
+
+                programs_++;
+                Node ast = translate();
+                step_ = 4; // Line is complete
+
+
+                if (currentLine_ == highTrail_.size()) {
+                    System.out.println("Program is complete!");
+                    System.out.println("Complete program = " + ast);
+                    partial_ = false;
+                }
+
+                return ast;
             }
 //
 //            // Partial program that contains only the higher-order components
@@ -1087,17 +1173,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 //            }
 
 
-            if (step_ == 3){
+                if (step_ == 3){
 
-                if (unsat) {
-                    System.out.println("programs=" + programs_);
-                    break;
-                }
 
-                step_ = 1;
-                programs_++;
-                Node ast = translate();
-                return ast;
 //
 //
 //                if (blockModel()) {
@@ -1106,13 +1184,13 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 //                } else {
 //                    programs++;
 //                }
+                }
+
+
             }
 
-
+            return result;
         }
 
-        return result;
+
     }
-
-
-}

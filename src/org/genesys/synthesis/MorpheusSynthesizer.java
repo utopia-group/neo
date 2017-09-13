@@ -37,9 +37,11 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     private Problem problem_;
 
-    private double totalDecide = 0.0;
+    private double totalSearch = 0.0;
 
     private double totalTest = 0.0;
+
+    private double totalDeduction = 0.0;
 
     private HashMap<Integer, Component> components_ = new HashMap<>();
 
@@ -104,8 +106,12 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) partial++;
             else concrete++;
 
-            if (!checker_.check(problem_, ast)) {
-                long start = LibUtils.tick();
+            long start = LibUtils.tick();
+            boolean isSatisfiable = checker_.check(problem_, ast);
+            long end = LibUtils.tick();
+            totalDeduction += LibUtils.computeTime(start, end);
+
+            if (!isSatisfiable) {
                 if (learning_) {
                     Z3Utils z3 = Z3Utils.getInstance();
                     List<Pair<Integer, List<Integer>>> conflicts = z3.getConflicts();
@@ -118,37 +124,52 @@ public class MorpheusSynthesizer implements Synthesizer {
                         }
                         convert.add(new_p);
                     }
+                    long start2 = LibUtils.tick();
                     ast = solver_.getCoreModel(convert, true);
-                } else ast = solver_.getModel(null, true);
-                long end = LibUtils.tick();
+                    long end2 = LibUtils.tick();
+                    totalSearch += LibUtils.computeTime(start2, end2);
+                } else {
+                    long start2 = LibUtils.tick();
+                    ast = solver_.getModel(null, true);
+                    long end2 = LibUtils.tick();
+                    totalSearch += LibUtils.computeTime(start2, end2);
+                }
                 if (solver_.isPartial()) prune_partial++;
                 else prune_concrete++;
-                totalDecide += LibUtils.computeTime(start, end);
                 continue;
             }
 
 
             if (solver_.isPartial()){
                 System.out.println("Partial Program: " + ast);
-                // FIXME: in the final version we DO NOT want to block a partial program
-                ast = solver_.getModel(null, true);
+                long start2 = LibUtils.tick();
+                ast = solver_.getModel(null, false);
+                long end2 = LibUtils.tick();
+                totalSearch += LibUtils.computeTime(start2, end2);
                 continue;
             } else {
             /* check input-output using the interpreter */
-                if (verify(ast)) {
+
+                long start2 = LibUtils.tick();
+                boolean isCorrect = verify(ast);
+                long end2 = LibUtils.tick();
+                totalTest += LibUtils.computeTime(start2,end2);
+
+                if (isCorrect) {
                     System.out.println("Synthesized PROGRAM: " + ast);
                     break;
                 } else {
-                    long start = LibUtils.tick();
+                    long start3 = LibUtils.tick();
                     ast = solver_.getModel(null, true);
-                    long end = LibUtils.tick();
-                    totalDecide += LibUtils.computeTime(start, end);
+                    long end3 = LibUtils.tick();
+                    totalSearch += LibUtils.computeTime(start3, end3);
                 }
             }
         }
         System.out.println("Concrete programs=: " + concrete);
         System.out.println("Partial programs=: " + partial);
-        System.out.println("Decide time=:" + (totalDecide));
+        System.out.println("Search time=:" + (totalSearch));
+        System.out.println("Deduction time=:" + (totalDeduction));
         System.out.println("Test time=:" + (totalTest));
         System.out.println("Total=:" + total);
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial*100.0/partial);

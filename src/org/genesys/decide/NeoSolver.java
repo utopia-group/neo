@@ -46,6 +46,10 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     /* Stores parent information */
     private Map<Node, Node> parents_ = new HashMap<>();
 
+    /* Order of exploration */
+    private List<Integer> exploration_ids_ = new ArrayList<>();
+    private List<Node> exploration_nodes_ = new ArrayList<>();
+
     /* Domain of productions */
     private final List<Production> domainProductions_ = new ArrayList<>();
     private final List<Production> domainLeafProductions_ = new ArrayList<>();
@@ -67,7 +71,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     private final List<Production> inputProductions_ = new ArrayList<>();
 
     /* Trail */
-    private final Deque<Pair<Node, Integer>> trail_ = new LinkedList<>();
+    //private final Deque<Pair<Node, Integer>> trail_ = new LinkedList<>();
+    private final List<Pair<Node, Integer>> trail_ = new ArrayList<>();
     private final List<Node> trailNeo_ = new ArrayList<>();
     private final List<Integer> trailSAT_ = new ArrayList<>();
 
@@ -248,6 +253,8 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         // depth starts at 2 since root is at level 1
         createTree(root_, 2);
         computeAncestors();
+
+        //explorationStrategy(root_);
 
         // create Boolean variables
         createVariables(root_);
@@ -641,7 +648,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
 
-    private Node decide(Deque<Pair<Node, Integer>> trail) {
+    private Node decide(List<Pair<Node, Integer>> trail) {
 
         assert (!trail.isEmpty());
         Node node = decideNode(trail);
@@ -744,8 +751,24 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         }
     }
 
-    private Node decideNode(Deque<Pair<Node, Integer>> pending) {
-        return pending.pollFirst().t0;
+    private Node decideNode(List<Pair<Node, Integer>> pending) {
+
+        int id = pending.get(0).t0.id;
+        int min = id;
+        int pos = 0;
+        //System.out.println("head = " + id);
+        for (int i = 1; i < pending.size(); i++){
+            if (pending.get(i).t0.id < min) {
+                min = id;
+                pos = i;
+            }
+        }
+        //return pending.pollFirst().t0;
+
+        Node n  = pending.remove(pos).t0;
+        return n;
+
+
     }
 
 
@@ -856,6 +879,25 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
             if (grammar_.getOutputType().toString().compareTo(prod.source.toString()) == 0)
                 domainRootProductions_.add(prod);
         }
+    }
+
+    private void explorationStrategy(Node node){
+
+        Deque<Node> queue = new LinkedList<>();
+        queue.add(node);
+
+        while (!queue.isEmpty()){
+            Node n = queue.poll();
+            exploration_ids_.add(n.id);
+            System.out.println("id = " + n.id);
+
+            // DFS using the left node -- is the higher-order component always on the left?
+            for (int i = n.children.size()-1; i >= 0; i--) {
+                queue.addFirst(n.children.get(i));
+            }
+        }
+
+
 
     }
 
