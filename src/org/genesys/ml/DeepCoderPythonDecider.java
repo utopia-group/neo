@@ -58,10 +58,10 @@ public class DeepCoderPythonDecider implements Decider {
 	
 	public static DeepCoderInputSamplerParameters getDeepCoderParameters() {
 		// parameters
-		int minLength = 3;
-		int maxLength = 5;
-		int minValue = -10;
-		int maxValue = 10;
+		int minLength = 5;
+		int maxLength = 20;
+		int minValue = -256;
+		int maxValue = 255;
 		
 		return new DeepCoderInputSamplerParameters(minLength, maxLength, maxValue, minValue);
 	}
