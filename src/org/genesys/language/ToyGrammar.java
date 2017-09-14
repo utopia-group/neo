@@ -42,6 +42,9 @@ public class ToyGrammar implements Grammar<String> {
     public List<Production<String>> getInputProductions() { return null; }
 
     @Override
+    public List<Production<String>> getLineProductions(int size) { return null; }
+
+    @Override
     public AbstractType getOutputType() { return null; }
 
     @Override

@@ -10,7 +10,7 @@ import org.genesys.type.Maybe;
 public interface ValidatorDriver<T, I> {
     Pair<Boolean, Maybe<I>> validate(T node, I input);
 
-    Object getPE(String key);
+    Object getPE(int key);
 
     void cleanPEMap();
 }

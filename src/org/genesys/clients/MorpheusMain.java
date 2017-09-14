@@ -1,6 +1,7 @@
 package org.genesys.clients;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import krangl.DataFrame;
 import krangl.SimpleDataFrameKt;
@@ -17,6 +18,7 @@ import org.genesys.ml.MorpheusNGramDecider;
 import org.genesys.models.Example;
 import org.genesys.models.Problem;
 import org.genesys.synthesis.*;
+import org.genesys.utils.ProblemDeserializer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -33,6 +35,10 @@ public class MorpheusMain {
         String specLoc = "./specs/Morpheus";
         if (args.length != 0) json = args[0];
         Gson gson = new Gson();
+
+//        GsonBuilder gsonBuilder = new GsonBuilder();
+//        gsonBuilder.registerTypeAdapter(Problem.class, new ProblemDeserializer());
+//        Gson gson = gsonBuilder.create();
         Problem problem = gson.fromJson(new FileReader(json), Problem.class);
         System.out.println("Run Morpheus main..." + problem);
 
@@ -74,6 +80,7 @@ public class MorpheusMain {
 
         boolean useStat;
         NeoSynthesizer synth;
+//        MorpheusSynthesizer synth;
         if (args.length == 4) {
             useStat = Boolean.valueOf(args[3]);
             if(useStat)

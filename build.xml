@@ -56,7 +56,7 @@
       <arg value="${depth}"/>
 	</java>
   </target>
-  <target name="neodeep" depends="jar">
+  <target name="neoDeepOLD" depends="jar">
   <java classname="org.genesys.clients.DeepCoderMainNeo"
           maxmemory="4g"
           fork="true"
@@ -68,6 +68,35 @@
     <pathelement location="lib/com.microsoft.z3.jar"/>
     <pathelement location="lib/gson-2.3.1.jar"/>
     <pathelement location="lib/sat4j-genesys.jar"/>
+	<pathelement location="lib/krangl-0.5-SNAPSHOT.jar"/>
+	<pathelement location="lib/kotlin-reflect.jar"/>
+	<pathelement location="lib/kotlin-runtime.jar"/>
+	<pathelement location="lib/commons-csv-1.3.jar"/>
+      </classpath>
+      <arg value="${app}"/>
+      <arg value="${depth}"/>
+      <arg value="${learn}"/>
+      <arg value="${stat}"/>
+  </java>
+  </target>
+
+    <target name="neoDeep" depends="jar">
+  <java classname="org.genesys.clients.DeepCoderMainMorpheus"
+          maxmemory="4g"
+          fork="true"
+          failonerror="true">
+        <jvmarg value="-ea" />
+      <env key="DYLD_LIBRARY_PATH" value="lib"/>
+      <classpath>
+    <pathelement location="./genesys.jar"/>
+    <pathelement location="lib/com.microsoft.z3.jar"/>
+    <pathelement location="lib/gson-2.3.1.jar"/>
+    <pathelement location="lib/sat4j-genesys.jar"/>
+	<pathelement location="lib/krangl-0.5-SNAPSHOT.jar"/>
+	<pathelement location="lib/kotlin-reflect.jar"/>
+	<pathelement location="lib/kotlin-runtime.jar"/>
+	<pathelement location="lib/commons-csv-1.3.jar"/>
+
       </classpath>
       <arg value="${app}"/>
       <arg value="${depth}"/>

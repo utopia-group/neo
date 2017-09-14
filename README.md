@@ -7,10 +7,16 @@ ant deep -Dapp=./problem/DeepCoder/prog5.json -Ddepth=3
 Without learning and statistical model
 ant neodeep -Dapp=./problem/DeepCoder/prog7.json -Ddepth=4 -Dlearn=false -Dstat=false
 
+# Outdated
 With learning and statistical model
-ant neodeep -Dapp=./problem/DeepCoder/prog7.json -Ddepth=4 -Dlearn=true -Dstat=true
+ant neoDeepOLD -Dapp=./problem/DeepCoder/prog7.json -Ddepth=4 -Dlearn=true -Dstat=true
 
 Note: Neo depth is -1 than deep (e.g. if deep depth is 4, neo depth is 3)
+
+New version of Neo:
+ant neoDeep -Dapp=./problem/DeepCoder/prog2.json -Ddepth=2 -Dlearn=false -Dstat=false
+
+Note: Neo2 searches by number of lines. Still experimental version that only enumerates partial programs.
 
 # Set up neural net model
 #

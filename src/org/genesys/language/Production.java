@@ -6,6 +6,8 @@ package org.genesys.language;
  */
 public class Production<T> {
 
+    public boolean higher;
+
     public final String function;
 
     public final T[] inputs;
@@ -21,7 +23,16 @@ public class Production<T> {
         this.source = src;
         this.function = function;
         this.inputs = inputs;
+        this.higher = false;
     }
+
+    public Production(boolean higher, T src, String function, T... inputs) {
+        this.higher = higher;
+        this.source = src;
+        this.function = function;
+        this.inputs = inputs;
+    }
+
 
     @Override
     public boolean equals(Object o) {

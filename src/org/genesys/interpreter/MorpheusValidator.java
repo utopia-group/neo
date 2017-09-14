@@ -1,7 +1,6 @@
 package org.genesys.interpreter;
 
-import org.genesys.interpreter.morpheus.Select;
-import org.genesys.interpreter.morpheus.Spread;
+import org.genesys.interpreter.morpheus.*;
 import org.genesys.language.Production;
 import org.genesys.models.Pair;
 import org.genesys.type.AbstractType;
@@ -31,30 +30,39 @@ public class MorpheusValidator extends BaseValidatorDriver {
         validators.put("input0", (objects, input) -> new Pair<>(true, new Maybe<>(((List) input).get(0))));
         validators.put("input1", (objects, input) -> new Pair<>(true, new Maybe<>(((List) input).get(1))));
 
-        validators.put("spread", (objects, input) -> {
-            assert objects.size() == 3;
-            assert false: objects;
-            return null;
-//            int key = (int) objects.get(1);
-//            int value = (int) objects.get(2);
-//            return new Spread(key, value).verify(objects.get(0));
-        });
+        validators.put("spread", (objects, input) -> new Spread().verify(objects));
 
-        validators.put("spread", (objects, input) -> {
-            assert objects.size() == 3;
-            assert false: objects;
-            return null;
-//            int key = (int) objects.get(1);
-//            int value = (int) objects.get(2);
-//            return new Spread(key, value).verify(objects.get(0));
-        });
+        validators.put("select", (objects, input) -> new Select().verify(objects));
 
-        validators.put("select", (objects, input) -> {
-//            return new Maybe<>(new Select().apply(args));
-            return new Select().verify(objects);
-        });
+        validators.put("inner_join", (objects, input) -> new InnerJoin().verify(objects));
 
-        for(Production<AbstractType> prod : inits) {
+        validators.put("group_by", (objects, input) -> new GroupBy().verify(objects));
+
+        validators.put("filter", (objects, input) -> new org.genesys.interpreter.morpheus.Filter().verify(objects));
+
+        validators.put("mutate", (objects, input) -> new Mutate().verify(objects));
+
+        validators.put("summarise", (objects, input) -> new Summarise().verify(objects));
+
+        validators.put("separate", (objects, input) -> new Separate().verify(objects));
+
+        validators.put("unite", (objects, input) -> new Unite().verify(objects));
+
+        validators.put("gather", (objects, input) -> new Gather().verify(objects));
+
+        validators.put("l(a,b).(/ a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop("/"))));
+        validators.put("l(a,b).(> a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop(">"))));
+        validators.put("l(a,b).(< a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop("<"))));
+        validators.put("l(a,b).(== a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop("=="))));
+        validators.put("l(a).(> a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveUnop(">", objects.get(0)))));
+        validators.put("l(a).(< a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveUnop("<", objects.get(0)))));
+        validators.put("l(a).(== a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveUnop("==", objects.get(0)))));
+
+        validators.put("sum", (objects, input) -> new Pair<>(true, new Maybe<>("sum")));
+        validators.put("mean", (objects, input) -> new Pair<>(true, new Maybe<>("mean")));
+        validators.put("min", (objects, input) -> new Pair<>(true, new Maybe<>("min")));
+
+        for (Production<AbstractType> prod : inits) {
             validators.put(prod.function, (objects, input) -> new Pair<>(true, new Maybe<>(prod.getValue())));
         }
     }

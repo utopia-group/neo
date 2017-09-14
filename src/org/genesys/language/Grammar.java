@@ -22,4 +22,6 @@ public interface Grammar<T> {
 
     List<Production<T>> getInputProductions();
 
+    List<Production<T>> getLineProductions(int size);
+
 }

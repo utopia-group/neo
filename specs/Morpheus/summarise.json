@@ -1,6 +1,7 @@
 {
   "id":6,
   "name":"summarise",
+  "high":true,
   "arguments":
   [
     "Table", 

@@ -12,10 +12,7 @@ public class TableType implements AbstractType {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableType)) {
-            return false;
-        }
-        return this.equals(obj);
+        return (obj instanceof TableType);
     }
 
     @Override

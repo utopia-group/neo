@@ -17,7 +17,7 @@ public class BaseValidatorDriver implements ValidatorDriver<Node, Object> {
     public final Map<String, Validator> validators = new HashMap<>();
 
     // nodeId -> result of partial evaluation
-    public final Map<String, Object> peMap = new HashMap<>();
+    public final Map<Integer, Object> peMap = new HashMap<>();
 
     @Override
     public Pair<Boolean, Maybe<Object>> validate(Node node, Object input) {
@@ -37,11 +37,12 @@ public class BaseValidatorDriver implements ValidatorDriver<Node, Object> {
         assert arglist.size() == node.children.size();
 
         Pair<Boolean, Maybe<Object>> ret = validators.get(node.function).validate(arglist, input);
+        if (ret.t1.has()) peMap.put(node.id, ret.t1.get());
         return ret;
     }
 
     @Override
-    public Object getPE(String key) {
+    public Object getPE(int key) {
         assert peMap.containsKey(key) : key;
         return peMap.get(key);
     }
@@ -49,5 +50,9 @@ public class BaseValidatorDriver implements ValidatorDriver<Node, Object> {
     @Override
     public void cleanPEMap() {
         peMap.clear();
+    }
+
+    public Map<Integer, Object> getPeMap() {
+        return this.peMap;
     }
 }

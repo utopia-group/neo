@@ -3,6 +3,8 @@ package org.genesys.interpreter.morpheus;
 import krangl.DataFrame;
 import krangl.ReshapeKt;
 import org.genesys.interpreter.Unop;
+import org.genesys.models.Pair;
+import org.genesys.type.Maybe;
 import org.genesys.utils.MorpheusUtil;
 
 import java.util.ArrayList;
@@ -21,9 +23,11 @@ public class Separate implements Unop {
 
     private int colVal;
 
-    public  Separate(int v) {
+    public Separate(int v) {
         colVal = v;
     }
+
+    public Separate() {}
 
     public Object apply(Object obj) {
         assert obj instanceof DataFrame;
@@ -37,6 +41,26 @@ public class Separate implements Unop {
 
         DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
         return res;
+    }
+
+    public Pair<Boolean, Maybe<Object>> verify(Object obj) {
+        List<Pair<Boolean, Maybe<Object>>> args = (List<Pair<Boolean, Maybe<Object>>>) obj;
+        Pair<Boolean, Maybe<Object>> arg0 = args.get(0);
+        Pair<Boolean, Maybe<Object>> arg1 = args.get(1);
+
+        if (!arg0.t1.has()) return new Pair<>(true, new Maybe<>());
+
+        DataFrame df = (DataFrame) arg0.t1.get();
+        int colIdx = (int) arg1.t1.get();
+        if (df.getNcol() <= colIdx) return new Pair<>(false, new Maybe<>());
+        List<String> colArgs = new ArrayList<>();
+        String col1 = MorpheusUtil.getInstance().getMorpheusString();
+        String col2 = MorpheusUtil.getInstance().getMorpheusString();
+        String orgCol = df.getNames().get(colIdx);
+        colArgs.add(col1);
+        colArgs.add(col2);
+        DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+        return new Pair<>(true, new Maybe<>(res));
     }
 
     public String toString() {

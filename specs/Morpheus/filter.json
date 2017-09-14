@@ -1,6 +1,7 @@
 {
   "id":10,
   "name":"filter",
+  "high":true,
   "arguments":
   [
     "Table", 
