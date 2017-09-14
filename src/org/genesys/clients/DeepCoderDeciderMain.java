@@ -1,6 +1,5 @@
 package org.genesys.clients;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -59,14 +58,9 @@ public class DeepCoderDeciderMain {
         DeepCoderPythonDecider decider = new DeepCoderPythonDecider(xFeaturizer, yFeaturizer, input, output);
         
         // test decider
-        List<String> ancestors = new ArrayList<>();
-        ancestors.add("HEAD");
-        ancestors.add("LAST");
-        List<String> functionChoices = new ArrayList<>();
-        functionChoices.add("LAST");
-        functionChoices.add("ACCESS");
-        functionChoices.add("SUM");
-        String nextChoice = decider.decide(ancestors, functionChoices);
-        System.out.println("Previous: " + ancestors + " Next decision: " + nextChoice);
+        for(String function : functions) {
+        	double probability = decider.getProbability(function);
+        	System.out.println(function + ": " + probability);
+        }
 	}
 }

@@ -95,6 +95,10 @@ public class DeepCoderPythonDecider implements Decider {
 		this.probabilities = this.build();
 	}
 	
+	public double getProbability(String function) {
+		return this.probabilities[this.yFeaturizer.functionIndices.get(function)];
+	}
+	
 	@Override
 	public String decide(List<String> ancestors, List<String> functionChoices) {
 		// get the most likely function
