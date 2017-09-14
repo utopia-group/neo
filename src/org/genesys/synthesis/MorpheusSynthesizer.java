@@ -177,7 +177,7 @@ public class MorpheusSynthesizer implements Synthesizer {
         System.out.println("Test time=:" + (totalTest));
         System.out.println("Total=:" + total);
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial*100.0/partial);
-        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete*100.0/partial);
+        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete*100.0/concrete);
 
         return ast;
     }

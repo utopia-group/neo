@@ -781,6 +781,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             if (prodName_.get(node.function).inputs.length != children)
                 partial_ = true;
 
+            if (prodName_.get(node.function).inputs.length == children) {
+                ast_node.setConcrete(true);
+            }
 
             children = 0;
             for (Node c: node.children){
@@ -795,6 +798,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         ch.function = c.function;
                         ch.id = c.id;
                         ch.setSymbol(prodSymbols_.get(ch.function));
+                        assert (prodName_.containsKey(ch.function));
+                        if (prodName_.get(ch.function).inputs.length == c.children.size()){
+                            ch.setConcrete(true);
+                        }
                         ast_node.addChild(ch);
                     }
                     children++;
@@ -807,7 +814,24 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         assert(!ast.isEmpty());
         root.addChild(ast.get(ast.size()-1));
 
+        //printTree(root);
+
         return root;
+    }
+
+    private void printTree(Node root) {
+        List<Node> bfs = new ArrayList<>();
+        bfs.add(root);
+        while (!bfs.isEmpty()) {
+            Node node = bfs.remove(bfs.size() - 1);
+            //assert (!node.domain.isEmpty());
+            System.out.println("Node " + node.id + " function= " + node.function + " concrete= " + node.isConcrete());
+            for (Production p : node.domain) {
+                System.out.println("Node " + node.id + " | Production= " + p.function);
+            }
+            for (int i = 0; i < node.children.size(); i++)
+                bfs.add(node.children.get(i));
+        }
     }
 
 
@@ -1070,7 +1094,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 currentChild_++;
 
                                 if (decision == null) {
-                                    assert (false);
+                                    assert(false);
                                 }
                             } else
                                 currentChild_++;
@@ -1099,9 +1123,18 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                         if (step_ == 3){
                             // go back one line
-                            assert(currentLine_ > 0);
-                            currentLine_--;
-                            currentChild_ = 0;
+                            //assert(currentLine_ > 0);
+                            if (currentLine_ == 0){
+                                // go back to step 2
+                                step_ = 2;
+                                currentLine_ = 0;
+                                currentChild_ = 0;
+                                backtrackStep2(highTrail_.size(), false, false);
+                                //assert(false);
+                            } else {
+                                currentLine_--;
+                                currentChild_ = 0;
+                            }
                         }
                     } else {
 
