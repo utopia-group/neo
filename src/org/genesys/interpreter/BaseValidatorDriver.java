@@ -37,7 +37,7 @@ public class BaseValidatorDriver implements ValidatorDriver<Node, Object> {
         assert arglist.size() == node.children.size();
 
         Pair<Boolean, Maybe<Object>> ret = validators.get(node.function).validate(arglist, input);
-        if (ret.t1.has()) peMap.put(node.id, ret.t1.get());
+        if (ret.t1.has() && (node.id != 0)) peMap.put(node.id, ret.t1.get());
         return ret;
     }
 

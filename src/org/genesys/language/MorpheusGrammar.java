@@ -86,45 +86,34 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         List<Production<AbstractType>> productions = new ArrayList<>();
         productions.addAll(initProductions);
 
-//        productions.add(new Production<>(new TableType(), "select", new TableType(), new ListType(new IntType())));
-//        productions.add(new Production<>(new TableType(), "group_by", new TableType(), new ListType(new IntType())));
-//        productions.add(new Production<>(new TableType(), "inner_join", new TableType(), new TableType()));
+        productions.add(new Production<>(new TableType(), "select", new TableType(), new ListType(new IntType())));
+        productions.add(new Production<>(new TableType(), "group_by", new TableType(), new ListType(new IntType())));
+        productions.add(new Production<>(new TableType(), "inner_join", new TableType(), new TableType()));
         productions.add(new Production<>(true, new TableType(), "gather", new TableType(), new ListType(new IntType())));
         productions.add(new Production<>(true, new TableType(), "spread", new TableType(), new ColIndexType(), new ColIndexType()));
         productions.add(new Production<>(true, new TableType(), "unite", new TableType(), new ColIndexType(), new ColIndexType()));
-//        productions.add(new Production<>(new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
-//        productions.add(new Production<>(new TableType(), "separate", new TableType(), new ColIndexType()));
-//        productions.add(new Production<>(new TableType(), "filter", new TableType(),
-//                new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), new ColIndexType(), new IntType()));
-//        productions.add(new Production<>(new TableType(), "mutate", new TableType(), new ColIndexType(),
-//                new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "separate", new TableType(), new ColIndexType()));
+        productions.add(new Production<>(new TableType(), "filter", new TableType(),
+                new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), new ColIndexType(), new IntType()));
+        productions.add(new Production<>(new TableType(), "mutate", new TableType(), new ColIndexType(),
+                new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), new ColIndexType()));
 
         //FunctionType
-//        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(/ a b)"));
-//
-//        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(> a b)"));
-//        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(< a b)"));
-//        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(== a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "l(a,b).(/ a b)"));
 
-//        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(> a b)", new IntType()));
-//        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(< a b)", new IntType()));
-//        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(== a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(> a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(< a b)"));
+        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new BoolType()), "l(a,b).(== a b)"));
+
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(> a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(< a b)", new IntType()));
+        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "l(a).(== a b)", new IntType()));
 
         // Aggregator Type
-//        productions.add(new Production<>(new AggrType(), "mean"));
-//        productions.add(new Production<>(new AggrType(), "min"));
-//        productions.add(new Production<>(new AggrType(), "sum"));
-
-//        // FIXME: IntType
-//        productions.add(new Production<>(new IntType(), "0"));
-//        productions.add(new Production<>(new IntType(), "1"));
-//
-//        // FIXME: ColIndexType
-//        productions.add(new Production<>(new ColIndexType(), "0"));
-//        productions.add(new Production<>(new ColIndexType(), "1"));
-//
-//        // FIXME: ListType
-//        productions.add(new Production<>(new ListType(new IntType()), getNeoList()));
+        productions.add(new Production<>(new AggrType(), "mean"));
+        productions.add(new Production<>(new AggrType(), "min"));
+        productions.add(new Production<>(new AggrType(), "sum"));
 
         return productions;
     }

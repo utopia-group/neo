@@ -53,6 +53,8 @@ public class GroupBy implements Unop {
             }
             assert colArgs.length > 0;
             DataFrame res = df.groupBy(colArgs);
+            //strange bug in the interpreter
+            if(!res.getRows().iterator().hasNext()) return new Pair<>(false, new Maybe<>());
             return new Pair<>(true, new Maybe<>(res));
         }
     }
