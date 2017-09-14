@@ -2,6 +2,9 @@ package org.genesys.synthesis;
 
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
+import krangl.DataFrame;
+import krangl.ReshapeKt;
+import krangl.SimpleDataFrame;
 import org.genesys.decide.AbstractSolver;
 import org.genesys.decide.Decider;
 import org.genesys.decide.MorpheusSolver;
@@ -196,9 +199,17 @@ public class MorpheusSynthesizer implements Synthesizer {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
                 //System.out.println("result target:\n" + tgt.get());
 
-                if (!tgt.get().equals(output)) {
-                    passed = false;
-                    break;
+                if (output instanceof DataFrame) {
+                    boolean flag = ReshapeKt.hasSameContents((DataFrame) tgt.get(), (SimpleDataFrame) output);
+                    if (!flag) {
+                        passed = false;
+                        break;
+                    }
+                } else {
+                    if (!tgt.get().equals(output)) {
+                        passed = false;
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 if (!silent_) System.out.println("Exception= " + e);
