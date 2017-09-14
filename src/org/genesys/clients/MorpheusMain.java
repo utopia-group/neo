@@ -79,8 +79,8 @@ public class MorpheusMain {
         Decider decider = new FirstDecider();
 
         boolean useStat;
-        NeoSynthesizer synth;
-//        MorpheusSynthesizer synth;
+//        NeoSynthesizer synth;
+        MorpheusSynthesizer synth;
         if (args.length == 4) {
             useStat = Boolean.valueOf(args[3]);
             if(useStat)
@@ -89,9 +89,9 @@ public class MorpheusMain {
             int depth = Integer.valueOf(args[1]);
             boolean learning = Boolean.valueOf(args[2]);
 
-            synth = new NeoSynthesizer(grammar, tableProblem, checker, interpreter, depth, specLoc, learning, decider);
+            synth = new MorpheusSynthesizer(grammar, tableProblem, checker, interpreter, depth, specLoc, learning, decider);
         } else {
-            synth = new NeoSynthesizer(grammar, tableProblem, checker, interpreter, specLoc, decider);
+            synth = new MorpheusSynthesizer(grammar, tableProblem, checker, interpreter, specLoc, decider);
         }
         synth.synthesize();
     }

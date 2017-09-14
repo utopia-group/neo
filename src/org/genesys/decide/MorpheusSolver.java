@@ -1090,47 +1090,58 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     Constr conflict = satUtils_.getSolver().propagate();
                     if (conflict != null) {
                         int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
-                        assert (false);
-                    }
+                        int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
+                        if (backjumpLevel == -1) {
+                            unsat = true;
+                            break;
+                        } else backtrackStep2(neoLevel, false, false);
+                        step_ = backtrackStep(neoLevel);
 
-                    // Go to the next line of code
-                    currentLine_++;
-                    currentChild_ = 0;
+                        if (step_ == 3){
+                            // go back one line
+                            assert(currentLine_ > 0);
+                            currentLine_--;
+                            currentChild_ = 0;
+                        }
+                    } else {
 
-                    programs_++;
-                    Node ast = translate();
-                    step_ = 4; // Line is complete
+                        // Go to the next line of code
+                        currentLine_++;
+                        currentChild_ = 0;
+
+                        programs_++;
+                        Node ast = translate();
+                        step_ = 4; // Line is complete
 
 
-                    if (currentLine_ == highTrail_.size()) {
-//                        System.out.println("Program is complete!");
-//                        System.out.println("Complete program = " + ast);
-                        partial_ = false;
-                    }
+                        // Checking if a program is complete in the translate method
+//                    if (currentLine_ == highTrail_.size()) {
+//                        partial_ = false;
+//                    }
 
-                    if (cacheAST_.containsKey(ast.toString())){
+                        if (cacheAST_.containsKey(ast.toString())) {
 
-                        if (step_ == 4 && partial_){
-                            // continue the search
-                            step_ = 3;
-                        } else if (!partial_) {
-                            boolean block = cacheAST_.get(ast.toString());
-                            if (block || !partial_) {
-                                boolean confl = blockModel();
-                                if (confl) {
-                                    System.out.println("programs=" + programs_);
-                                    return null;
+                            if (step_ == 4 && partial_) {
+                                // continue the search
+                                step_ = 3;
+                            } else if (!partial_) {
+                                boolean block = cacheAST_.get(ast.toString());
+                                if (block || !partial_) {
+                                    boolean confl = blockModel();
+                                    if (confl) {
+                                        System.out.println("programs=" + programs_);
+                                        return null;
+                                    }
                                 }
                             }
+                            partial_ = true;
+                            //System.out.println("CACHED-STEP3 = " + ast);
+                        } else {
+                            //cacheAST_.put(ast.toString(), true);
+
+                            return ast;
                         }
-                        partial_ = true;
-                        //System.out.println("CACHED-STEP3 = " + ast);
-                    } else {
-                        //cacheAST_.put(ast.toString(), true);
-
-                        return ast;
                     }
-
                 }
             }
 
