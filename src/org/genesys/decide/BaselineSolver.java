@@ -70,6 +70,9 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     @Override
+    public void cacheAST(String program, boolean block) {};
+
+    @Override
     public boolean isPartial() { return false; }
 
     @Override

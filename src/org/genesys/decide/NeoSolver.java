@@ -105,6 +105,9 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         Object start = grammar_.start();
     }
 
+    @Override
+    public void cacheAST(String program, boolean block) {};
+
     public boolean learnCore(List<Pair<Integer, List<String>>> core) {
         boolean conflict = false;
 

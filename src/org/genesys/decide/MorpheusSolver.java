@@ -50,6 +50,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private List<Node> loc_ = new ArrayList<Node>();
 
+    private HashMap<String, Boolean> cacheAST_ = new HashMap<>();
+
     private boolean init_ = false;
 
     private int nodeId_ = 1;
@@ -75,6 +77,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     private List<Integer> currentSATLevel_ = new ArrayList<>();
 
     private final List<List<Integer>> backtrack_ = new ArrayList<>();
+
+    /* String to production */
+    private Map<String, Production> prodName_ = new HashMap<>();
 
     private int level_ = 0;
     private int currentChild_ = 0;
@@ -109,7 +114,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             loadGrammar();
             initDataStructures();
         } else {
-            System.out.println("step = " + step_ + " partial_ = " + partial_);
             if (step_ == 4 && partial_){
                 // continue the search
                 step_ = 3;
@@ -120,7 +124,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     return null;
                 }
             }
-            System.out.println("current step = " + step_);
             partial_ = true;
         }
 
@@ -421,7 +424,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
             prodSymbols_.put(prod.function, prod.source);
 
-            //prodName_.put(prod.function, prod);
+            prodName_.put(prod.function, prod);
 
             if (prod.inputs.length > maxChildren_)
                 maxChildren_ = prod.inputs.length;
@@ -554,7 +557,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         if (!decideDomain.isEmpty()) {
-            System.out.println("domain = " + decideDomain);
             String decision = nextDecision(decideDomain);
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
@@ -652,33 +654,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private boolean blockModel() {
 
-        //System.out.println("trail_.size = " + trailNeo_.size());
         boolean unsat = false;
-//        while (backtrack(currentLevel_ - 1)) {
-//            if (currentLevel_ == 0) {
-//                System.out.println("s UNSATISFIABLE : backtracking block model");
-//                unsat = true;
-//                break;
-//            }
-//        }
-        //unsat = backtrack(0, true);
 
-//        currentLine_ = 0;
-//        currentChild_ = 0;
-//        level_ = 0;
-//        currentSATLevel_.clear();
-//        currentSATLevel_.add(0);
-//        trailNeo_.clear();
-//        for (int i = 0; i < trail_.size(); i++){
-//            trail_.get(i).clear();
-//        }
-//        satUtils_.getSolver().cancelUntil(currentSATLevel_.get(0));
-//        unsat = satUtils_.blockTrail(trailSAT_);
-//        System.out.println("trailSAT= " + trailSAT_);
-//        trailSAT_.clear();
-
-
-        unsat = backtrackStep2(0, true);
+        unsat = backtrackStep2(0, true, true);
         step_ = 1;
         if (unsat)
             System.out.println("s UNSATISFIABLE : backtracking block model");
@@ -725,14 +703,18 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return conflict;
     }
 
-    private boolean backtrackStep2(int lvl, boolean block) {
+    private boolean backtrackStep2(int lvl, boolean block, boolean sat) {
 
         // There is a disparity between the level in Neo and the level in the SAT solvers
         // Several decisions in Neo may be in the same internal level in the SAT solver
         // When backtracking, we need to take into consideration the internals of the SAT solver
+
+
         int backtrack_lvl = lvl;
-        while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
-            backtrack_lvl--;
+        if (sat) {
+            while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
+                backtrack_lvl--;
+            }
         }
 
         assert (trailNeo_.size() > 0 && trailSAT_.size() > 0);
@@ -776,6 +758,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         root.id=0;
         root.setConcrete(true);
 
+        partial_ = false;
 
         List<Node> ast = new ArrayList<>();
         for (int i = 0; i < highTrail_.size(); i++){
@@ -787,6 +770,19 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             ast_node.id = node.id;
             ast_node.function = node.function;
             ast_node.setSymbol(prodSymbols_.get(ast_node.function));
+
+            int children = 0;
+            for (Node c : node.children) {
+                if (!c.function.equals("")) {
+                    children++;
+                }
+            }
+
+            if (prodName_.get(node.function).inputs.length != children)
+                partial_ = true;
+
+
+            children = 0;
             for (Node c: node.children){
                 if (!c.function.equals("")) {
                     if (c.function.startsWith("line")){
@@ -801,8 +797,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         ch.setSymbol(prodSymbols_.get(ch.function));
                         ast_node.addChild(ch);
                     }
+                    children++;
                 }
             }
+
             ast.add(ast_node);
         }
 
@@ -864,31 +862,53 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         System.out.println("Line= " + program);
     }
 
+    public int convertLevelFromSATtoNeo(int lvl){
+        int neo_lvl = lvl;
+        for (int i = 0; i < currentSATLevel_.size(); i++){
+            if (currentSATLevel_.get(i) == lvl){
+                neo_lvl = i;
+                break;
+            }
+        }
+        return neo_lvl;
+    }
+
+
+    public int backtrackStep(int lvl){
+        if (lvl < highTrail_.size())
+            return 1;
+        else if (lvl < step2lvl_)
+            return 2;
+        else
+            return 3;
+    }
+
+    public void cacheAST(String program, boolean block){
+        assert (!cacheAST_.containsKey(program));
+        cacheAST_.put(program, block);
+    }
+
     public Node search() {
+
         Node result = null;
-
         boolean unsat = false;
-        //step_ = 1;
-        System.out.println("step = " + step_);
-
         while (!unsat) {
 
             if (step_ == 1) {
 
                 // STEP 1. Decide all higher-order components
                 while (level_ < highTrail_.size()) {
-                    //System.out.println("level_ " + level_);
-                    //if (partial_) break;
 
                     if (unsat) break;
 
                     Constr conflict = satUtils_.getSolver().propagate();
                     if (conflict != null) {
                         int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                        int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
                         if (backjumpLevel == -1) {
                             unsat = true;
                             break;
-                        } else backtrackStep1(backjumpLevel, false);
+                        } else backtrackStep1(neoLevel, false);
                     } else {
                         // No conflict
                         Node decision = decideHigh();
@@ -915,6 +935,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 }
 
                 step_ = 2;
+
             }
 
             if (step_ == 2) {
@@ -926,24 +947,27 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                 while (currentLine_ < trail_.size()) {
                     boolean children_assigned = false;
-                    System.out.println("trail_.get(currentLine_).size() = " + trail_.get(currentLine_).size());
                     while (currentChild_ < trail_.get(currentLine_).size()) {
 
                         Constr conflict = satUtils_.getSolver().propagate();
                         if (conflict != null) {
                             int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                            int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
+                            if (backjumpLevel == -1) {
+                                unsat = true;
+                                break;
+                            }
 
                             if (backjumpLevel < highTrail_.size()) {
-                                backtrackStep2(backjumpLevel, false);
+                                backtrackStep2(neoLevel, false, false);
                                 step_ = 1;
                                 break;
                             } else {
-                                backtrackStep2(backjumpLevel, false);
+                                backtrackStep2(neoLevel, false, false);
                                 if (level_ < highTrail_.size()){
                                     step_ = 1;
                                     break;
                                 } else {
-                                    System.out.println("level_ = " + level_);
                                     repeat_step2 = true;
                                     break;
                                 }
@@ -957,22 +981,26 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         }
                     }
 
+                    if (unsat) {
+                        System.out.println("s NO SOLUTION");
+                        System.out.println("programs=" + programs_);
+                        break;
+                    }
+
                     if (!children_assigned && step_ == 2 && !repeat_step2){
                         // conflict -- backtrack needed
-                        assert(false);
-
-                        System.out.println("level_ = " + level_);
-
-                        while (backtrackStep2(level_ - 1, true)) {
-                            System.out.println("level_ = " + level_);
-                            if (level_ == 0) {
-                                unsat = true;
-                                break;
-                            }
-                        }
-                        System.out.println("level = " + level_);
-
-                        System.out.println("children not assigned!");
+//                        System.out.println("old level_ = " + level_);
+//
+//                        while (backtrackStep2(level_ - 1, true, true)) {
+//                            System.out.println("level_ = " + level_);
+//                            if (level_ == 0) {
+//                                unsat = true;
+//                                break;
+//                            }
+//                        }
+//                        System.out.println("new level = " + level_);
+//
+//                        System.out.println("children not assigned!");
                         assert(false);
                     }
 
@@ -990,7 +1018,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     // Check that we are in a consistent state
                     Constr conflict = satUtils_.getSolver().propagate();
                     if (conflict != null) {
-                        int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                        //int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                         assert(false);
                     }
 
@@ -1001,40 +1029,44 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     currentLine_ = 0;
                     step2lvl_ = level_;
 
-                    System.out.println("trail size = " + trail_.size());
-                    for (int i = 0 ; i < trail_.size(); i++)
-                        System.out.println("child = " + trail_.get(i).size());
-
-//                    if (unsat) {
-//                        System.out.println("programs=" + programs_);
-//                        break;
-//                    }
-
                     programs_++;
                     Node ast = translate();
-                    return ast;
+                    if (cacheAST_.containsKey(ast.toString())){
+                        boolean block = cacheAST_.get(ast.toString());
+                        if (block || !partial_) {
+                            boolean confl = blockModel();
+                            if (confl) {
+                                System.out.println("programs=" + programs_);
+                                return null;
+                            }
+                        }
+                        partial_ = true;
+                        //System.out.println("CACHED-STEP2=" + ast);
+                    } else {
+                        //cacheAST_.put(ast.toString(),true);
+                        return ast;
+                    }
+
                 }
             }
 
 
             if (step_ == 3) {
 
-                System.out.println("currentLine_ = " + currentLine_);
-                System.out.println("currentChild_ = " + currentChild_);
-
                 // Fill line-by-line and only ask the deduction system after we have a full line
-//                while (currentLine_ < trail_.size()) {
-//                    System.out.println("currentLine_ = " + currentLine_);
                     while (currentChild_ < trail_.get(currentLine_).size()) {
-                        System.out.println("currentChild_ = " + currentChild_);
                         Constr conflict = satUtils_.getSolver().propagate();
                         if (conflict != null) {
-                            assert (false);
-
+                            int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                            int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
+                            if (backjumpLevel == -1) {
+                                unsat = true;
+                                break;
+                            } else backtrackStep2(neoLevel, false, false);
+                            step_ = backtrackStep(neoLevel);
                         } else {
                             if (highTrail_.get(currentLine_).t0.children.get(currentChild_).function.equals("")) {
                                 Node decision = decideFirst();
-                                System.out.println("decision = " + decision.function);
                                 currentChild_++;
 
                                 if (decision == null) {
@@ -1045,147 +1077,62 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                         }
                     }
-//                    currentLine_++;
-//
-//                }
 
-                // Check that we are in a consistent state
-                Constr conflict = satUtils_.getSolver().propagate();
-                if (conflict != null) {
-                    int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
-                    assert(false);
+                if (step_ == 3) {
+
+                    if (unsat) {
+                        System.out.println("s NO SOLUTION");
+                        System.out.println("programs=" + programs_);
+                        break;
+                    }
+
+                    // Check that we are in a consistent state
+                    Constr conflict = satUtils_.getSolver().propagate();
+                    if (conflict != null) {
+                        int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                        assert (false);
+                    }
+
+                    // Go to the next line of code
+                    currentLine_++;
+                    currentChild_ = 0;
+
+                    programs_++;
+                    Node ast = translate();
+                    step_ = 4; // Line is complete
+
+
+                    if (currentLine_ == highTrail_.size()) {
+//                        System.out.println("Program is complete!");
+//                        System.out.println("Complete program = " + ast);
+                        partial_ = false;
+                    }
+
+                    if (cacheAST_.containsKey(ast.toString())){
+
+                        if (step_ == 4 && partial_){
+                            // continue the search
+                            step_ = 3;
+                        } else if (!partial_) {
+                            boolean block = cacheAST_.get(ast.toString());
+                            if (block || !partial_) {
+                                boolean confl = blockModel();
+                                if (confl) {
+                                    System.out.println("programs=" + programs_);
+                                    return null;
+                                }
+                            }
+                        }
+                        partial_ = true;
+                        //System.out.println("CACHED-STEP3 = " + ast);
+                    } else {
+                        //cacheAST_.put(ast.toString(), true);
+
+                        return ast;
+                    }
+
                 }
-
-                // Go to the next line of code
-                currentLine_++;
-                currentChild_ = 0;
-
-                programs_++;
-                Node ast = translate();
-                step_ = 4; // Line is complete
-
-
-                if (currentLine_ == highTrail_.size()) {
-                    System.out.println("Program is complete!");
-                    System.out.println("Complete program = " + ast);
-                    partial_ = false;
-                }
-
-                return ast;
             }
-//
-//            // Partial program that contains only the higher-order components
-//            // Decide first-order bottom-up
-//            System.out.println("currentLine = " + currentLine_);
-//            while (currentLine_ < trail_.size()) {
-//                while (currentChild_ < trail_.get(currentLine_).size()) {
-//
-//                    Constr conflict = satUtils_.getSolver().propagate();
-//                    if (conflict != null) {
-//                        System.out.println("currentChild = " + currentChild_ + " trail_ " + trail_.get(currentLine_).size());
-//
-//                        System.out.println("****Conflict in the SAT");
-//                        System.out.println("Current level = " + level_);
-//                        int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
-//                        System.out.println("backjumplevel= " + backjumpLevel);
-//
-//                        if (backjumpLevel == -1) {
-//                            System.out.println("s UNSATISFIABLE : SAT Conflict");
-//                            unsat = true;
-//                            break;
-//                        }
-//
-//                        backtrackFirst(0, false);
-//                        backtracking = true;
-//                        break;
-////
-////                        else backtrack(backjumpLevel, false);
-////
-////
-////                        System.out.println("currentChild = " + currentChild_ + " trail_ " + trail_.get(currentLine_).size());
-////
-////                        assert (backjumpLevel >= highTrail_.size());
-////                        System.out.println("currentLine = " + currentLine_ + " currentChild = " + currentChild_);
-////
-////                        // we need to figure out where to backtrack...
-////                        // each line has a currentChild which corresponds to a decision level
-////                        // we also need to figure out which line to backtrack...
-////                        // everytime we backtrack we need to put back in the trail
-////
-////                        System.out.println("currentLine = " + currentLine_ + " currentChild = " + currentChild_);
-////
-////
-////                        //if (backjumpLevel < highTrail_.size()) {
-//////                            backtrack(0, false);
-//////                            backtracking = true;
-//////                            break;
-//                        //}
-//
-//                    } else {
-//                        System.out.println("no conflict");
-//                        // No conflict
-//                        Node decision = decideFirst();
-//                        currentChild_++;
-//                        if (decision == null) {
-//                            System.out.println("decision is null!");
-//                            if (level_ == 0) {
-//                                System.out.println("s UNSATISFIABLE : lvl = 0");
-//                                unsat = true;
-//                                break;
-//                            }
-//
-//                            while (backtrackFirst(level_ - 1, true)) {
-//                                if (level_ == 0) {
-//                                    System.out.println("s UNSATISFIABLE : backtracking");
-//                                    unsat = true;
-//                                    break;
-//                                }
-//                            }
-//
-//                            assert (level_ < highTrail_.size());
-//                            backtracking = true;
-//                            break;
-//
-//
-////                            backtrack(0, false);
-////                            backtracking = true;
-////                            break;
-//
-//                        }
-//                    }
-//                    System.out.println("currentChild = " + currentChild_ + " trail_ " + trail_.get(currentLine_).size());
-//                }
-//
-//                if (backtracking){
-//                    currentLine_ = 0;
-//                    currentChild_ = 0;
-//                    break;
-//                } else {
-//
-//                    System.out.println("printing programs");
-//                    for (Pair<Node, Integer> n : highTrail_) {
-//                        printProgram(n.t0);
-//                    }
-//
-//                    currentLine_++;
-//                    currentChild_ = 0;
-//                }
-//            }
-
-
-                if (step_ == 3){
-
-
-//
-//
-//                if (blockModel()) {
-//                    System.out.println("programs=" + programs);
-//                    break;
-//                } else {
-//                    programs++;
-//                }
-                }
-
 
             }
 

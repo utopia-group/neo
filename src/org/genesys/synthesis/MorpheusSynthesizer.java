@@ -125,11 +125,13 @@ public class MorpheusSynthesizer implements Synthesizer {
                         convert.add(new_p);
                     }
                     long start2 = LibUtils.tick();
+                    solver_.cacheAST(ast.toString(),true);
                     ast = solver_.getCoreModel(convert, true);
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 } else {
                     long start2 = LibUtils.tick();
+                    solver_.cacheAST(ast.toString(),true);
                     ast = solver_.getModel(null, true);
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
@@ -143,13 +145,14 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()){
                 System.out.println("Partial Program: " + ast);
                 long start2 = LibUtils.tick();
+                solver_.cacheAST(ast.toString(),false);
                 ast = solver_.getModel(null, false);
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
                 continue;
             } else {
-            /* check input-output using the interpreter */
 
+                /* check input-output using the interpreter */
                 long start2 = LibUtils.tick();
                 boolean isCorrect = verify(ast);
                 long end2 = LibUtils.tick();
@@ -160,6 +163,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                     break;
                 } else {
                     long start3 = LibUtils.tick();
+                    solver_.cacheAST(ast.toString(),true);
                     ast = solver_.getModel(null, true);
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
@@ -190,7 +194,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
-//                System.out.println("result target:\n" + tgt.get());
+                //System.out.println("result target:\n" + tgt.get());
 
                 if (!tgt.get().equals(output)) {
                     passed = false;

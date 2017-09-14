@@ -48,6 +48,9 @@ public class SATSolver<C, T> implements AbstractSolver<C, T> {
     public boolean isPartial() { return false; }
 
     @Override
+    public void cacheAST(String program, boolean block) {};
+
+    @Override
     public T getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
         return null;
     }

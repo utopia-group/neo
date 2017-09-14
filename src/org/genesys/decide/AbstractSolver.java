@@ -14,4 +14,6 @@ public interface AbstractSolver<C, T> {
 
     boolean isPartial();
 
+    void cacheAST(String program, boolean block);
+
 }
