@@ -255,6 +255,31 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
 
+//        /* Domain specify constraints for R */
+//        // group_by can only be a child of summarise
+        if (prodName_.containsKey("summarise") && prodName_.containsKey("group_by")) {
+
+            for (int i = 0; i < maxLen_-1; i++) {
+                Node parent = highTrail_.get(i).t0;
+                Production g = prodName_.get("group_by");
+                Node child = highTrail_.get(i + 1).t0;
+                Production s = prodName_.get("summarise");
+                int v1 = varNodes_.get(new Pair<Integer, Production>(parent.id, g));
+                int v2 = varNodes_.get(new Pair<Integer, Production>(child.id, s));
+                System.out.println("g= " + g + " s= " + s);
+                VecInt lits = new VecInt(new int[]{-v1, v2});
+                satUtils_.addClause(lits);
+            }
+
+            // group_by cannot be at the root level
+            Node root = highTrail_.get(highTrail_.size()-1).t0;
+            Production gg = prodName_.get("group_by");
+            int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+            VecInt lits = new VecInt(new int[]{-var});
+            satUtils_.addClause(lits);
+        }
+
+
         // At most one variable is assigned at each node
         for (Node node : nodes_) {
             VecInt clause = new VecInt();
