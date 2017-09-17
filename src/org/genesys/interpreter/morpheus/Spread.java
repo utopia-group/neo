@@ -45,20 +45,23 @@ public class Spread implements Unop {
         Pair<Boolean, Maybe<Object>> arg1 = args.get(1);
         Pair<Boolean, Maybe<Object>> arg2 = args.get(2);
 
-        if(!arg0.t1.has()) return new Pair<>(true, new Maybe<>());
+        if (!arg0.t1.has()) return new Pair<>(true, new Maybe<>());
         DataFrame df = (DataFrame) arg0.t1.get();
         int k = (int) arg1.t1.get();
         int v = (int) arg2.t1.get();
-        if ((df.getNcol() <= k) || (df.getNcol() <= v) || (k >= v)) {
+        if ((df.getNcol() <= k) || (df.getNcol() <= v) || (k >= v) || (df.getNrow() == 0)) {
             return new Pair<>(false, new Maybe<>());
-        } else {
+        } else{
             String keyCol = df.getNames().get(k);
             String valCol = df.getNames().get(v);
-            if(!(df.get(keyCol) instanceof StringCol))  {
+            if (!(df.get(keyCol) instanceof StringCol)) {
                 return new Pair<>(false, new Maybe<>());
             }
+            Object fstElem = df.getCols().get(k).values$krangl_main()[0];
+            if (df.getNames().contains(fstElem)) return new Pair<>(false, new Maybe<>());
+            ;
             DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, true);
-            if(res.getNcol() == 0) {
+            if (res.getNcol() == 0) {
                 return new Pair<>(false, new Maybe<>());
             }
             return new Pair<>(true, new Maybe<>(res));
