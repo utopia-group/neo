@@ -507,7 +507,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             assert(!highTrail_.get(i).t0.function.equals(""));
             ancestors.add(highTrail_.get(i).t0.function);
         }
-        
+        Collections.reverse(ancestors);
+
         String decision = decider_.decide(ancestors, domain);
         assert (!decision.equals(""));
         return decision;
@@ -997,7 +998,11 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 step_ = 2;
 
                 String sketch =  "";
-                for (int i = highTrail_.size()-1; i >= 0; i--){
+//                for (int i = highTrail_.size()-1; i >= 0; i--){
+//                    assert (highTrail_.get(i).t0.function != "");
+//                    sketch += highTrail_.get(i).t0.function + " ";
+//                }
+                for (int i = 0; i < highTrail_.size(); i++){
                     assert (highTrail_.get(i).t0.function != "");
                     sketch += highTrail_.get(i).t0.function + " ";
                 }
