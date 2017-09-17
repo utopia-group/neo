@@ -2,6 +2,7 @@ package org.genesys.interpreter.morpheus;
 
 import krangl.ColumnsKt;
 import krangl.DataFrame;
+import krangl.StringCol;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
@@ -67,6 +68,7 @@ public class Filter implements Unop {
         //FIXME: the root cause is on json.
         int rhs = ((Double) arg3.t1.get()).intValue();
         if(df.getNcol() <= lhs) return new Pair<>(false, new Maybe<>());
+        if(df.getCols().get(lhs) instanceof StringCol) return new Pair<>(false, new Maybe<>());
         String colName = df.getNames().get(lhs);
         String opStr = op.toString();
 

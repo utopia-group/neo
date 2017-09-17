@@ -17,8 +17,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     public AbstractType outputType;
 
-    // maximum column numbe we need to consider
-    private int maxCol = 5;
+    // maximum column number we need to consider
+    private int maxCol = 4;
 
     private List<Production<AbstractType>> initProductions = new ArrayList<>();
 
@@ -92,8 +92,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(true, new TableType(), "gather", new TableType(), new ListType(new IntType())));
         productions.add(new Production<>(true, new TableType(), "spread", new TableType(), new ColIndexType(), new ColIndexType()));
         productions.add(new Production<>(true, new TableType(), "unite", new TableType(), new ColIndexType(), new ColIndexType()));
-//        productions.add(new Production<>(true,new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
-//        productions.add(new Production<>(true,new TableType(), "separate", new TableType(), new ColIndexType()));
+        productions.add(new Production<>(true,new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
+        productions.add(new Production<>(true,new TableType(), "separate", new TableType(), new ColIndexType()));
         productions.add(new Production<>(true, new TableType(), "filter", new TableType(),
                 new BinopBoolType(), new ColIndexType(), new IntType()));
         productions.add(new Production<>(true, new TableType(), "mutate", new TableType(), new ColIndexType(),

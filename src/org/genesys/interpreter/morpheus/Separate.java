@@ -2,6 +2,7 @@ package org.genesys.interpreter.morpheus;
 
 import krangl.DataFrame;
 import krangl.ReshapeKt;
+import krangl.StringCol;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
@@ -27,7 +28,8 @@ public class Separate implements Unop {
         colVal = v;
     }
 
-    public Separate() {}
+    public Separate() {
+    }
 
     public Object apply(Object obj) {
         assert obj instanceof DataFrame;
@@ -53,12 +55,16 @@ public class Separate implements Unop {
         DataFrame df = (DataFrame) arg0.t1.get();
         int colIdx = (int) arg1.t1.get();
         if (df.getNcol() <= colIdx) return new Pair<>(false, new Maybe<>());
+        if (!(df.getCols().get(colIdx) instanceof StringCol)) return new Pair<>(false, new Maybe<>());
         List<String> colArgs = new ArrayList<>();
         String col1 = MorpheusUtil.getInstance().getMorpheusString();
         String col2 = MorpheusUtil.getInstance().getMorpheusString();
         String orgCol = df.getNames().get(colIdx);
         colArgs.add(col1);
         colArgs.add(col2);
+        StringCol strCol = (StringCol) df.getCols().get(colIdx);
+        String testVal =  strCol.getValues()[0];
+        if(!testVal.contains("_")) return new Pair<>(false, new Maybe<>());
         DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
         return new Pair<>(true, new Maybe<>(res));
     }

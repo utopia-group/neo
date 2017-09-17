@@ -1,9 +1,6 @@
 package org.genesys.interpreter.morpheus;
 
-import krangl.ColumnsKt;
-import krangl.DataFrame;
-import krangl.ReshapeKt;
-import krangl.TableFormula;
+import krangl.*;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
@@ -30,7 +27,8 @@ public class Mutate implements Unop {
         rhs = r;
     }
 
-    public Mutate() {}
+    public Mutate() {
+    }
 
     public Object apply(Object obj) {
         assert obj instanceof DataFrame;
@@ -65,12 +63,18 @@ public class Mutate implements Unop {
         int lhs = (int) arg1.t1.get();
         Binop op = (Binop) arg2.t1.get();
         int rhs = (int) arg3.t1.get();
+        int nCol = df.getNcol();
+        if (nCol <= lhs || nCol <= rhs) return new Pair<>(false, new Maybe<>());
+
+        DataCol lhsCol = df.getCols().get(lhs);
+        DataCol rhsCol = df.getCols().get(rhs);
+
+        if ((lhsCol instanceof StringCol) || (rhsCol instanceof StringCol)) return new Pair<>(false, new Maybe<>());
+
         String lhsColName = df.getNames().get(lhs);
         String rhsColName = df.getNames().get(rhs);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
-        String opStr = binop.toString();
-        int nCol = df.getNcol();
-        if(nCol <= lhs || nCol <= rhs) return new Pair<>(false, new Maybe<>());
+        String opStr = op.toString();
 
         DataFrame res = df.mutate(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
             if (opStr.equals("l(a,b).(/ a b)")) {
