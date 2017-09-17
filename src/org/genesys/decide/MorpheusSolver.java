@@ -51,6 +51,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     private List<Node> loc_ = new ArrayList<Node>();
 
     private HashMap<String, Boolean> cacheAST_ = new HashMap<>();
+    private HashMap<String, Boolean> sketches_ = new HashMap<>();
 
     private boolean init_ = false;
 
@@ -498,8 +499,21 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             createVariables(node.children.get(i));
     }
 
-    public String nextDecision(List<String> domain) {
+    public String nextDecisionHigher(List<String> domain){
 
+        List ancestors = new ArrayList<>();
+        assert (level_ < highTrail_.size());
+        for (int i  = level_-1; i >= 0; i--){
+            assert(!highTrail_.get(i).t0.function.equals(""));
+            ancestors.add(highTrail_.get(i).t0.function);
+        }
+        
+        String decision = decider_.decide(ancestors, domain);
+        assert (!decision.equals(""));
+        return decision;
+    }
+
+    public String nextDecision(List<String> domain) {
 
         String decision = decider_.decide(new ArrayList<>(), domain);
         assert (!decision.equals(""));
@@ -638,7 +652,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         if (!decideDomain.isEmpty()) {
-            String decision = nextDecision(decideDomain);
+            String decision = nextDecisionHigher(decideDomain);
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
             decisionSAT = p.t1;
@@ -982,6 +996,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                 step_ = 2;
 
+                String sketch =  "";
+                for (int i = highTrail_.size()-1; i >= 0; i--){
+                    assert (highTrail_.get(i).t0.function != "");
+                    sketch += highTrail_.get(i).t0.function + " ";
+                }
+                if (!sketches_.containsKey(sketch)){
+                    sketches_.put(sketch, true);
+                    System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
+                }
             }
 
             if (step_ == 2) {
