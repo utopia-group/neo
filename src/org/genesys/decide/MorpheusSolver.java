@@ -87,6 +87,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private boolean partial_ = true;
 
+    private Node ast_ = null;
+
     public MorpheusSolver(Grammar g, Decider decider) {
         satUtils_ = SATUtils.getInstance();
         grammar_ = g;
@@ -132,6 +134,54 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
+    public boolean learnCore(List<Pair<Integer, List<String>>> core) {
+        boolean conflict = false;
+
+        HashMap<Integer,String> node2function = new HashMap<>();
+        List<Node> bfs = new ArrayList<>();
+        Node root = ast_;
+        bfs.add(root);
+        while (!bfs.isEmpty()) {
+            Node node = bfs.remove(bfs.size() - 1);
+            node2function.put(node.id,node.function);
+            for (int i = 0; i < node.children.size(); i++)
+                bfs.add(node.children.get(i));
+        }
+
+        List<List<Integer>> eqClauses = new ArrayList<>();
+        String learnt = "";
+        for (Pair<Integer,List<String>> p : core){
+            List<Integer> eq = new ArrayList<>();
+            learnt = learnt + "[(" + p.t0 + ") ";
+            //System.out.println("node= " + p.t0);
+            assert (node2function.containsKey(p.t0));
+            learnt = learnt + node2function.get(p.t0);
+            Pair<Integer, String> id = new Pair<>(p.t0,node2function.get(p.t0));
+            assert (nameNodes_.containsKey(id));
+            eq.add(nameNodes_.get(id));
+            //System.out.println("function= " + node2function.get(p.t0));
+            // FIXME : this should not hapen!
+            if (!node2function.get(p.t0).contains("input")) {
+                for (String l : p.t1) {
+                    Pair<Integer, String> id2 = new Pair<>(p.t0, l);
+                    if (!nameNodes_.containsKey(id2))
+                        continue;
+                    //assert (coreNodes_.containsKey(id2));
+                    eq.add(nameNodes_.get(id2));
+                    learnt = learnt + " , " + l;
+                }
+            }
+            eqClauses.add(eq);
+            learnt = learnt + "]";
+        }
+        if (!eqClauses.isEmpty()) {
+            System.out.println("Learning: " + learnt);
+            conflict = SATUtils.getInstance().learnCore(eqClauses);
+        }
+        return conflict;
+
+    }
+
     public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
         if (!init_) {
             init_ = true;
@@ -144,11 +194,11 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 return null;
             }
             else {
-//                boolean confl = learnCore(core);
-//                if (confl){
-//                    System.out.println("s UNSATISFIABLE - learning core");
-//                    return null;
-//                }
+                boolean confl = learnCore(core);
+                if (confl){
+                    System.out.println("s UNSATISFIABLE - learning core");
+                    return null;
+                }
             }
             partial_ = true;
         }
@@ -256,7 +306,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
 
-//        /* Domain specify constraints for R */
+//        /* Domain specific constraints for R */
 //        // group_by can only be a child of summarise
         if (prodName_.containsKey("summarise") && prodName_.containsKey("group_by")) {
 
@@ -277,6 +327,18 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
             VecInt lits = new VecInt(new int[]{-var});
             satUtils_.addClause(lits);
+        }
+
+        /* Domain specific constraints for DeepCoder */
+        if (prodName_.containsKey("ACCESS")){
+            // ACCESS cannot be at the root level
+            Node root = highTrail_.get(highTrail_.size()-1).t0;
+            Production gg = prodName_.get("ACCESS");
+            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
+                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+                VecInt lits = new VecInt(new int[]{-var});
+                satUtils_.addClause(lits);
+            }
         }
 
 
@@ -1119,6 +1181,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         //System.out.println("CACHED-STEP2=" + ast);
                     } else {
                         //cacheAST_.put(ast.toString(),true);
+                        ast_ = ast;
                         return ast;
                     }
 
@@ -1228,6 +1291,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         } else {
                             //cacheAST_.put(ast.toString(), true);
 
+                            ast_ = ast;
                             return ast;
                         }
                     }
@@ -1236,6 +1300,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
             }
 
+            ast_  = result;
             return result;
         }
 

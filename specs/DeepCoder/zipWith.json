@@ -6,7 +6,6 @@
   [
   "(declare-const IN1_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= IN1_LEN_SPEC OUT_LEN_SPEC))",
   "(declare-const IN2_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= IN2_LEN_SPEC OUT_LEN_SPEC))",
-    "(declare-const IN0_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert (= IN0_MAX_SPEC OUT_MAX_SPEC))",
     "(declare-const IN0_ARG0_MAX_SPEC_CHILD Int)(declare-const IN1_MAX_SPEC Int)(assert (= IN0_ARG0_MAX_SPEC_CHILD IN1_MAX_SPEC))",
     "(declare-const IN0_ARG1_MAX_SPEC_CHILD Int)(declare-const IN2_MAX_SPEC Int)(assert (= IN0_ARG1_MAX_SPEC_CHILD IN2_MAX_SPEC))"
   ]

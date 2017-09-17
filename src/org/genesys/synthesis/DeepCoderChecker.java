@@ -58,6 +58,13 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             String workerVar2 = "V_MAX" + worker.id;
             //Get component spec.
             Component comp = components_.get(func);
+
+            // only uses the max constraints if all children of zipwith and map are present
+            // FIXME: fix this hack in the future
+            boolean hackMax = ((!func.equals("ZIPWITH") && !func.equals("MAP")) ||
+                    (func.equals("ZIPWITH") && worker.children.size() == 3) ||
+                    (func.equals("MAP") && worker.children.size() == 2));
+
             if ("root".equals(func)) {
                 //attach output
                 int outSize = 1;
@@ -84,13 +91,16 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                 cstList.add(outCst);
                 cstList.add(eqCst);
 
-                BoolExpr outMaxCst = z3.genEqCst(workerVar2, outMax);
-                assert worker.children.size() == 1;
-                String childVar2 = "V_MAX" + lastChild.id;
-                BoolExpr eqCst2 = z3.genEqCst(workerVar2, childVar2);
 
-                cstList.add(outMaxCst);
-                cstList.add(eqCst2);
+                if (hackMax){
+                    BoolExpr outMaxCst = z3.genEqCst(workerVar2, outMax);
+                    assert worker.children.size() == 1;
+                    String childVar2 = "V_MAX" + lastChild.id;
+                    BoolExpr eqCst2 = z3.genEqCst(workerVar2, childVar2);
+
+                    cstList.add(outMaxCst);
+                    cstList.add(eqCst2);
+                }
 
             } else if (func.contains("input")) {
                 //attach inputs
@@ -124,7 +134,9 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                     if (comp != null) {
                         for (String cstStr : comp.getConstraint()) {
                             String targetCst = cstStr.replace("OUT_LEN_SPEC", workerVar);
-                            targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
+                            if (hackMax) {
+                                targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
+                            }
 
                             for (int i = 0; i < worker.children.size(); i++) {
                                 Node child = worker.children.get(i);
@@ -133,9 +145,11 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                                 String targetId = "IN" + i + "_LEN_SPEC";
                                 targetCst = targetCst.replace(targetId, childVar);
 
-                                String childVar2 = "V_MAX" + child.id;
-                                String targetId2 = "IN" + i + "_MAX_SPEC";
-                                targetCst = targetCst.replace(targetId2, childVar2);
+                                if (hackMax) {
+                                    String childVar2 = "V_MAX" + child.id;
+                                    String targetId2 = "IN" + i + "_MAX_SPEC";
+                                    targetCst = targetCst.replace(targetId2, childVar2);
+                                }
                             }
 
                             Node fstChild = worker.children.get(0);
@@ -143,24 +157,28 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                             if (fstComp != null && comp.isHigh()) {
                                 List<String> childSpecs = fstComp.getConstraint();
                                 for (String childCst : childSpecs) {
-                                    String fstChildVar = "V_MAX" + fstChild.id;
-                                    childCst = childCst.replace("OUT_MAX_SPEC", fstChildVar);
-                                    String postfix = "_" + worker.id;
-                                    childCst = childCst.replaceAll("IN[0-9]_MAX_SPEC", "$0" + postfix);
-                                    BoolExpr exprChild = z3.convertStrToExpr(childCst);
-                                    cstList.add(exprChild);
-                                    clauseToNodeMap_.put(exprChild.toString(), fstChild.id);
+                                    if (hackMax) {
+                                        String fstChildVar = "V_MAX" + fstChild.id;
+                                        childCst = childCst.replace("OUT_MAX_SPEC", fstChildVar);
+                                        String postfix = "_" + worker.id;
+                                        childCst = childCst.replaceAll("IN[0-9]_MAX_SPEC", "$0" + postfix);
+                                        BoolExpr exprChild = z3.convertStrToExpr(childCst);
+                                        cstList.add(exprChild);
+                                        clauseToNodeMap_.put(exprChild.toString(), fstChild.id);
+                                    }
                                 }
                             }
 
-                            if (targetCst.contains("IN0_ARG")) {
-                                targetCst = targetCst.replace("0_ARG", "");
-                                targetCst = targetCst.replace("CHILD", String.valueOf(worker.id));
+                            if (hackMax) {
+                                if (targetCst.contains("IN0_ARG")) {
+                                    targetCst = targetCst.replace("0_ARG", "");
+                                    targetCst = targetCst.replace("CHILD", String.valueOf(worker.id));
+                                }
                             }
 
-                            BoolExpr expr = z3.convertStrToExpr(targetCst);
-                            cstList.add(expr);
-                            clauseToNodeMap_.put(expr.toString(), worker.id);
+                                BoolExpr expr = z3.convertStrToExpr(targetCst);
+                                cstList.add(expr);
+                                clauseToNodeMap_.put(expr.toString(), worker.id);
                         }
                     }
                 }
@@ -173,6 +191,9 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                 queue.add(child);
             }
         }
+//        for (BoolExpr b : cstList){
+//            System.out.println(b);
+//        }
         boolean sat = z3.isSat(cstList, clauseToNodeMap_, components_.values());
         if (!sat) System.out.println("Prune program:" + node);
 
