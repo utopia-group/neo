@@ -37,7 +37,7 @@ public class InnerJoin implements Unop {
 
         DataFrame df = (DataFrame) arg0.t1.get();
         DataFrame df2 = (DataFrame) arg1.t1.get();
-        if ((df.getNcol() == 0) || (df2.getNcol() == 0) || (df2.getNrow() == 0))
+        if ((df.getNcol() == 0) || (df2.getNcol() == 0) || (df2.getNrow() == 0) || (df.getNrow() == 0))
             return new org.genesys.models.Pair<>(false, new Maybe<>());
 
         List<String> commons = new ArrayList<>(df.getNames());
