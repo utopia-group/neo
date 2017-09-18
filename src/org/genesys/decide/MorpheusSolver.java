@@ -57,7 +57,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private int nodeId_ = 1;
 
-    private int programs_ = 0;
     private int step_ = 1;
     private int step2lvl_ = 1;
 
@@ -123,7 +122,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             } else if (block || !partial_) {
                 boolean conflict = blockModel();
                 if (conflict) {
-                    System.out.println("programs=" + programs_);
                     return null;
                 }
             }
@@ -190,7 +188,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         } else {
             boolean conflict = blockModel();
             if (conflict) {
-                System.out.println("programs=" + programs_);
                 return null;
             }
             else {
@@ -760,6 +757,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         if (unsat)
             System.out.println("s UNSATISFIABLE : backtracking block model");
 
+        //System.out.println("#constraints = " + satUtils_.getSolver().nConstraints());
         return unsat;
     }
 
@@ -1053,7 +1051,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                 if (unsat) {
                     System.out.println("s NO SOLUTION");
-                    System.out.println("programs=" + programs_);
                     break;
                 }
 
@@ -1119,7 +1116,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                     if (unsat) {
                         System.out.println("s NO SOLUTION");
-                        System.out.println("programs=" + programs_);
                         break;
                     }
 
@@ -1136,7 +1132,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             currentLine_--;
                             currentChild_ = 0;
                             // can this can an infinite loop?
-                            assert (false);
                         }
                     } else {
 
@@ -1155,36 +1150,40 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     // Check that we are in a consistent state
                     Constr conflict = satUtils_.getSolver().propagate();
                     if (conflict != null) {
-                        //int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
-                        assert (false);
-                    }
-
-                    assert (conflict == null);
-                    step_ = 3;
-
-                    currentChild_ = 0;
-                    currentLine_ = 0;
-                    step2lvl_ = level_;
-
-                    programs_++;
-                    Node ast = translate();
-                    if (cacheAST_.containsKey(ast.toString())) {
-                        boolean block = cacheAST_.get(ast.toString());
-                        if (block || !partial_) {
-                            boolean confl = blockModel();
-                            if (confl) {
-                                System.out.println("programs=" + programs_);
-                                return null;
-                            }
-                        }
-                        partial_ = true;
-                        //System.out.println("CACHED-STEP2=" + ast);
+                        int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                        int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
+                        if (backjumpLevel == -1) {
+                            unsat = true;
+                            break;
+                        } else backtrackStep2(neoLevel, false, false);
+                        step_ = backtrackStep(neoLevel);
                     } else {
-                        //cacheAST_.put(ast.toString(),true);
-                        ast_ = ast;
-                        return ast;
-                    }
 
+                        assert (conflict == null);
+                        step_ = 3;
+
+                        currentChild_ = 0;
+                        currentLine_ = 0;
+                        step2lvl_ = level_;
+
+                        Node ast = translate();
+                        if (cacheAST_.containsKey(ast.toString())) {
+                            boolean block = cacheAST_.get(ast.toString());
+                            if (block || !partial_) {
+                                boolean confl = blockModel();
+                                if (confl) {
+                                    return null;
+                                }
+                            }
+                            partial_ = true;
+                            //System.out.println("CACHED-STEP2=" + ast);
+                        } else {
+                            //cacheAST_.put(ast.toString(),true);
+                            ast_ = ast;
+                            return ast;
+                        }
+
+                    }
                 }
             }
 
@@ -1225,7 +1224,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                     if (unsat) {
                         System.out.println("s NO SOLUTION");
-                        System.out.println("programs=" + programs_);
                         break;
                     }
 
@@ -1249,7 +1247,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 currentLine_ = 0;
                                 currentChild_ = 0;
                                 backtrackStep2(highTrail_.size(), false, false);
-                                //assert(false);
                             } else {
                                 currentLine_--;
                                 currentChild_ = 0;
@@ -1261,7 +1258,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         currentLine_++;
                         currentChild_ = 0;
 
-                        programs_++;
                         Node ast = translate();
                         step_ = 4; // Line is complete
 
@@ -1281,7 +1277,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 if (block || !partial_) {
                                     boolean confl = blockModel();
                                     if (confl) {
-                                        System.out.println("programs=" + programs_);
                                         return null;
                                     }
                                 }
