@@ -228,7 +228,7 @@ public class Z3Utils {
                     if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
                     continue;
                 }
-                String core_str = core.replace(items[1], inExpr);
+                String core_str = core.replaceFirst(items[1], inExpr);
                 core_str = core_str.replace(items[2], outExpr);
                 String core_cst_str = "(declare-const " + inExpr + " Int)" + "(declare-const "
                         + outExpr + " Int)" + "(assert " + core_str + ")";
