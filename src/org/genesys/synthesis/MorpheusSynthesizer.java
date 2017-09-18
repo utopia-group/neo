@@ -110,7 +110,8 @@ public class MorpheusSynthesizer implements Synthesizer {
             else concrete++;
 
             long start = LibUtils.tick();
-            boolean isSatisfiable = checker_.check(problem_, ast);
+            //boolean isSatisfiable = checker_.check(problem_, ast);
+            boolean isSatisfiable = true;
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
 
