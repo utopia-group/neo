@@ -30,7 +30,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     private AbstractSolver<BoolExpr, Node> solver_;
 
-    private boolean silent_ = false;
+    private boolean silent_ = true;
 
     private boolean learning_ = true;
 
@@ -147,7 +147,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
 
             if (solver_.isPartial()){
-                System.out.println("Partial Program: " + ast);
+                if(!silent_) System.out.println("Partial Program: " + ast);
                 long start2 = LibUtils.tick();
                 solver_.cacheAST(ast.toString(),false);
                 ast = solver_.getModel(null, false);
