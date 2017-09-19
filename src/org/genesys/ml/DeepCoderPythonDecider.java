@@ -96,7 +96,15 @@ public class DeepCoderPythonDecider implements Decider {
 	}
 	
 	public double getProbability(String function) {
-		return this.probabilities[this.yFeaturizer.functionIndices.get(function)];
+		if(!this.hasProbability(function)) {
+			return 0.0;
+		} else {
+			return this.probabilities[this.yFeaturizer.functionIndices.get(function)];
+		}
+	}
+	
+	public boolean hasProbability(String function) {
+		return this.yFeaturizer.functionIndices.containsKey(function);
 	}
 	
 	@Override
@@ -105,12 +113,9 @@ public class DeepCoderPythonDecider implements Decider {
 		String maxFunction = null;
 		double maxProbability = -1.0;
 		for(String function : functionChoices) {
-			if(!this.yFeaturizer.functionIndices.containsKey(function)) {
-				continue;
-			}
-			if(maxProbability <= this.probabilities[this.yFeaturizer.functionIndices.get(function)]) {
+			if(maxProbability <= this.getProbability(function)) {
 				maxFunction = function;
-				maxProbability = this.probabilities[this.yFeaturizer.functionIndices.get(function)];
+				maxProbability = this.getProbability(function);
 			}
 		}
 		
