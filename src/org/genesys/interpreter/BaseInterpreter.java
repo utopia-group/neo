@@ -1,6 +1,7 @@
 package org.genesys.interpreter;
 
 import org.genesys.models.Node;
+import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 
 import java.util.*;
@@ -11,6 +12,10 @@ import java.util.*;
 public class BaseInterpreter implements Interpreter<Node, Object> {
 
     public final Map<String, Executor> executors = new HashMap<>();
+
+    private final boolean cacheOn_ = true;
+
+    private final Map<Pair<Node, Object>, Maybe> cache_ = new HashMap<>();
 
     @Override
     public Maybe<Object> execute(Node node, Object input) {
@@ -29,7 +34,19 @@ public class BaseInterpreter implements Interpreter<Node, Object> {
         }
         assert arglist.size() == node.children.size();
 
-        return this.executors.get(node.function).execute(arglist, input);
+        if (cacheOn_) {
+            Pair<Node, Object> key = new Pair<>(node, input);
+            Maybe m;
+            if (cache_.containsKey(key)) {
+                m = cache_.get(key);
+            } else {
+                m = this.executors.get(node.function).execute(arglist, input);
+                cache_.put(key, m);
+            }
+            return m;
+        } else {
+            return this.executors.get(node.function).execute(arglist, input);
+        }
     }
 
     @Override

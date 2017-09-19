@@ -3,6 +3,7 @@ package org.genesys.models;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.genesys.language.Production;
 
 /**
@@ -40,26 +41,30 @@ public class Node {
         this.children = children;
     }
 
-    public Node(String function, List<Node> children, List<Production> productions){
+    public Node(String function, List<Node> children, List<Production> productions) {
         this.function = function;
         this.children = children;
 
-        for (Production p : productions){
+        for (Production p : productions) {
             activeDomain.put(p, true);
         }
         domain = productions;
     }
 
-    public void setDomain(List<Production> productions){
-        for (Production p : productions){
+    public void setDomain(List<Production> productions) {
+        for (Production p : productions) {
             activeDomain.put(p, true);
         }
         domain = productions;
     }
 
-    public boolean isConcrete() { return pe_; }
+    public boolean isConcrete() {
+        return pe_;
+    }
 
-    public void setConcrete(boolean value) { pe_ = value; }
+    public void setConcrete(boolean value) {
+        pe_ = value;
+    }
 
     public void addChild(Node node) {
         children.add(node);
@@ -75,6 +80,25 @@ public class Node {
 
     public void setSymbol(Object symbol) {
         this.symbol = symbol;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        assert o instanceof Node;
+        Node other = (Node) o;
+        if (!function.equals(other.function)) return false;
+        if (children.size() != other.children.size()) return false;
+        return children.equals(other.children);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + function.hashCode();
+        for (Node child : children) {
+            result = 31 * result + child.hashCode();
+        }
+        return result;
     }
 
     @Override
