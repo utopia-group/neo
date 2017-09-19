@@ -584,6 +584,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         Production decisionNeo = null;
         int decisionSAT = -1;
+        int decisionComponent = -1;
 
         Node node = trail_.get(currentLine_).get(currentChild_).t0;
         Map<String, Pair<Production, Integer>> decideMap = new HashMap<>();
@@ -605,6 +606,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
             decisionSAT = p.t1;
+            decisionComponent = p.t0.id;
         }
 
         if (decisionNeo == null) {
@@ -612,6 +614,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         } else {
             node.function = decisionNeo.function;
             node.decision = decisionNeo;
+            node.component = decisionComponent;
             node.level = level_;
 
 //            System.out.println("NEO decision Inputs = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
@@ -641,6 +644,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         Production decisionNeo = null;
         int decisionSAT = -1;
+        int decisionComponent = -1;
 
         Node node = trail_.get(currentLine_).get(currentChild_).t0;
         Map<String, Pair<Production, Integer>> decideMap = new HashMap<>();
@@ -660,6 +664,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
             decisionSAT = p.t1;
+            decisionComponent = p.t0.id;
         }
 
         if (decisionNeo == null){
@@ -668,6 +673,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         else {
             node.function = decisionNeo.function;
             node.decision = decisionNeo;
+            node.component = decisionComponent;
             node.level = level_;
 
 //            System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
@@ -697,6 +703,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         assert (level_ < highTrail_.size());
         Production decisionNeo = null;
         int decisionSAT = -1;
+        int decisionComponent = -1;
 
         Node node = highTrail_.get(level_).t0;
         Map<String, Pair<Production, Integer>> decideMap = new HashMap<>();
@@ -716,6 +723,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
             decisionSAT = p.t1;
+            decisionComponent = p.t0.id;
         }
 
         if (decisionNeo == null) {
@@ -723,6 +731,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         } else {
             node.function = decisionNeo.function;
             node.decision = decisionNeo;
+            node.component = decisionComponent;
             node.level = ++level_;
 
 //            System.out.println("NEO decision = " + decisionNeo.function + " @" +level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
@@ -853,6 +862,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         root.setSymbol(startNode);
         root.function = "root";
         root.id=0;
+        root.component=0;
         root.setConcrete(true);
 
         partial_ = false;
@@ -865,6 +875,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             assert(node.function.compareTo("")!=0);
 
             ast_node.id = node.id;
+            ast_node.component = node.component;
             ast_node.function = node.function;
             ast_node.setSymbol(prodSymbols_.get(ast_node.function));
 
@@ -893,6 +904,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     } else {
                         Node ch = new Node();
                         ch.function = c.function;
+                        ch.component = c.component;
                         ch.id = c.id;
                         ch.setSymbol(prodSymbols_.get(ch.function));
                         assert (prodName_.containsKey(ch.function));

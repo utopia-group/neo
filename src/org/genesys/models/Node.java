@@ -17,6 +17,8 @@ public class Node {
 
     public int id = -1;
 
+    public int component = -1;
+
     public int level = -1;
 
     public String function;
@@ -86,7 +88,8 @@ public class Node {
     public boolean equals(Object o) {
         assert o instanceof Node;
         Node other = (Node) o;
-        if (!function.equals(other.function)) return false;
+        //if (!function.equals(other.function)) return false;
+        if (component != other.component) return false;
         if (children.size() != other.children.size()) return false;
         return children.equals(other.children);
     }
@@ -94,7 +97,8 @@ public class Node {
     @Override
     public int hashCode() {
         int result = 17;
-        result = 31 * result + function.hashCode();
+        //result = 31 * result + function.hashCode();
+        result = 31 * result + component;
         for (Node child : children) {
             result = 31 * result + child.hashCode();
         }

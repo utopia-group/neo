@@ -10,6 +10,8 @@ public class Production<T> {
 
     public final String function;
 
+    public int id = -1;
+
     public final T[] inputs;
 
     public final T source;
@@ -27,6 +29,23 @@ public class Production<T> {
     }
 
     public Production(boolean higher, T src, String function, T... inputs) {
+        this.higher = higher;
+        this.source = src;
+        this.function = function;
+        this.inputs = inputs;
+    }
+
+    @SafeVarargs
+    public Production(int id, T src, String function, T... inputs) {
+        this.id = id;
+        this.source = src;
+        this.function = function;
+        this.inputs = inputs;
+        this.higher = false;
+    }
+
+    public Production(boolean higher, int id, T src, String function, T... inputs) {
+        this.id = id;
         this.higher = higher;
         this.source = src;
         this.function = function;

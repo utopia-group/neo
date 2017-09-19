@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class DeepCoderGrammar implements Grammar<AbstractType> {
 
+    private int id = 1;
+
     public AbstractType inputType;
 
     public AbstractType outputType;
@@ -105,60 +107,60 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
 //        productions.add(new Production<>(new IntType(), "0"));
 //        productions.add(new Production<>(new IntType(), "1"));
 
-        productions.add(new Production<>(true, new IntType(), "MAXIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(true, new IntType(), "MINIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(true, new IntType(), "SUM", new ListType(new IntType())));
-        productions.add(new Production<>(true,new IntType(), "HEAD", new ListType(new IntType())));
-        productions.add(new Production<>(true,new IntType(), "LAST", new ListType(new IntType())));
-            productions.add(new Production<>(true,new IntType(), "COUNT", new FunctionType(new IntType(), new BoolType()),
+        productions.add(new Production<>(true, id++, new IntType(), "MAXIMUM", new ListType(new IntType())));
+        productions.add(new Production<>(true, id++, new IntType(), "MINIMUM", new ListType(new IntType())));
+        productions.add(new Production<>(true, id++,new IntType(), "SUM", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new IntType(), "HEAD", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new IntType(), "LAST", new ListType(new IntType())));
+            productions.add(new Production<>(true,id++,new IntType(), "COUNT", new FunctionType(new IntType(), new BoolType()),
                 new ListType(new IntType())));
-        productions.add(new Production<>(true,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         // ListType -- only considering lists of IntType
-        productions.add(new Production<>(true,new ListType(new IntType()), "FILTER", new FunctionType(new IntType(), new BoolType()),
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new FunctionType(new IntType(), new BoolType()),
                 new ListType(new IntType())));
-        productions.add(new Production<>(true,new ListType(new IntType()), "MAP", new FunctionType(new IntType(), new IntType()),
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP", new FunctionType(new IntType(), new IntType()),
                 new ListType(new IntType())));
-        productions.add(new Production<>(true,new ListType(new IntType()), "ZIPWITH", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
                 new ListType(new IntType()), new ListType(new IntType())));
-        productions.add(new Production<>(true,new ListType(new IntType()), "SORT", new ListType(new IntType())));
-        productions.add(new Production<>(true,new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
-        productions.add(new Production<>(true,new ListType(new IntType()), "SCANL1", new FunctionType(new PairType(new IntType(),
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SORT", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1", new FunctionType(new PairType(new IntType(),
                 new IntType()), new IntType()), new ListType(new IntType())));
 
 
-        productions.add(new Production<>(true,new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,new ListType(new IntType()), "DROP", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "DROP", new ListType(new IntType()), new IntType()));
 
 
         //FunctionType
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "+"));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "-"));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "*"));
+        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "+"));
+        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "-"));
+        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "*"));
 
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "MIN"));
-        productions.add(new Production<>(new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "MAX"));
-
-
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "MUL3"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "MUL4"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "DIV3"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "DIV4"));
-
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "INC"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "DEC"));
-
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "SHL"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "SHR"));
-
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "SQR"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new IntType()), "doNEG"));
+        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "MIN"));
+        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "MAX"));
 
 
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isPOS"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isNEG"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isODD"));
-        productions.add(new Production<>(new FunctionType(new IntType(), new BoolType()), "isEVEN"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "MUL3"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "MUL4"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "DIV3"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "DIV4"));
+
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "INC"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "DEC"));
+
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "SHL"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "SHR"));
+
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "SQR"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "doNEG"));
+
+
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isPOS"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isNEG"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isODD"));
+        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isEVEN"));
 
         return productions;
     }
