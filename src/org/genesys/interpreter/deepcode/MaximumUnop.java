@@ -14,6 +14,7 @@ public class MaximumUnop implements Unop {
     public Object apply(Object obj) {
         assert obj instanceof List : obj;
         List<Integer> list = LibUtils.cast(obj);
+        if (list.isEmpty()) return null;
         Optional<Integer> max = list.stream().reduce(Integer::max);
         return max.get();
     }

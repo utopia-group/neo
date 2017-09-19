@@ -207,7 +207,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                         break;
                     }
                 } else {
-                    if (!tgt.get().equals(output)) {
+                    if (!tgt.has() || !tgt.get().equals(output)) {
                         passed = false;
                         break;
                     }

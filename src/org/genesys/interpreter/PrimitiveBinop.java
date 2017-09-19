@@ -29,6 +29,8 @@ public class PrimitiveBinop implements Binop {
             return (boolean) first && (boolean) second;
         } else if (this.op.equals("-")) {
             return (int) first - (int) second;
+        } else if (this.op.equals("/")) {
+            return (int) first / (int) second;
         } else if (this.op.equals("~")) {
             return !(boolean) first;
         } else if (this.op.equals("%")) {
@@ -39,7 +41,10 @@ public class PrimitiveBinop implements Binop {
             return (((int) first) % 2) != (int) second;
         } else if (this.op.equals("%=2")) {//EVEN
             return (((int) first) % 2) == (int) second;
+        } else if (this.op.equals("**")) {
+            return ((int) first * (int)first);
         } else {
+            assert false : this.op;
             throw new RuntimeException();
         }
     }

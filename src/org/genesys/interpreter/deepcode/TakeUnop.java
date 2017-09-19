@@ -23,7 +23,7 @@ public class TakeUnop implements Unop {
         List input1 = (List) pair.get(0);
         int input2 = (Integer) pair.get(1);
         if (input2 < 0) {
-            throw new UnsupportedOperationException("Size of inputs need to be equal.");
+            throw new UnsupportedOperationException("index can't be negative.");
         } else if (input2 >= input1.size()) {
             return input1;
         } else {

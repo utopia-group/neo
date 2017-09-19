@@ -39,8 +39,6 @@ public class DeepCoderInterpreter extends BaseInterpreter {
         executors.put("SQR", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("**"), 2)));
         executors.put("doNEG", (objects, input) -> new Maybe<>(new NumUnop(new PrimitiveBinop("*"), -1)));
 
-        executors.put("SQR", (objects, input) -> new Maybe<>((int) objects.get(0) * (int) objects.get(0)));
-
         executors.put("MAXIMUM", (objects, input) -> new Maybe<>(new MaximumUnop().apply(objects.get(0))));
         executors.put("MINIMUM", (objects, input) -> new Maybe<>(new MinimumUnop().apply(objects.get(0))));
         executors.put("SUM", (objects, input) -> new Maybe<>(new SumUnop().apply(objects.get(0))));
