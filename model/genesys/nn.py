@@ -131,20 +131,22 @@ class DeepCoderModel:
                     # Step 4e: Run training step
                     sess.run(train_step, feed_dict=feed_dict)
 
-                # Step 4f: Test set accuracy
-                feed_dict = {
-                    self.input_values: input_values_test,
-                    self.output_values: output_values_test,
-                    self.labels: labels_test,
-                }
-                loss = sess.run(self.loss, feed_dict=feed_dict)
-                print 'Loss: %g' % loss
-                accuracy = sess.run(self.accuracy, feed_dict=feed_dict)
-                print 'Accuracy: %g' % accuracy
+                    if j%1000 == 0:
+
+                        # Step 4f: Test set accuracy
+                        feed_dict = {
+                            self.input_values: input_values_test,
+                            self.output_values: output_values_test,
+                            self.labels: labels_test,
+                        }
+                        loss = sess.run(self.loss, feed_dict=feed_dict)
+                        print 'Loss: %g' % loss
+                        accuracy = sess.run(self.accuracy, feed_dict=feed_dict)
+                        print 'Accuracy: %g' % accuracy
                 
-                # Step 4g: save model
-                tf.train.Saver().save(sess, save_path)
-                print 'Saved deep coder neural net in: %s' % save_path
+                        # Step 4g: save model
+                        tf.train.Saver().save(sess, save_path)
+                        print 'Saved deep coder neural net in: %s' % save_path
 
     # input_values:  np.array([num_train, input_length])
     # output_values: np.array([num_train, output_length])
