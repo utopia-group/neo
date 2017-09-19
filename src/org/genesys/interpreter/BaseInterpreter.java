@@ -13,7 +13,7 @@ public class BaseInterpreter implements Interpreter<Node, Object> {
 
     public final Map<String, Executor> executors = new HashMap<>();
 
-    private final boolean cacheOn_ = true;
+    private final boolean cacheOn_ = false;
 
     private final Map<Pair<Node, Object>, Maybe> cache_ = new HashMap<>();
 
