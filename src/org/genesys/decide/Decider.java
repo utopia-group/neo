@@ -13,4 +13,7 @@ public interface Decider {
      */
     public String decide(List<String> trail, List<String> candidates);
 
+    public String decideSketch(List<String> candidates, int child);
+
+
 }

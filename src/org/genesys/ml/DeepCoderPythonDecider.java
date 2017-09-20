@@ -106,7 +106,10 @@ public class DeepCoderPythonDecider implements Decider {
 	public boolean hasProbability(String function) {
 		return this.yFeaturizer.functionIndices.containsKey(function);
 	}
-	
+
+	@Override
+	public String decideSketch(List<String> candidates, int child) { return decide(new ArrayList<String>(), candidates); }
+
 	@Override
 	public String decide(List<String> ancestors, List<String> functionChoices) {
 		// get the most likely function

@@ -747,7 +747,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
         Collections.reverse(ancestors);
 
-        String decision = decider_.decide(ancestors, domain);
+        //String decision = decider_.decide(ancestors, domain);
+        String decision = decider_.decideSketch(domain, level_);
         assert (!decision.equals(""));
         return decision;
     }
@@ -1320,6 +1321,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 if (!sketches_.containsKey(sketch)){
                     sketches_.put(sketch, true);
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
+                    //decider_.nextProgram();
                 }
             }
 
