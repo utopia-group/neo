@@ -110,6 +110,8 @@ class DeepCoderModel:
                 tf.train.Saver().restore(sess, save_path)
                 print 'Loaded deep coder model in: %s' % save_path
 
+            min_loss = None
+
             for i in range(params.num_epochs):
                 print 'epoch: %d' % i
                 for j in range(num_batches):
@@ -143,10 +145,12 @@ class DeepCoderModel:
                         print 'Loss: %g' % loss
                         accuracy = sess.run(self.accuracy, feed_dict=feed_dict)
                         print 'Accuracy: %g' % accuracy
-                
+
                         # Step 4g: save model
-                        tf.train.Saver().save(sess, save_path)
-                        print 'Saved deep coder neural net in: %s' % save_path
+                        if min_loss is None or loss <= min_loss:
+                            tf.train.Saver().save(sess, save_path)
+                            print 'Saved deep coder neural net in: %s' % save_path
+                            min_loss = loss
 
     # input_values:  np.array([num_train, input_length])
     # output_values: np.array([num_train, output_length])
