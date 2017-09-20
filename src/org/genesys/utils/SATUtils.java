@@ -226,7 +226,7 @@ public class SATUtils {
 
             solver_.addClauseOnTheFly(c);
             solver_.qhead = solver_.trail.size(); // Why doesn't SAT4J does this?
-            System.out.println("current ctr= " + solver_.getIthConstr(solver_.nConstraints()-1));
+//            System.out.println("current ctr= " + solver_.getIthConstr(solver_.nConstraints()-1));
 //            System.out.println("assuming = " + asserting);
             Constr ctr = solver_.propagate();
             if (ctr != null || nb_asserting == 0) {
