@@ -1464,6 +1464,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 currentChild_=0;
                             }
 
+                            if (currentLine_ == trail_.size()){
+                                // go to step 2?
+                                step_ = 2;
+                                currentLine_ = 0;
+                                currentChild_ = 0;
+                                backtrackStep2(highTrail_.size(), true, true);
+                                step_ = backtrackStep(level_);
+                                break;
+                            }
+
                             if (step_ != 3){
                                 break;
                             }
