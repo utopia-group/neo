@@ -64,8 +64,14 @@ public class Separate implements Unop {
         colArgs.add(col2);
         StringCol strCol = (StringCol) df.getCols().get(colIdx);
         String testVal = strCol.getValues()[0];
-        if (testVal == null || !testVal.contains("_")) return new Pair<>(false, new Maybe<>());
-        DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+        if (testVal == null || !testVal.contains("_") || !testVal.contains("|"))
+            return new Pair<>(false, new Maybe<>());
+        DataFrame res;
+        if (testVal.contains("|"))
+            res = ReshapeKt.separate(df, orgCol, colArgs, "|", remove_, convert_);
+        else
+            res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+
         return new Pair<>(true, new Maybe<>(res));
     }
 
