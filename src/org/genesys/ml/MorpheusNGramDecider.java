@@ -3,6 +3,7 @@ package org.genesys.ml;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,10 @@ public class MorpheusNGramDecider implements Decider {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	@Override
+	public String decideSketch(List<String> candidates, int child) { return decide(new ArrayList<String>(), candidates); }
+
 	@Override
 	public String decide(List<String> ancestors, List<String> functionChoices) {
 		String curFunction = null;

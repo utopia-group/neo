@@ -13,4 +13,7 @@ public class FirstDecider implements Decider {
         return candidates.get(0);
     }
 
+    @Override
+    public String decideSketch(List<String> candidates, int child) { return candidates.get(0); }
+
 }

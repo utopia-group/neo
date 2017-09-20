@@ -1,0 +1,318 @@
+select group_by summarise 
+select inner_join select 
+select inner_join gather 
+select inner_join spread 
+select inner_join unite 
+select inner_join summarise 
+select inner_join separate 
+select gather select 
+select gather inner_join 
+select gather spread 
+select gather unite 
+select gather summarise 
+select gather separate 
+select spread select 
+select spread inner_join 
+select spread gather 
+select spread unite 
+select spread summarise 
+select spread separate 
+select unite select 
+select unite inner_join 
+select unite gather 
+select unite spread 
+select unite summarise 
+select unite separate 
+select summarise select 
+select summarise inner_join 
+select summarise gather 
+select summarise spread 
+select summarise unite 
+select summarise separate 
+select separate select 
+select separate inner_join 
+select separate gather 
+select separate spread 
+select separate unite 
+select separate summarise 
+group_by summarise select 
+group_by summarise inner_join 
+group_by summarise gather 
+group_by summarise spread 
+group_by summarise unite 
+group_by summarise separate 
+inner_join select inner_join 
+inner_join select gather 
+inner_join select spread 
+inner_join select unite 
+inner_join select summarise 
+inner_join select separate 
+inner_join group_by summarise 
+inner_join gather select 
+inner_join gather inner_join 
+inner_join gather spread 
+inner_join gather unite 
+inner_join gather summarise 
+inner_join gather separate 
+inner_join spread select 
+inner_join spread inner_join 
+inner_join spread gather 
+inner_join spread unite 
+inner_join spread summarise 
+inner_join spread separate 
+inner_join unite select 
+inner_join unite inner_join 
+inner_join unite gather 
+inner_join unite spread 
+inner_join unite summarise 
+inner_join unite separate 
+inner_join summarise select 
+inner_join summarise inner_join 
+inner_join summarise gather 
+inner_join summarise spread 
+inner_join summarise unite 
+inner_join summarise separate 
+inner_join separate select 
+inner_join separate inner_join 
+inner_join separate gather 
+inner_join separate spread 
+inner_join separate unite 
+inner_join separate summarise 
+gather select inner_join 
+gather select gather 
+gather select spread 
+gather select unite 
+gather select summarise 
+gather select separate 
+gather group_by summarise 
+gather inner_join select 
+gather inner_join gather 
+gather inner_join spread 
+gather inner_join unite 
+gather inner_join summarise 
+gather inner_join separate 
+gather spread select 
+gather spread inner_join 
+gather spread gather 
+gather spread unite 
+gather spread summarise 
+gather spread separate 
+gather unite select 
+gather unite inner_join 
+gather unite gather 
+gather unite spread 
+gather unite summarise 
+gather unite separate 
+gather summarise select 
+gather summarise inner_join 
+gather summarise gather 
+gather summarise spread 
+gather summarise unite 
+gather summarise separate 
+gather separate select 
+gather separate inner_join 
+gather separate gather 
+gather separate spread 
+gather separate unite 
+gather separate summarise 
+spread select inner_join 
+spread select gather 
+spread select spread 
+spread select unite 
+spread select summarise 
+spread select separate 
+spread group_by summarise 
+spread inner_join select 
+spread inner_join gather 
+spread inner_join spread 
+spread inner_join unite 
+spread inner_join summarise 
+spread inner_join separate 
+spread gather select 
+spread gather inner_join 
+spread gather spread 
+spread gather unite 
+spread gather summarise 
+spread gather separate 
+spread unite select 
+spread unite inner_join 
+spread unite gather 
+spread unite spread 
+spread unite summarise 
+spread unite separate 
+spread summarise select 
+spread summarise inner_join 
+spread summarise gather 
+spread summarise spread 
+spread summarise unite 
+spread summarise separate 
+spread separate select 
+spread separate inner_join 
+spread separate gather 
+spread separate spread 
+spread separate unite 
+spread separate summarise 
+unite select inner_join 
+unite select gather 
+unite select spread 
+unite select unite 
+unite select summarise 
+unite select separate 
+unite group_by summarise 
+unite inner_join select 
+unite inner_join gather 
+unite inner_join spread 
+unite inner_join unite 
+unite inner_join summarise 
+unite inner_join separate 
+unite gather select 
+unite gather inner_join 
+unite gather spread 
+unite gather unite 
+unite gather summarise 
+unite gather separate 
+unite spread select 
+unite spread inner_join 
+unite spread gather 
+unite spread unite 
+unite spread summarise 
+unite spread separate 
+unite summarise select 
+unite summarise inner_join 
+unite summarise gather 
+unite summarise spread 
+unite summarise unite 
+unite summarise separate 
+unite separate select 
+unite separate inner_join 
+unite separate gather 
+unite separate spread 
+unite separate unite 
+unite separate summarise 
+summarise select inner_join 
+summarise select gather 
+summarise select spread 
+summarise select unite 
+summarise select summarise 
+summarise select separate 
+summarise group_by summarise 
+summarise inner_join select 
+summarise inner_join gather 
+summarise inner_join spread 
+summarise inner_join unite 
+summarise inner_join summarise 
+summarise inner_join separate 
+summarise gather select 
+summarise gather inner_join 
+summarise gather spread 
+summarise gather unite 
+summarise gather summarise 
+summarise gather separate 
+summarise spread select 
+summarise spread inner_join 
+summarise spread gather 
+summarise spread unite 
+summarise spread summarise 
+summarise spread separate 
+summarise unite select 
+summarise unite inner_join 
+summarise unite gather 
+summarise unite spread 
+summarise unite summarise 
+summarise unite separate 
+summarise separate select 
+summarise separate inner_join 
+summarise separate gather 
+summarise separate spread 
+summarise separate unite 
+summarise separate summarise 
+separate select inner_join 
+separate select gather 
+separate select spread 
+separate select unite 
+separate select summarise 
+separate select separate 
+separate group_by summarise 
+separate inner_join select 
+separate inner_join gather 
+separate inner_join spread 
+separate inner_join unite 
+separate inner_join summarise 
+separate inner_join separate 
+separate gather select 
+separate gather inner_join 
+separate gather spread 
+separate gather unite 
+separate gather summarise 
+separate gather separate 
+separate spread select 
+separate spread inner_join 
+separate spread gather 
+separate spread unite 
+separate spread summarise 
+separate spread separate 
+separate unite select 
+separate unite inner_join 
+separate unite gather 
+separate unite spread 
+separate unite summarise 
+separate unite separate 
+separate summarise select 
+separate summarise inner_join 
+separate summarise gather 
+separate summarise spread 
+separate summarise unite 
+separate summarise separate 
+l(a,b).(/ a b) select mutate 
+l(a,b).(/ a b) inner_join mutate 
+l(a,b).(/ a b) gather mutate 
+l(a,b).(/ a b) spread mutate 
+l(a,b).(/ a b) unite mutate 
+l(a,b).(/ a b) summarise mutate 
+l(a,b).(/ a b) separate mutate 
+l(a,b).(/ a b) mutate select 
+l(a,b).(/ a b) mutate inner_join 
+l(a,b).(/ a b) mutate gather 
+l(a,b).(/ a b) mutate spread 
+l(a,b).(/ a b) mutate unite 
+l(a,b).(/ a b) mutate summarise 
+l(a,b).(/ a b) mutate separate 
+l(a,b).(> a b) inner_join filter 
+l(a,b).(> a b) gather filter 
+l(a,b).(> a b) spread filter 
+l(a,b).(> a b) unite filter 
+l(a,b).(> a b) summarise filter 
+l(a,b).(> a b) separate filter 
+l(a,b).(> a b) filter select 
+l(a,b).(> a b) filter inner_join 
+l(a,b).(> a b) filter gather 
+l(a,b).(> a b) filter spread 
+l(a,b).(> a b) filter unite 
+l(a,b).(> a b) filter summarise 
+l(a,b).(> a b) filter separate 
+l(a,b).(< a b) inner_join filter 
+l(a,b).(< a b) gather filter 
+l(a,b).(< a b) spread filter 
+l(a,b).(< a b) unite filter 
+l(a,b).(< a b) summarise filter 
+l(a,b).(< a b) separate filter 
+l(a,b).(< a b) filter select 
+l(a,b).(< a b) filter inner_join 
+l(a,b).(< a b) filter gather 
+l(a,b).(< a b) filter spread 
+l(a,b).(< a b) filter unite 
+l(a,b).(< a b) filter summarise 
+l(a,b).(< a b) filter separate 
+l(a,b).(== a b) inner_join filter 
+l(a,b).(== a b) gather filter 
+l(a,b).(== a b) spread filter 
+l(a,b).(== a b) unite filter 
+l(a,b).(== a b) summarise filter 
+l(a,b).(== a b) separate filter 
+l(a,b).(== a b) filter select 
+l(a,b).(== a b) filter inner_join 
+l(a,b).(== a b) filter gather 
+l(a,b).(== a b) filter spread 
+l(a,b).(== a b) filter unite 
+l(a,b).(== a b) filter summarise 
+l(a,b).(== a b) filter separate 

@@ -18,6 +18,14 @@ ant neoDeep -Dapp=./problem/DeepCoder/prog2.json -Ddepth=2 -Dlearn=false -Dstat=
 
 Note: Neo2 searches by number of lines. Still experimental version that only enumerates partial programs.
 
+# Neo for Morpheus
+
+Without n-gram information:
+ant neoMorpheus -Dapp=./problem/Morpheus/r4.json -Ddepth=3 -Dlearn=false -Dstat=false -Dfile=""
+
+With n-gram information using a file:
+ant neoMorpheus -Dapp=./problem/Morpheus/r4.json -Ddepth=3 -Dlearn=false -Dstat=false -Dfile="./sketches/sketches-size3.txt"
+
 # Set up neural net model
 #
 # requires:

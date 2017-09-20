@@ -6,6 +6,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import krangl.DataFrame;
 import krangl.SimpleDataFrameKt;
 import org.genesys.decide.Decider;
+import org.genesys.decide.FileDecider;
 import org.genesys.decide.FirstDecider;
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
@@ -77,22 +78,27 @@ public class MorpheusMain {
         // init constants in Morpheus.
         interpreter.initMorpheusConstants(grammar.getInitProductions());
         Decider decider = new FirstDecider();
+        //Decider decider = new FileDecider("./sketches/sketches-size3.txt");
 
         boolean useStat;
 //        NeoSynthesizer synth;
         MorpheusSynthesizer synth;
-        if (args.length == 4) {
-            useStat = Boolean.valueOf(args[3]);
-            if(useStat)
-                decider = new MorpheusNGramDecider();
+        assert (args.length == 5);
 
-            int depth = Integer.valueOf(args[1]);
-            boolean learning = Boolean.valueOf(args[2]);
+        useStat = Boolean.valueOf(args[3]);
+        if (useStat)
+            decider = new MorpheusNGramDecider();
 
-            synth = new MorpheusSynthesizer(grammar, tableProblem, checker, interpreter, depth, specLoc, learning, decider);
-        } else {
-            synth = new MorpheusSynthesizer(grammar, tableProblem, checker, interpreter, specLoc, decider);
+        int depth = Integer.valueOf(args[1]);
+        boolean learning = Boolean.valueOf(args[2]);
+
+        if (args.length == 5){
+            if (!args[4].equals(""))
+                decider = new FileDecider(args[4]);
         }
+
+        synth = new MorpheusSynthesizer(grammar, tableProblem, checker, interpreter, depth, specLoc, learning, decider);
+
         synth.synthesize();
     }
 }

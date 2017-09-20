@@ -326,10 +326,186 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             satUtils_.addClause(lits);
         }
 
+        if (prodName_.containsKey("filter") && prodName_.containsKey("select")){
+            // Filter select is equivalent to select filter
+            // Only allow one of them to happen
+            for (int i = 0; i < highTrail_.size()-1; i++){
+                Production f = prodName_.get("filter");
+                Production s = prodName_.get("select");
+                Node node = highTrail_.get(i).t0;
+                Node next = highTrail_.get(i+1).t0;
+                int v1 = varNodes_.get(new Pair<Integer, Production>(node.id, s));
+                int v2 = varNodes_.get(new Pair<Integer, Production>(next.id, f));
+                VecInt clause = new VecInt(new int[]{-v1,-v2});
+                satUtils_.addClause(clause);
+            }
+        }
+
+        if (prodName_.containsKey("mutate") && prodName_.containsKey("l(a,b).(/ a b)")){
+
+            // If mutate occurs then the predicate had to occur before
+            for (int i = highTrail_.size()-1; i > 0; i--){
+                Node node = highTrail_.get(i).t0;
+                Production f = prodName_.get("mutate");
+                int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
+                VecInt c1 = new VecInt(new int[]{-v});
+                for (int j = 0 ; j < i; j++){
+                    Production p1 = prodName_.get("l(a,b).(/ a b)");
+                    Node cur = highTrail_.get(j).t0;
+                    int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
+                    c1.push(v1);
+                }
+                satUtils_.addClause(c1);
+            }
+
+            // If a mutate predicate occurs then mutate must occur in the future
+            for (int i = 0; i < highTrail_.size()-1; i++){
+                Production p1 = prodName_.get("l(a,b).(/ a b)");
+                Node cur = highTrail_.get(i).t0;
+                int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
+
+                VecInt c1 = new VecInt(new int[]{-v1});
+
+                for (int j = i+1 ; j < highTrail_.size(); j++){
+
+                    Node node = highTrail_.get(j).t0;
+                    Production f = prodName_.get("mutate");
+                    int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
+                    c1.push(v);
+
+                }
+                satUtils_.addClause(c1);
+            }
+
+            // Mutate cannot be the first component
+            Node root = highTrail_.get(0).t0;
+            Production gg = prodName_.get("mutate");
+            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
+                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+                VecInt lits = new VecInt(new int[]{-var});
+                satUtils_.addClause(lits);
+            }
+
+            // At most one mutate
+            VecInt clause = new VecInt();
+            for (int i = 0; i < highTrail_.size(); i++){
+                Production p = prodName_.get("mutate");
+                Node node = highTrail_.get(i).t0;
+                int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
+                clause.push(var);
+            }
+            satUtils_.addAMK(clause, 1);
+
+            // Mutate predicates can only be used in the first line
+            for (int i = 1; i < highTrail_.size()-1; i++){
+                Production p1 = prodName_.get("l(a,b).(/ a b)");
+                Node node = highTrail_.get(i).t0;
+                int v1 = varNodes_.get(new Pair<Integer,Production>(node.id, p1));
+                VecInt c1 = new VecInt(new int[]{-v1});
+                satUtils_.addClause(c1);
+            }
+
+        }
+
+        if (prodName_.containsKey("l(a,b).(> a b)") &&
+                prodName_.containsKey("l(a,b).(< a b)") &&
+                prodName_.containsKey("l(a,b).(== a b)") &&
+                prodName_.containsKey("filter")){
+
+            // If filter occurs then one of the other predicate had to occur before
+            for (int i = highTrail_.size()-1; i > 0; i--){
+                Node node = highTrail_.get(i).t0;
+                Production f = prodName_.get("filter");
+                int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
+                VecInt c1 = new VecInt(new int[]{-v});
+                for (int j = 0 ; j < i; j++){
+                    Production p1 = prodName_.get("l(a,b).(> a b)");
+                    Production p2 = prodName_.get("l(a,b).(< a b)");
+                    Production p3 = prodName_.get("l(a,b).(== a b)");
+                    Node cur = highTrail_.get(j).t0;
+                    int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
+                    int v2 = varNodes_.get(new Pair<Integer,Production>(cur.id, p2));
+                    int v3 = varNodes_.get(new Pair<Integer,Production>(cur.id, p3));
+
+                    c1.push(v1);
+                    c1.push(v2);
+                    c1.push(v3);
+                }
+                satUtils_.addClause(c1);
+            }
+
+            // If a filter predicate occurs then filter must occur in the future
+            for (int i = 0; i < highTrail_.size()-1; i++){
+                Production p1 = prodName_.get("l(a,b).(> a b)");
+                Production p2 = prodName_.get("l(a,b).(< a b)");
+                Production p3 = prodName_.get("l(a,b).(== a b)");
+                Node cur = highTrail_.get(i).t0;
+                int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
+                int v2 = varNodes_.get(new Pair<Integer,Production>(cur.id, p2));
+                int v3 = varNodes_.get(new Pair<Integer,Production>(cur.id, p3));
+
+                VecInt c1 = new VecInt(new int[]{-v1});
+                VecInt c2 = new VecInt(new int[]{-v2});
+                VecInt c3 = new VecInt(new int[]{-v3});
+
+                for (int j = i+1 ; j < highTrail_.size(); j++){
+
+                    Node node = highTrail_.get(j).t0;
+                    Production f = prodName_.get("filter");
+                    int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
+                    c1.push(v);
+                    c2.push(v);
+                    c3.push(v);
+
+                }
+                satUtils_.addClause(c1);
+                satUtils_.addClause(c2);
+                satUtils_.addClause(c3);
+            }
+
+            // Filter cannot be the first component
+            Node root = highTrail_.get(0).t0;
+            Production gg = prodName_.get("filter");
+            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
+                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+                VecInt lits = new VecInt(new int[]{-var});
+                satUtils_.addClause(lits);
+            }
+
+            // At most one filter
+            VecInt clause = new VecInt();
+            for (int i = 0; i < highTrail_.size(); i++){
+                Production p = prodName_.get("filter");
+                Node node = highTrail_.get(i).t0;
+                int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
+                clause.push(var);
+            }
+            satUtils_.addAMK(clause, 1);
+
+            // Filter predicates can only be used in the first line
+            for (int i = 1; i < highTrail_.size()-1; i++){
+                Production p1 = prodName_.get("l(a,b).(> a b)");
+                Production p2 = prodName_.get("l(a,b).(< a b)");
+                Production p3 = prodName_.get("l(a,b).(== a b)");
+                Node node = highTrail_.get(i).t0;
+                int v1 = varNodes_.get(new Pair<Integer,Production>(node.id, p1));
+                int v2 = varNodes_.get(new Pair<Integer,Production>(node.id, p2));
+                int v3 = varNodes_.get(new Pair<Integer,Production>(node.id, p3));
+                VecInt c1 = new VecInt(new int[]{-v1});
+                VecInt c2 = new VecInt(new int[]{-v2});
+                VecInt c3 = new VecInt(new int[]{-v3});
+                satUtils_.addClause(c1);
+                satUtils_.addClause(c2);
+                satUtils_.addClause(c3);
+            }
+
+
+        }
+
         /* Domain specific constraints for DeepCoder */
         if (prodName_.containsKey("ACCESS")){
-            // ACCESS cannot be at the root level
-            Node root = highTrail_.get(highTrail_.size()-1).t0;
+            // ACCESS cannot be the first line
+            Node root = highTrail_.get(0).t0;
             Production gg = prodName_.get("ACCESS");
             if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
                 int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
@@ -368,9 +544,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         // At least one input must be used in the first line of code
+        /*
         VecInt clause_input = new VecInt();
         for (Node node : highTrail_.get(0).t0.children){
-
 
             for (Production p : inputProductions_){
                 int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
@@ -378,7 +554,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
         satUtils_.addClause(clause_input);
-
+        */
 
         // The intermediate results cannot be used before they are created
         // ---> This is encoded in the domain
@@ -526,7 +702,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     domainOutput_.add(prod);
 
                 for (Production<T> p : (List<Production<T>>) grammar_.getInputProductions()) {
-                    if (prod.source.toString().compareTo(p.source.toString()) == 0) {
+
+                    // FIXME: if constants are available we do not need to just use inputs
+                    if (prod.source.toString().compareTo(p.source.toString()) == 0 ||
+                            prod.function.startsWith("l(a,b).")) { // stupid HACK
                         domainInput_.add(prod);
                         break;
                     }
@@ -568,7 +747,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
         Collections.reverse(ancestors);
 
-        String decision = decider_.decide(ancestors, domain);
+        //String decision = decider_.decide(ancestors, domain);
+        String decision = decider_.decideSketch(domain, level_);
         assert (!decision.equals(""));
         return decision;
     }
@@ -776,9 +956,11 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         // Several decisions in Neo may be in the same internal level in the SAT solver
         // When backtracking, we need to take into consideration the internals of the SAT solver
         int backtrack_lvl = lvl;
-        while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
-            backtrack_lvl--;
-        }
+        // FIXME: potential issue with on the fly adding of clauses
+//        while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
+//            backtrack_lvl--;
+//        }
+        backtrack_lvl = 0;
 
         assert (trailNeo_.size() > 0 && trailSAT_.size() > 0);
         int size = trailNeo_.size();
@@ -818,9 +1000,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         int backtrack_lvl = lvl;
         if (sat) {
-            while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
-                backtrack_lvl--;
-            }
+//            while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) && backtrack_lvl > 0) {
+//                backtrack_lvl--;
+//            }
+            backtrack_lvl = 0;
         }
 
         assert (trailNeo_.size() > 0 && trailSAT_.size() > 0);
@@ -1021,10 +1204,72 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         cacheAST_.put(program, block);
     }
 
+    public void printSketches() {
+
+        boolean unsat = false;
+        while (!unsat) {
+            while (level_ < highTrail_.size()) {
+
+                if (unsat) break;
+
+                Constr conflict = satUtils_.getSolver().propagate();
+                if (conflict != null) {
+                    int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
+                    int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
+                    if (backjumpLevel == -1) {
+                        unsat = true;
+                        break;
+                    } else backtrackStep1(neoLevel, false);
+                } else {
+                    // No conflict
+                    Node decision = decideHigh();
+                    if (decision == null) {
+                        if (level_ == 0) {
+                            unsat = true;
+                            break;
+                        }
+
+                        while (backtrackStep1(level_ - 1, true)) {
+                            if (level_ == 0) {
+                                unsat = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (unsat) {
+                System.out.println("s NO SOLUTION");
+                break;
+            }
+
+            step_ = 2;
+
+            String sketch = "";
+            for (int i = 0; i < highTrail_.size(); i++) {
+                assert (highTrail_.get(i).t0.function != "");
+                sketch += highTrail_.get(i).t0.function + " ";
+            }
+            if (!sketches_.containsKey(sketch)) {
+                sketches_.put(sketch, true);
+                System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
+            }
+            unsat = blockModel();
+        }
+    }
+
+
     public Node search() {
+
+
 
         Node result = null;
         boolean unsat = false;
+
+        //printSketches();
+        //unsat = true;
+
         while (!unsat) {
 
             if (step_ == 1) {
@@ -1069,10 +1314,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 step_ = 2;
 
                 String sketch =  "";
-//                for (int i = highTrail_.size()-1; i >= 0; i--){
-//                    assert (highTrail_.get(i).t0.function != "");
-//                    sketch += highTrail_.get(i).t0.function + " ";
-//                }
                 for (int i = 0; i < highTrail_.size(); i++){
                     assert (highTrail_.get(i).t0.function != "");
                     sketch += highTrail_.get(i).t0.function + " ";
@@ -1080,6 +1321,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 if (!sketches_.containsKey(sketch)){
                     sketches_.put(sketch, true);
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
+                    //decider_.nextProgram();
                 }
             }
 
@@ -1132,19 +1374,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     }
 
                     if (!children_assigned && step_ == 2 && !repeat_step2) {
-                        // backtrack to previous line
-                        if (currentLine_ == 0) {
-                            // go back to step 1
+                        // was not possible to assign children
+                        // should we go back to step1?
                             step_ = 1;
                             currentLine_ = 0;
                             currentChild_ = 0;
-                            backtrackStep2(0, false, false);
+                            backtrackStep2(0, true, true);
                             break;
-                        } else {
-                            currentLine_--;
-                            currentChild_ = 0;
-                            // can this can an infinite loop?
-                        }
+
                     } else {
 
                         if (step_ == 1 || repeat_step2) {
@@ -1169,7 +1406,13 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             break;
                         } else backtrackStep2(neoLevel, false, false);
                         step_ = backtrackStep(neoLevel);
-                    } else {
+                        currentLine_ = trailNeo_.get(trailNeo_.size()-1).t1.t0;
+                        currentChild_ = trailNeo_.get(trailNeo_.size()-1).t1.t1+1;
+                        if (currentChild_ >= trail_.get(currentLine_).size()){
+                            currentLine_++;
+                            currentChild_=0;
+                        }
+                   } else {
 
                         assert (conflict == null);
                         step_ = 3;
@@ -1213,6 +1456,17 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 break;
                             } else backtrackStep2(neoLevel, false, false);
                             step_ = backtrackStep(neoLevel);
+
+                            currentLine_ = trailNeo_.get(trailNeo_.size()-1).t1.t0;
+                            currentChild_ = trailNeo_.get(trailNeo_.size()-1).t1.t1+1;
+                            if (currentChild_ >= trail_.get(currentLine_).size()){
+                                currentLine_++;
+                                currentChild_=0;
+                            }
+
+                            if (step_ != 3){
+                                break;
+                            }
                         } else {
                             if (highTrail_.get(currentLine_).t0.children.get(currentChild_).function.equals("")) {
                                 Node decision = decideFirst();
