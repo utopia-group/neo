@@ -747,13 +747,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
         Collections.reverse(ancestors);
 
-        //String decision = decider_.decide(ancestors, domain);
-        String decision = decider_.decideSketch(domain, level_);
-        assert (!decision.equals(""));
+
+        String decision = decider_.decideSketch(ancestors, domain, level_);
+        //assert (!decision.equals(""));
         return decision;
     }
 
     public String nextDecision(List<String> domain) {
+
+//        List ancestors = new ArrayList<>();
+//        assert (level_ < highTrail_.size());
+//        for (int i  = level_-1; i >= 0; i--){
+//            assert(!highTrail_.get(i).t0.function.equals(""));
+//            ancestors.add(highTrail_.get(i).t0.function);
+//        }
+//        Collections.reverse(ancestors);
+
 
         String decision = decider_.decide(new ArrayList<>(), domain);
         assert (!decision.equals(""));
@@ -900,6 +909,11 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         if (!decideDomain.isEmpty()) {
             String decision = nextDecisionHigher(decideDomain);
+            if (decision == ""){
+                // we need to go to the next program
+                backtrackStep2(0, false, false);
+                return null;
+            }
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
             decisionSAT = p.t1;
@@ -1223,6 +1237,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 } else {
                     // No conflict
                     Node decision = decideHigh();
+                    System.out.println("level = " + level_);
                     if (decision == null) {
                         if (level_ == 0) {
                             unsat = true;
@@ -1236,6 +1251,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             }
                         }
                     }
+
                 }
             }
 
@@ -1290,16 +1306,18 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     } else {
                         // No conflict
                         Node decision = decideHigh();
-                        if (decision == null) {
-                            if (level_ == 0) {
-                                unsat = true;
-                                break;
-                            }
-
-                            while (backtrackStep1(level_ - 1, true)) {
+                        if (level_ != 0) { // FIXME: quick hack to go to the next program
+                            if (decision == null) {
                                 if (level_ == 0) {
                                     unsat = true;
                                     break;
+                                }
+
+                                while (backtrackStep1(level_ - 1, true)) {
+                                    if (level_ == 0) {
+                                        unsat = true;
+                                        break;
+                                    }
                                 }
                             }
                         }

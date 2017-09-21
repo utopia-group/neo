@@ -108,7 +108,7 @@ public class DeepCoderPythonDecider implements Decider {
 	}
 
 	@Override
-	public String decideSketch(List<String> candidates, int child) { return decide(new ArrayList<String>(), candidates); }
+	public String decideSketch(List<String> trail, List<String> candidates, int child) { return decide(trail, candidates); }
 
 	@Override
 	public String decide(List<String> ancestors, List<String> functionChoices) {

@@ -18,6 +18,6 @@ public class RandomDecider implements Decider {
     }
 
     @Override
-    public String decideSketch(List<String> candidates, int child) { return decide(new ArrayList<String>(), candidates); }
+    public String decideSketch(List<String> trail, List<String> candidates, int child) { return decide(trail, candidates); }
 
 }

@@ -14,6 +14,6 @@ public class FirstDecider implements Decider {
     }
 
     @Override
-    public String decideSketch(List<String> candidates, int child) { return candidates.get(0); }
+    public String decideSketch(List<String> trail, List<String> candidates, int child) { return decide(trail, candidates); }
 
 }
