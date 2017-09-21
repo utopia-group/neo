@@ -911,7 +911,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             String decision = nextDecisionHigher(decideDomain);
             if (decision == ""){
                 // we need to go to the next program
-                backtrackStep2(0, false, false);
+                if (level_ != 0)
+                    backtrackStep2(0, false, false);
                 return null;
             }
             Pair<Production, Integer> p = decideMap.get(decision);
@@ -1237,7 +1238,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 } else {
                     // No conflict
                     Node decision = decideHigh();
-                    System.out.println("level = " + level_);
                     if (decision == null) {
                         if (level_ == 0) {
                             unsat = true;
