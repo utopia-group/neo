@@ -909,6 +909,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         if (!decideDomain.isEmpty()) {
             String decision = nextDecisionHigher(decideDomain);
+            if (decision == null){
+                level_ = -1;
+                return null;
+            }
             if (decision == ""){
                 // we need to go to the next program
                 if (level_ != 0)
@@ -1239,6 +1243,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     // No conflict
                     Node decision = decideHigh();
                     if (decision == null) {
+                        System.out.println("decision is null!");
                         if (level_ == 0) {
                             unsat = true;
                             break;
@@ -1306,6 +1311,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     } else {
                         // No conflict
                         Node decision = decideHigh();
+                        if (level_ == -1){ // FIXME: quick hack to exit after all programs are checked
+                            unsat = true;
+                            break;
+                        }
                         if (level_ != 0) { // FIXME: quick hack to go to the next program
                             if (decision == null) {
                                 if (level_ == 0) {
