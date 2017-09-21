@@ -13,7 +13,7 @@ hidden_layer_dim = 256    # number of nodes in each hidden layer)
 # Train parameters
 num_epochs = 1
 batch_size = 50
-step_size = 1e-6
+step_size = 1e-7
 save_path = 'deep_coder_model.ckpt'
 load_prev = False
 
