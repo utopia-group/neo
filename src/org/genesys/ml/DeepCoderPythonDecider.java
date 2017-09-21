@@ -31,7 +31,7 @@ public class DeepCoderPythonDecider implements Decider {
 				br.close();
 			} catch(IOException e) {}
 		}
-		COMMAND = pythonPath + "python -m model.genesys.test";
+		COMMAND = pythonPath + "python -m model.genesys.run";
 	}
 	
 	private final XFeaturizer<Object> xFeaturizer;

@@ -136,25 +136,44 @@ class DeepCoderModel:
                     if j%1000 == 0:
 
                         # Step 4f: Test set accuracy
-                        feed_dict = {
-                            self.input_values: input_values_test,
-                            self.output_values: output_values_test,
-                            self.labels: labels_test,
-                        }
-                        loss = sess.run(self.loss, feed_dict=feed_dict)
-                        print 'Loss: %g' % loss
-                        accuracy = sess.run(self.accuracy, feed_dict=feed_dict)
-                        print 'Accuracy: %g' % accuracy
-
+                        (loss, accuracy) = self.test(input_values_test, output_values_test, labels_test, params)
+                        
                         # Step 4g: save model
                         if min_loss is None or loss <= min_loss:
                             tf.train.Saver().save(sess, save_path)
                             print 'Saved deep coder neural net in: %s' % save_path
                             min_loss = loss
+                            
+    # input_values:  np.array([num_test, input_length])
+    # output_values: np.array([num_test, output_length])
+    # labels_test:   np.array([num_test, num_dsl_ops])
+    # params:        DeepCoderTrainParams | DeepCoderTestParams
+    def test(self, input_values, output_values, labels, params):
+        with tf.Session() as sess:
+            # Step 1: Directory path
+            save_path = self.save_path(params)
 
-    # input_values:  np.array([num_train, input_length])
-    # output_values: np.array([num_train, output_length])
-    def test(self, input_values, output_values, params):
+            # Step 2: Load neural net
+            tf.train.Saver().restore(sess, save_path)
+            print 'Loaded deep coder model in: %s' % save_path
+
+            # Test neural net
+            feed_dict = {
+                self.input_values: input_values,
+                self.output_values: output_values,
+                self.labels: labels,
+            }
+            loss = sess.run(self.loss, feed_dict=feed_dict)
+            print 'Loss: %g' % loss
+            accuracy = sess.run(self.accuracy, feed_dict=feed_dict)
+            print 'Accuracy: %g' % accuracy
+
+        return (loss, accuracy)
+
+    # input_values:  np.array([num_run, input_length])
+    # output_values: np.array([num_run, output_length])
+    # params:        DeepCoderTestParams
+    def run(self, input_values, output_values, params):
 
         with tf.Session() as sess:
             # Step 1: Directory path

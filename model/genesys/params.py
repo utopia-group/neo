@@ -22,5 +22,8 @@ deep_coder_dataset_filename = 'deep_coder.txt'
 deep_coder_funcs_filename = 'deep_coder_funcs.txt'
 train_frac = 0.9
 
+# Test dataset parameters
+deep_coder_test_dataset_filename = 'deep_coder_test.txt'
+
 # Test parameters
 deep_coder_test_filename = 'deep_coder.txt'

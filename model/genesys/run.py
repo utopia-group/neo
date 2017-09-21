@@ -6,16 +6,17 @@ def main():
     # Step 1: Build parameters
     model_params = DeepCoderModelParams(num_vals, val_embedding_dim, input_length, output_length, hidden_layer_dim, num_dsl_ops)
     test_params = DeepCoderTestParams(save_path)
-
+    
     # Step 2: Build neural net
     model = DeepCoderModel(model_params)
 
     # Step 3: Read dataset
-    if input_length != output_length:
-        raise Exception('Input and output lengths must be equal!')
-    dataset = read_train_dataset(deep_coder_test_dataset_filename, deep_coder_funcs_filename, num_vals, input_length)
+    dataset = read_test_dataset(deep_coder_dataset_filename)
 
-    model.test(dataset[0], dataset[1], dataset[2], test_params)
-    
+    # Step 4: Train model
+    results = model.run(dataset[0], dataset[1], test_params)
+    for result in results:
+        print 'RESULT:', list(result)
+
 if __name__ == '__main__':
     main()

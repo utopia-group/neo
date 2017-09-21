@@ -18,6 +18,6 @@ def main():
 
     # Step 4: Train model
     model.train(train_dataset[0], train_dataset[1], train_dataset[2], test_dataset[0], test_dataset[1], test_dataset[2], train_params)
-    
+
 if __name__ == '__main__':
     main()

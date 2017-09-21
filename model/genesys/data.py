@@ -28,7 +28,7 @@ def read_train_dataset(filename, funcs_filename, num_vals, max_len):
     counter = 0
     for line in f:
 
-        if counter > 1000000:
+        if counter > 2000000:
             break
 
         if counter%10000 == 0:
