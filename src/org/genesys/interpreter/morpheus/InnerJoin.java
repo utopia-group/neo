@@ -42,6 +42,7 @@ public class InnerJoin implements Unop {
 
         List<String> commons = new ArrayList<>(df.getNames());
         commons.retainAll(df2.getNames());
+        if(commons.isEmpty()) return new org.genesys.models.Pair<>(false, new Maybe<>());
         DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
         return new org.genesys.models.Pair<>(true, new Maybe<>(res));
     }
