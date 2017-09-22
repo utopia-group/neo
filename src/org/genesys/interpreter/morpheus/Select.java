@@ -1,6 +1,8 @@
 package org.genesys.interpreter.morpheus;
 
+import kotlin.jvm.functions.Function1;
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.ReshapeKt;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
@@ -24,13 +26,29 @@ public class Select implements Unop {
         DataFrame df = (DataFrame) pair.get(0);
         List cols = (List) pair.get(1);
         List<String> colArgs = new ArrayList<>();
+        List<Function1> colNegs = new ArrayList<>();
+        boolean hasNeg = false;
+
         for (Object o : cols) {
             Integer index = (Integer) o;
-            String arg = df.getNames().get(index);
+            int absIdx = index;
+            if (index == -99) absIdx = 0;
+            String arg = df.getNames().get(Math.abs(absIdx));
             colArgs.add(arg);
+            if (index < 0) {
+                hasNeg = true;
+                colNegs.add(Extensions.unaryMinus(arg));
+            }
         }
         assert !colArgs.isEmpty();
-        DataFrame res = df.select(colArgs);
+        DataFrame res;
+        if(hasNeg) {
+            Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
+            res = Extensions.select(df, argNegs);
+        } else {
+            res  = df.select(colArgs);
+        }
+
         return res;
     }
 
@@ -48,14 +66,33 @@ public class Select implements Unop {
             return new Pair<>(false, new Maybe<>());
         } else {
             List<String> colArgs = new ArrayList<>();
+            List<Function1> colNegs = new ArrayList<>();
+            boolean hasNeg = false;
+
             for (Object o : cols) {
                 Integer index = (Integer) o;
-                if (nCol <= index) return new Pair<>(false, new Maybe<>());
-                String arg = df.getNames().get(index);
+                int absIndx = index;
+                if (index == -99) absIndx = 0;
+
+                if (nCol <= Math.abs(absIndx)) return new Pair<>(false, new Maybe<>());
+                String arg = df.getNames().get(Math.abs(absIndx));
+                if (index < 0) {
+                    hasNeg = true;
+                    colNegs.add(Extensions.unaryMinus(arg));
+                }
                 colArgs.add(arg);
             }
             assert !colArgs.isEmpty();
-            DataFrame res = df.select(colArgs);
+            DataFrame res;
+            if (!hasNeg) {
+                res = df.select(colArgs);
+            } else {
+                Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
+                res = Extensions.select(df, argNegs);
+            }
+//            System.out.println("Running select....");
+//            System.out.println(df);
+//            System.out.println(res);
             return new Pair<>(true, new Maybe<>(res));
         }
     }

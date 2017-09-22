@@ -51,6 +51,17 @@ public class MorpheusUtil {
         return res;
     }
 
+    public Set<Integer> negateSet(Set<Integer> orgSet) {
+        Set<Integer> tgtSet = new HashSet<>();
+        for (Integer i : orgSet) {
+            if (i == 0) //hack for -0
+                tgtSet.add(-99);
+            else
+                tgtSet.add(i * (-1));
+        }
+        return tgtSet;
+    }
+
     public void reset() {
         counter_ = 0;
     }

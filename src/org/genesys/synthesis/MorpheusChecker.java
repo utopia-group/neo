@@ -57,9 +57,10 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 //        System.out.println("Verifying.... " + node);
         Pair<Boolean, Maybe<Object>> validRes = validator_.validate(node, example.getInput());
         if (!validRes.t0) {
+//            System.out.println("Refuting.... " + node);
             return false;
         } else {
-            //System.out.println("Verifying.... " + node);
+//            System.out.println("Verifying.... " + node);
         }
 
         /* Generate SMT formula for current AST node. */

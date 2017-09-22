@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class Separate implements Unop {
 
-    private final String sep_ = "_";
+    private final String sep_ = "\\.|_|\\|";
 
-    private final boolean remove_ = false;
+    private final boolean remove_ = true;
 
-    private final boolean convert_ = false;
+    private final boolean convert_ = true;
 
     private int colVal;
 
@@ -62,15 +62,10 @@ public class Separate implements Unop {
         String orgCol = df.getNames().get(colIdx);
         colArgs.add(col1);
         colArgs.add(col2);
-        StringCol strCol = (StringCol) df.getCols().get(colIdx);
-        String testVal = strCol.getValues()[0];
-        if (testVal == null || !testVal.contains("_") || !testVal.contains("|"))
-            return new Pair<>(false, new Maybe<>());
-        DataFrame res;
-        if (testVal.contains("|"))
-            res = ReshapeKt.separate(df, orgCol, colArgs, "|", remove_, convert_);
-        else
-            res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+        DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+//        System.out.println("Running separate...." + orgCol);
+//        System.out.println(df);
+//        System.out.println(res);
 
         return new Pair<>(true, new Maybe<>(res));
     }
