@@ -32,7 +32,7 @@ public class Spread implements Unop {
         assert df.getNcol() > value;
         String keyCol = df.getNames().get(key);
         String valCol = df.getNames().get(value);
-        DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, true);
+        DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
 //        System.out.println("----------------SPREAD------------------");
 //        Extensions.print(df);
 //        Extensions.print(res);
@@ -60,7 +60,7 @@ public class Spread implements Unop {
             Object fstElem = df.getCols().get(k).values$krangl_main()[0];
             if (df.getNames().contains(fstElem)) return new Pair<>(false, new Maybe<>());
             ;
-            DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, true);
+            DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
             if (res.getNcol() == 0) {
                 return new Pair<>(false, new Maybe<>());
             }

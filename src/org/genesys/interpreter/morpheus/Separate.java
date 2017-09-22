@@ -20,7 +20,7 @@ public class Separate implements Unop {
 
     private final boolean remove_ = true;
 
-    private final boolean convert_ = true;
+    private final boolean convert_ = false;
 
     private int colVal;
 

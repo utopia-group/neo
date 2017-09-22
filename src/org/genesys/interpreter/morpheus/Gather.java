@@ -47,9 +47,9 @@ public class Gather implements Unop {
         DataFrame res;
         if(hasNeg) {
             Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
-            res = ReshapeKt.gather(df, key, value, argNegs, true);
+            res = ReshapeKt.gather(df, key, value, argNegs, false);
         } else {
-             res = ReshapeKt.gather(df, key, value, colArgs, true);
+             res = ReshapeKt.gather(df, key, value, colArgs, false);
         }
 //        System.out.println("----------------Gather------------------");
 //        Extensions.print(df);
@@ -97,9 +97,9 @@ public class Gather implements Unop {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
 //                System.out.println("Running gather...." + argNegs) ;
 
-                res = ReshapeKt.gather(df, key, value, argNegs, true);
+                res = ReshapeKt.gather(df, key, value, argNegs, false);
             } else  {
-                res = ReshapeKt.gather(df, key, value, colArgs, true);
+                res = ReshapeKt.gather(df, key, value, colArgs, false);
             }
 //            System.out.println(df);
 //            System.out.println(res);
