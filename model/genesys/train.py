@@ -13,7 +13,7 @@ def main():
     # Step 3: Read dataset
     if input_length != output_length:
         raise Exception('Input and output lengths must be equal!')
-    dataset = read_train_dataset(deep_coder_dataset_filename, deep_coder_funcs_filename, num_vals, input_length)
+    dataset = read_train_dataset(deep_coder_processed_dataset_filename, num_dsl_ops)
     (train_dataset, test_dataset) = split_train_test(dataset, train_frac)
 
     # Step 4: Train model

@@ -11,14 +11,15 @@ num_dsl_ops = 34          # number of DSL operators
 hidden_layer_dim = 256    # number of nodes in each hidden layer)
 
 # Train parameters
-num_epochs = 1
+num_epochs = 10
 batch_size = 50
-step_size = 1e-7
+step_size = 1e-4
 save_path = 'deep_coder_model.ckpt'
 load_prev = False
 
 # Dataset parameters
 deep_coder_dataset_filename = 'deep_coder.txt'
+deep_coder_processed_dataset_filename = 'deep_coder_processed.txt'
 deep_coder_funcs_filename = 'deep_coder_funcs.txt'
 train_frac = 0.9
 

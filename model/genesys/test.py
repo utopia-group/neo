@@ -13,9 +13,11 @@ def main():
     # Step 3: Read dataset
     if input_length != output_length:
         raise Exception('Input and output lengths must be equal!')
-    dataset = read_train_dataset(deep_coder_test_dataset_filename, deep_coder_funcs_filename, num_vals, input_length)
+    dataset = read_deep_coder_train_dataset(deep_coder_test_dataset_filename, deep_coder_funcs_filename, num_vals, input_length)
+    dataset = np.array(dataset).T.tolist()
+    dataset = [np.array(dataset[0]), np.array(dataset[1]), np.array(dataset[2])]
 
-    model.test(dataset[0], dataset[1], dataset[2], test_params)
+    model.test(np.array(dataset[0]), np.array(dataset[1]), np.array(dataset[2]), test_params)
     
 if __name__ == '__main__':
     main()
