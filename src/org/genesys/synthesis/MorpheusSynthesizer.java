@@ -110,7 +110,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             else concrete++;
 
             long start = LibUtils.tick();
-            //boolean isSatisfiable = true;
+//            boolean isSatisfiable = true;
             boolean isSatisfiable = checker_.check(problem_, ast);
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
@@ -198,7 +198,10 @@ public class MorpheusSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
-                //System.out.println("result target:\n" + tgt.get());
+//                System.out.println("result target:\n" + ((SimpleDataFrame)tgt.get()).getCols());
+//                System.out.println("result target:\n" + tgt.get());
+//                System.out.println("expected target:\n" + ((SimpleDataFrame)output).getCols());
+//                System.out.println("expected target:\n" + output);
 
                 if (output instanceof DataFrame) {
                     boolean flag = ReshapeKt.hasSameContents((DataFrame) tgt.get(), (SimpleDataFrame) output);
@@ -215,6 +218,8 @@ public class MorpheusSynthesizer implements Synthesizer {
             } catch (Exception e) {
                 if (!silent_) System.out.println("Exception= " + e);
                 passed = false;
+                e.printStackTrace();
+                assert false;
                 break;
             }
         }

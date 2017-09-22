@@ -17,8 +17,11 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     public AbstractType outputType;
 
-    // maximum column number we need to consider
+    // maximum column number we need to consider. Can blow up search space
     private int maxCol = 4;
+
+    // max size of column subset. Can blow up search space
+    private int maxColListSize = 2;
 
     private List<Production<AbstractType>> initProductions = new ArrayList<>();
 
@@ -62,7 +65,12 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
             allCols.add(i);
         }
         List<Set<Integer>> cols = MorpheusUtil.getInstance().getSubsets(allCols, 1);
-        cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, 2));
+        cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, maxColListSize));
+        List<Set<Integer>> negSets = new ArrayList<>();
+        for (Set<Integer> col : cols) {
+            negSets.add(MorpheusUtil.getInstance().negateSet(col));
+        }
+        cols.addAll(negSets);
         for (Set<Integer> col : cols) {
             Production prod = new Production<>(new ListType(new IntType()), col.toString());
             prod.setValue(new ArrayList(col));

@@ -47,6 +47,8 @@ public class GroupBy implements Unop {
             String[] colArgs = new String[cols.size()];
             for (int i = 0; i < cols.size(); i++) {
                 Integer index = (Integer) cols.get(i);
+                //don't support negation for now.
+                if(index < 0) return new Pair<>(false, new Maybe<>());
                 if (nCol <= index) return new Pair<>(false, new Maybe<>());
                 String arg = df.getNames().get(index);
                 colArgs[i] = arg;

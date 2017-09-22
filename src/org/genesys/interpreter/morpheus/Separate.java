@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class Separate implements Unop {
 
-    private final String sep_ = "_";
+    private final String sep_ = "\\.|_|\\|";
 
-    private final boolean remove_ = false;
+    private final boolean remove_ = true;
 
-    private final boolean convert_ = false;
+    private final boolean convert_ = true;
 
     private int colVal;
 
@@ -54,7 +54,7 @@ public class Separate implements Unop {
 
         DataFrame df = (DataFrame) arg0.t1.get();
         int colIdx = (int) arg1.t1.get();
-        if (df.getNcol() <= colIdx) return new Pair<>(false, new Maybe<>());
+        if ((df.getNcol() <= colIdx) || (df.getNrow() == 0)) return new Pair<>(false, new Maybe<>());
         if (!(df.getCols().get(colIdx) instanceof StringCol)) return new Pair<>(false, new Maybe<>());
         List<String> colArgs = new ArrayList<>();
         String col1 = MorpheusUtil.getInstance().getMorpheusString();
@@ -62,10 +62,11 @@ public class Separate implements Unop {
         String orgCol = df.getNames().get(colIdx);
         colArgs.add(col1);
         colArgs.add(col2);
-        StringCol strCol = (StringCol) df.getCols().get(colIdx);
-        String testVal =  strCol.getValues()[0];
-        if(!testVal.contains("_")) return new Pair<>(false, new Maybe<>());
         DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+//        System.out.println("Running separate...." + orgCol);
+//        System.out.println(df);
+//        System.out.println(res);
+
         return new Pair<>(true, new Maybe<>(res));
     }
 

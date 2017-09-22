@@ -747,13 +747,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
         Collections.reverse(ancestors);
 
-        //String decision = decider_.decide(ancestors, domain);
-        String decision = decider_.decideSketch(domain, level_);
-        assert (!decision.equals(""));
+
+        String decision = decider_.decideSketch(ancestors, domain, level_);
+        //assert (!decision.equals(""));
         return decision;
     }
 
     public String nextDecision(List<String> domain) {
+
+//        List ancestors = new ArrayList<>();
+//        assert (level_ < highTrail_.size());
+//        for (int i  = level_-1; i >= 0; i--){
+//            assert(!highTrail_.get(i).t0.function.equals(""));
+//            ancestors.add(highTrail_.get(i).t0.function);
+//        }
+//        Collections.reverse(ancestors);
+
 
         String decision = decider_.decide(new ArrayList<>(), domain);
         assert (!decision.equals(""));
@@ -900,6 +909,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         if (!decideDomain.isEmpty()) {
             String decision = nextDecisionHigher(decideDomain);
+            if (decision == null){
+                level_ = -1;
+                return null;
+            }
+            if (decision == ""){
+                // we need to go to the next program
+                if (level_ != 0)
+                    backtrackStep2(0, false, false);
+                return null;
+            }
             Pair<Production, Integer> p = decideMap.get(decision);
             decisionNeo = p.t0;
             decisionSAT = p.t1;
@@ -1224,6 +1243,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     // No conflict
                     Node decision = decideHigh();
                     if (decision == null) {
+                        System.out.println("decision is null!");
                         if (level_ == 0) {
                             unsat = true;
                             break;
@@ -1236,6 +1256,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             }
                         }
                     }
+
                 }
             }
 
@@ -1290,16 +1311,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     } else {
                         // No conflict
                         Node decision = decideHigh();
-                        if (decision == null) {
-                            if (level_ == 0) {
-                                unsat = true;
-                                break;
-                            }
-
-                            while (backtrackStep1(level_ - 1, true)) {
+                        if (level_ == -1){ // FIXME: quick hack to exit after all programs are checked
+                            unsat = true;
+                            break;
+                        }
+                        if (level_ != 0) { // FIXME: quick hack to go to the next program
+                            if (decision == null) {
                                 if (level_ == 0) {
                                     unsat = true;
                                     break;
+                                }
+
+                                while (backtrackStep1(level_ - 1, true)) {
+                                    if (level_ == 0) {
+                                        unsat = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -1462,6 +1489,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             if (currentChild_ >= trail_.get(currentLine_).size()){
                                 currentLine_++;
                                 currentChild_=0;
+                            }
+
+                            if (currentLine_ == trail_.size()){
+                                // go to step 2?
+                                step_ = 2;
+                                currentLine_ = 0;
+                                currentChild_ = 0;
+                                backtrackStep2(highTrail_.size(), true, true);
+                                step_ = backtrackStep(level_);
+                                break;
                             }
 
                             if (step_ != 3){

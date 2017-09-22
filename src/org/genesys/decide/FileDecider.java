@@ -95,13 +95,15 @@ public class FileDecider implements Decider {
     }
 
     @Override
-    public String decideSketch(List<String> candidates, int child) {
+    public String decideSketch(List<String> trail, List<String> candidates, int child) {
+        if (program_ >= sketches_.size())
+            return null;
         String decision = sketches_.get(program_).get(child);
-        while (!candidates.contains(decision)){
+        if (!candidates.contains(decision)) {
+            decision = "";
             program_++;
-            decision = sketches_.get(program_).get(child);
         }
-        assert(candidates.contains(decision));
+
         return decision;
     }
 
