@@ -74,14 +74,14 @@ class DeepCoderModel:
         dsl_op_logits = tf.layers.dense(inputs=hidden2, units=params.num_dsl_ops, activation=None)
 
         # Step 6: Output (probability of each DSL operator)
-        self.dsl_op_scores = tf.nn.softmax(dsl_op_logits)
+        self.dsl_op_scores = tf.nn.sigmoid(dsl_op_logits)
 
         # Step 7: Loss layer
         self.labels = tf.placeholder(tf.float32, [None, params.num_dsl_ops])
-        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.labels, logits=dsl_op_logits))
+        self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=self.labels, logits=dsl_op_logits))
 
         # Step 8: Accuracy
-        self.accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(dsl_op_logits, 1), tf.argmax(self.labels, 1)), tf.float32))
+        self.accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.cast(tf.round(self.dsl_op_scores), tf.int32), tf.cast(self.labels, tf.int32)), tf.float32))
 
     # input_values_train:  np.array([num_train, input_length])
     # output_values_train: np.array([num_train, output_length])

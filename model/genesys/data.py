@@ -17,11 +17,27 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
 
     # Step 2: Read training set
 
+    # helper function
+    def process(ex):
+        if type(ex) is np.int64 or type(ex) is int:
+            return int(ex + num_vals/2)
+        elif type(ex) is list:
+            partial_value = np.array(ex, dtype=np.int64) + num_vals/2
+            value = np.zeros(max_len, dtype=np.int64) + num_vals
+            value[:len(partial_value)] = partial_value
+            return value.tolist()
+        else:
+            raise Exception('Not recognized: ' + str(type(ex)))
+
     f = open(DATA_PATH + '/' + filename)
 
     dataset = []
     counter = 0
+    
     for line in f:
+
+        if counter > 1000000:
+            break
 
         if counter%10000 == 0:
             print 'Reading:', counter
@@ -39,40 +55,29 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
         except:
             continue
 
-        # helper function
-        def process(ex):
-            if type(ex) is np.int64 or type(ex) is int:
-                return int(ex + num_vals/2)
-            elif type(ex) is list:
-                partial_value = np.array(ex, dtype=np.int64) + num_vals/2
-                value = np.zeros(max_len, dtype=np.int64) + num_vals
-                value[:len(partial_value)] = partial_value
-                return value.tolist()
-            else:
-                raise Exception('Not recognized: ' + str(type(ex)))
+        # construct the input value
+        if len(io_examples[0][0]) == 2:
+            input_value = [process(io_examples[0][0][0]), process(io_examples[0][0][1])]
+        elif len(io_examples[0][0]) == 1:
+            input_value = process(io_examples[0][0][0])
+        else:
+            raise Exception('Invalid input example: ' + str(io_examples[0][0]))
 
-        # iterate over functions in the program
+        # construct the output value
+        output_value = process(io_examples[0][1])
+
+        # TODO: only retaining list -> list functions for now
+        if len(io_examples[0][0]) == 2 or type(output_value) is int:
+            continue
+
+        # construct the label by iterating over functions in the program
+        label = np.zeros([len(funcs)], dtype=np.int64)
         for func in program.src.split():
             if func in funcs:
-                # construct the input value
-                if len(io_examples[0][0]) == 2:
-                    input_value = [process(io_examples[0][0][0]), process(io_examples[0][0][1])]
-                elif len(io_examples[0][0]) == 1:
-                    input_value = process(io_examples[0][0][0])
-                else:
-                    raise Exception('Invalid input example: ' + str(io_examples[0][0]))
-
-                # construct the output value
-                output_value = process(io_examples[0][1])
-
-                # construct the label
-                label = np.zeros([len(funcs)], dtype=np.int64)
                 label[funcs[func]] = 1
-                label = label.tolist()
+        label = label.tolist()
 
-                dataset.append((input_value, output_value, label))
-
-                break
+        dataset.append((input_value, output_value, label))
 
     f.close()
 
@@ -113,12 +118,13 @@ def read_train_dataset(filename, num_dsl_ops):
     counter = 0
 
     for line in f:
+
+        if counter > 1000000:
+            break
+
         if counter%100000 == 0:
             print 'Read ' + str(counter)
         counter += 1
-
-        if counter > 100000:
-            break
 
         try:
             # Step 1: Obtain (DSL ops, input values, output values) tuples
