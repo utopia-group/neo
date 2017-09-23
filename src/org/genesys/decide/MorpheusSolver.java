@@ -265,6 +265,17 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             for (Production p : node.domain) {
 
                 int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
+                boolean exist_production = true;
+                for (int i = 0; i < p.inputs.length; i++){
+                    if(!prodTypes_.containsKey(p.inputs[i].toString())) {
+                        exist_production = false;
+                        break;
+                    }
+                }
+
+                if (!exist_production) {
+                    continue;
+                }
 
                 for (int i = 0; i < p.inputs.length; i++) {
                     ArrayList<Production> occurs = new ArrayList<>();
