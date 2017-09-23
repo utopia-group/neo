@@ -109,6 +109,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) partial++;
             else concrete++;
 
+//            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
 //            boolean isSatisfiable = true;
             boolean isSatisfiable = checker_.check(problem_, ast);

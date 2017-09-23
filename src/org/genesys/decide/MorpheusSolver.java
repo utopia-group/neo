@@ -817,7 +817,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             node.component = decisionComponent;
             node.level = level_;
 
-//            System.out.println("NEO decision Inputs = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+            //System.out.println("NEO decision Inputs = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
             Pair<Node, Pair<Integer,Integer>> p2 = new Pair<Node, Pair<Integer,Integer>>(node, p);
@@ -876,7 +876,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             node.component = decisionComponent;
             node.level = level_;
 
-//            System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+            //System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
             Pair<Node, Pair<Integer,Integer>> p2 = new Pair<Node, Pair<Integer,Integer>>(node, p);
@@ -944,7 +944,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             node.component = decisionComponent;
             node.level = ++level_;
 
-//            System.out.println("NEO decision = " + decisionNeo.function + " @" +level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+            //System.out.println("NEO decision = " + decisionNeo.function + " @" +level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
@@ -1365,6 +1365,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
             if (step_ == 2) {
 
+
                 // STEP 2. Decide on all inputs/lines
                 currentLine_ = 0;
                 currentChild_ = 0;
@@ -1399,8 +1400,13 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             }
 
                         } else {
-                            Node decision = decideInputs();
-                            if (decision != null)
+                            // Check if the production does not have any input tables
+                            // FIXME: generalize this
+                            if (!highTrail_.get(currentLine_).t0.function.startsWith("l(a,b).")) {
+                                Node decision = decideInputs();
+                                if (decision != null)
+                                    children_assigned = true;
+                            } else
                                 children_assigned = true;
                             currentChild_++;
                         }
