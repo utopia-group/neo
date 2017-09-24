@@ -18,7 +18,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
     public AbstractType outputType;
 
     // maximum column number we need to consider. Can blow up search space
-    private int maxCol = 6;
+    private int maxCol = 5;
 
     // max size of column subset. Can blow up search space
     private int maxColListSize = 2;
