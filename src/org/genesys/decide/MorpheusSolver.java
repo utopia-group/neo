@@ -613,7 +613,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         for (int i = 0; i < maxLen_; i++){
             if (!letbind.get(i).isEmpty()) {
-                satUtils_.addClause(letbind.get(i));
+                satUtils_.addEO(letbind.get(i),1);
             }
         }
 
