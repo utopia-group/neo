@@ -352,6 +352,30 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
 
+        if (prodName_.containsKey("mutate")){
+            // At most one mutate
+            VecInt clause = new VecInt();
+            for (int i = 0; i < highTrail_.size(); i++){
+                Production p = prodName_.get("mutate");
+                Node node = highTrail_.get(i).t0;
+                int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
+                clause.push(var);
+            }
+            satUtils_.addAMK(clause, 1);
+        }
+
+        if (prodName_.containsKey("filter")) {
+            VecInt clause = new VecInt();
+            for (int i = 0; i < highTrail_.size(); i++) {
+                Production p = prodName_.get("filter");
+                Node node = highTrail_.get(i).t0;
+                int var = varNodes_.get(new Pair<Integer, Production>(node.id, p));
+                clause.push(var);
+            }
+            satUtils_.addAMK(clause, 1);
+        }
+
+        /*
         if (prodName_.containsKey("mutate") && prodName_.containsKey("l(a,b).(/ a b)")){
 
             // If mutate occurs then the predicate had to occur before
@@ -512,6 +536,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
 
         }
+        */
 
         /* Domain specific constraints for DeepCoder */
         if (prodName_.containsKey("ACCESS")){
@@ -555,7 +580,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         // At least one input must be used in the first line of code
-        /*
+
         VecInt clause_input = new VecInt();
         for (Node node : highTrail_.get(0).t0.children){
 
@@ -565,7 +590,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
         satUtils_.addClause(clause_input);
-        */
 
         // The intermediate results cannot be used before they are created
         // ---> This is encoded in the domain
@@ -588,8 +612,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
 
         for (int i = 0; i < maxLen_; i++){
-            if (!letbind.get(i).isEmpty())
-                satUtils_.addEO(letbind.get(i),1);
+            if (!letbind.get(i).isEmpty()) {
+                satUtils_.addClause(letbind.get(i));
+            }
         }
 
         // Every input is used at least once and at most twice
@@ -714,9 +739,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                 for (Production<T> p : (List<Production<T>>) grammar_.getInputProductions()) {
 
-                    // FIXME: if constants are available we do not need to just use inputs
-                    if (prod.source.toString().compareTo(p.source.toString()) == 0 ||
-                            prod.function.startsWith("l(a,b).")) { // stupid HACK
+                    if (prod.source.toString().compareTo(p.source.toString()) == 0) {
                         domainInput_.add(prod);
                         break;
                     }
@@ -1254,7 +1277,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     // No conflict
                     Node decision = decideHigh();
                     if (decision == null) {
-                        System.out.println("decision is null!");
                         if (level_ == 0) {
                             unsat = true;
                             break;
@@ -1299,8 +1321,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         Node result = null;
         boolean unsat = false;
 
-        //printSketches();
-        //unsat = true;
+//        printSketches();
+//        unsat = true;
 
         while (!unsat) {
 
@@ -1374,6 +1396,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 while (currentLine_ < trail_.size()) {
                     boolean children_assigned = false;
                     while (currentChild_ < trail_.get(currentLine_).size()) {
+//                        System.out.println("currentChild = " + currentChild_ + " currentLine=" + currentLine_);
 
                         Constr conflict = satUtils_.getSolver().propagate();
                         if (conflict != null) {
@@ -1400,14 +1423,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             }
 
                         } else {
-                            // Check if the production does not have any input tables
-                            // FIXME: generalize this
-                            if (!highTrail_.get(currentLine_).t0.function.startsWith("l(a,b).")) {
+                            // Assumes that all higher-order components have children
                                 Node decision = decideInputs();
                                 if (decision != null)
                                     children_assigned = true;
-                            } else
-                                children_assigned = true;
                             currentChild_++;
                         }
                     }

@@ -100,17 +100,17 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(true, new TableType(), "gather", new TableType(), new ListType(new IntType())));
         productions.add(new Production<>(true, new TableType(), "spread", new TableType(), new ColIndexType(), new ColIndexType()));
         productions.add(new Production<>(true, new TableType(), "unite", new TableType(), new ColIndexType(), new ColIndexType()));
-        productions.add(new Production<>(true,new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
-        productions.add(new Production<>(true,new TableType(), "separate", new TableType(), new ColIndexType()));
-        productions.add(new Production<>(true, new TableType(), "filter", new TableType(), new BinopBoolType()));
-        productions.add(new Production<>(true, new TableType(), "mutate", new TableType(), new BinopIntType()));
+        productions.add(new Production<>(true, new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
+        productions.add(new Production<>(true, new TableType(), "separate", new TableType(), new ColIndexType()));
+        productions.add(new Production<>(true, new TableType(), "filter", new TableType(), new BinopBoolType(), new ColIndexType(), new IntType()));
+        productions.add(new Production<>(true, new TableType(), "mutate", new TableType(), new BinopIntType(),new ColIndexType(),new ColIndexType()));
 
         //FunctionType
-        productions.add(new Production<>(true,new BinopIntType(), "l(a,b).(/ a b)",new ColIndexType(),new ColIndexType()));
+        productions.add(new Production<>(new BinopIntType(), "l(a,b).(/ a b)"));
 
-        productions.add(new Production<>(true,new BinopBoolType(), "l(a,b).(> a b)", new ColIndexType(), new IntType()));
-        productions.add(new Production<>(true,new BinopBoolType(), "l(a,b).(< a b)", new ColIndexType(), new IntType()));
-        productions.add(new Production<>(true,new BinopBoolType(), "l(a,b).(== a b)", new ColIndexType(), new IntType()));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(> a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(< a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(== a b)"));
 
         // Aggregator Type
         productions.add(new Production<>(new AggrType(), "mean"));
@@ -142,8 +142,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
         for (int i = 0; i < size; i++) {
             productions.add(new Production<>(new TableType(), "line" + i + "table"));
-            productions.add(new Production<>(new BinopIntType(), "line" + i + "binopint"));
-            productions.add(new Production<>(new BinopBoolType(), "line" + i + "binopbool"));
+//            productions.add(new Production<>(new BinopIntType(), "line" + i + "binopint"));
+//            productions.add(new Production<>(new BinopBoolType(), "line" + i + "binopbool"));
         }
 
         return productions;
