@@ -60,8 +60,8 @@ public class Mutate implements Unop {
         if (!arg0.t1.has()) return new Pair<>(true, new Maybe<>());
 
         DataFrame df = (DataFrame) arg0.t1.get();
-        int lhs = (int) arg1.t1.get();
-        Binop op = (Binop) arg2.t1.get();
+        int lhs = (int) arg2.t1.get();
+        Binop op = (Binop) arg1.t1.get();
         int rhs = (int) arg3.t1.get();
         int nCol = df.getNcol();
         if (nCol <= lhs || nCol <= rhs) return new Pair<>(false, new Maybe<>());
@@ -84,6 +84,8 @@ public class Mutate implements Unop {
 
             }
         }));
+        System.out.println("Mutate:==============");
+        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
 

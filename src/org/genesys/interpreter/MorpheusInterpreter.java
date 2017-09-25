@@ -86,8 +86,8 @@ public class MorpheusInterpreter extends BaseInterpreter {
 
         executors.put("mutate", (objects, input) -> {
             assert objects.size() == 4;
-            int lhs = (int) objects.get(1);
-            Binop op = (Binop) objects.get(2);
+            int lhs = (int) objects.get(2);
+            Binop op = (Binop) objects.get(1);
             int rhs = (int) objects.get(3);
             return new Maybe<>(new Mutate(lhs, op, rhs).apply(objects.get(0)));
         });
