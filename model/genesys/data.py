@@ -8,9 +8,7 @@ from gen_io import *
 # funcs_filename: str (path of the set of DSL operators)
 # num_vals: int (the number of possible values in the input-output examples)
 # max_len: int (the maximum length of an input-output example)
-# return: [([int], [int], [int], ..., [int])]
-#         (an array of (first input value, ..., second input value, ..., output value ..., label) tuples,
-#          with 5 sets of the first three items)
+# return: [([int], [int], [int])] (an array of (input value, output value, label) tuples)
 def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
     # Step 1: Read functions
     f = open(DATA_PATH + '/' + funcs_filename)
@@ -22,17 +20,14 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
     # helper function
     def process(ex):
         if type(ex) is np.int64 or type(ex) is int:
-            value = np.zeros(max_len, dtype=np.int64) + num_vals
-            value[0] = int(ex + num_vals/2)
-        elif type(ex) is list and len(ex) == 0:
-            value = np.zeros(max_len, dtype=np.int64) + num_vals
+            return int(ex + num_vals/2)
         elif type(ex) is list:
             partial_value = np.array(ex, dtype=np.int64) + num_vals/2
             value = np.zeros(max_len, dtype=np.int64) + num_vals
             value[:len(partial_value)] = partial_value
+            return value.tolist()
         else:
             raise Exception('Not recognized: ' + str(type(ex)))
-        return value.tolist()
 
     f = open(DATA_PATH + '/' + filename)
 
@@ -40,6 +35,9 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
     counter = 0
     
     for line in f:
+
+        if counter > 1000000:
+            break
 
         if counter%10000 == 0:
             print 'Reading:', counter
@@ -53,27 +51,24 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
 
         # Step 2c: Generate the IO examples
         try:
-            io_examples = generate_IO_examples([program], 5, max_len)[0]
+            io_examples = generate_IO_examples([program], 1, max_len)[0]
         except:
             continue
 
-        # construct the input and output values
+        # construct the input value
+        if len(io_examples[0][0]) == 2:
+            input_value = [process(io_examples[0][0][0]), process(io_examples[0][0][1])]
+        elif len(io_examples[0][0]) == 1:
+            input_value = process(io_examples[0][0][0])
+        else:
+            raise Exception('Invalid input example: ' + str(io_examples[0][0]))
 
-        input_values_first = []
-        input_values_second = []
-        output_values = []
-        
-        for i in range(5):
-            if len(io_examples[i][0]) == 2:
-                input_values_first.append(process(io_examples[i][0][0]))
-                input_values_second.append(process(io_examples[i][0][1]))
-            elif len(io_examples[i][0]) == 1:
-                input_values_first.append(process(io_examples[i][0][0]))
-                input_values_second.append(process([]))
-            else:
-                raise Exception('Invalid input example: ' + str(io_examples[i][0]))
+        # construct the output value
+        output_value = process(io_examples[0][1])
 
-            output_values.append(process(io_examples[i][1]))
+        # TODO: only retaining list -> list functions for now
+        if len(io_examples[0][0]) == 2 or type(output_value) is int:
+            continue
 
         # construct the label by iterating over functions in the program
         label = np.zeros([len(funcs)], dtype=np.int64)
@@ -82,7 +77,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
                 label[funcs[func]] = 1
         label = label.tolist()
 
-        dataset.append(tuple(input_values_first + input_values_second + output_values + [label,]))
+        dataset.append((input_value, output_value, label))
 
     f.close()
 
@@ -96,13 +91,13 @@ def write_deep_coder_train_dataset(filename, dataset):
 
     counter = 0
 
-    for datapoint in dataset:
+    for (input_value, output_value, label) in dataset:
 
         if counter%10000 == 0:
             print 'Writing: ' + str(counter)
         counter += 1
         
-        f.write(str(datapoint) + '\n')
+        f.write('(' + str(input_value) + ', ' + str(output_value) + ', ' + str(label) + ')\n')
 
     f.close()
 
