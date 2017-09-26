@@ -2,6 +2,7 @@ package org.genesys.clients;
 
 import com.google.gson.Gson;
 import org.genesys.decide.Decider;
+import org.genesys.decide.FileDecider;
 import org.genesys.decide.FirstDecider;
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
@@ -37,7 +38,7 @@ public class DeepCoderMainMorpheus {
         Decider decider = new FirstDecider();
 
         MorpheusSynthesizer synth;
-        if (args.length == 4) {
+        assert (args.length == 5);
             useStat = Boolean.valueOf(args[3]);
             if(useStat)
                 decider = new DeepCoderPythonDecider(dcProblem);
@@ -45,10 +46,12 @@ public class DeepCoderMainMorpheus {
             int depth = Integer.valueOf(args[1]);
             boolean learning = Boolean.valueOf(args[2]);
 
-            synth = new MorpheusSynthesizer(grammar, dcProblem, checker, interpreter, depth, specLoc, learning, decider);
-        } else {
-            synth = new MorpheusSynthesizer(grammar, dcProblem, checker, interpreter, specLoc, decider);
-        }
+            if (args.length == 5){
+                if (!args[4].equals(""))
+                    decider = new FileDecider(args[4]);
+            }
+
+        synth = new MorpheusSynthesizer(grammar, dcProblem, checker, interpreter, depth, specLoc, learning, decider);
         synth.synthesize();
     }
 }

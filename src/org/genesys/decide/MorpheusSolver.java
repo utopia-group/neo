@@ -539,16 +539,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         */
 
         /* Domain specific constraints for DeepCoder */
-        if (prodName_.containsKey("ACCESS")){
-            // ACCESS cannot be the first line
-            Node root = highTrail_.get(0).t0;
-            Production gg = prodName_.get("ACCESS");
-            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
-                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
-                VecInt lits = new VecInt(new int[]{-var});
-                satUtils_.addClause(lits);
-            }
-        }
+//        if (prodName_.containsKey("ACCESS")){
+//            // ACCESS cannot be the first line
+//            Node root = highTrail_.get(0).t0;
+//            Production gg = prodName_.get("ACCESS");
+//            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
+//                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+//                VecInt lits = new VecInt(new int[]{-var});
+//                satUtils_.addClause(lits);
+//            }
+//        }
 
 
         // At most one variable is assigned at each node
@@ -568,11 +568,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             for (int i = 0 ;i < ((List)pair.getValue()).size(); i++){
                 amk.push(((List<Integer>)pair.getValue()).get(i));
 
-                if (i != ((List)pair.getValue()).size()-1){
-                    // There are no two consecutive higher order function calls
-                    VecInt clause = new VecInt(new int[]{-((List<Integer>)pair.getValue()).get(i),-((List<Integer>)pair.getValue()).get(i+1)});
-                    satUtils_.addClause(clause);
-                }
+                // disabled for DeepCoder -- maybe add it as preference for Morpheus?
+//                if (i != ((List)pair.getValue()).size()-1){
+//                    // There are no two consecutive higher order function calls
+//                    VecInt clause = new VecInt(new int[]{-((List<Integer>)pair.getValue()).get(i),-((List<Integer>)pair.getValue()).get(i+1)});
+//                    satUtils_.addClause(clause);
+//                }
             }
             // At most 2 occurrences of each higher order component in the sketch
             satUtils_.addAMK(amk, 2);
@@ -581,15 +582,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         // At least one input must be used in the first line of code
 
-        VecInt clause_input = new VecInt();
-        for (Node node : highTrail_.get(0).t0.children){
-
-            for (Production p : inputProductions_){
-                int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
-                clause_input.push(productionVar);
-            }
-        }
-        satUtils_.addClause(clause_input);
+//        VecInt clause_input = new VecInt();
+//        for (Node node : highTrail_.get(0).t0.children){
+//
+//            for (Production p : inputProductions_){
+//                int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
+//                clause_input.push(productionVar);
+//            }
+//        }
+//        satUtils_.addClause(clause_input);
 
         // The intermediate results cannot be used before they are created
         // ---> This is encoded in the domain
@@ -734,16 +735,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             if (prod.higher) {
                 domainHigher_.add(prod);
 
-                if (grammar_.getOutputType().toString().compareTo(prod.source.toString()) == 0)
+                if (grammar_.getOutputType().toString().equals(prod.source.toString())) {
                     domainOutput_.add(prod);
-
-                for (Production<T> p : (List<Production<T>>) grammar_.getInputProductions()) {
-
-                    if (prod.source.toString().compareTo(p.source.toString()) == 0) {
-                        domainInput_.add(prod);
-                        break;
-                    }
                 }
+                //domainOutput_.add(prod);
+
+                // FIXME: we could potentially prune some input productions
+                domainInput_.add(prod);
+
             } else {
                 domainFirst_.add(prod);
             }
@@ -899,7 +898,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             node.component = decisionComponent;
             node.level = level_;
 
-            //System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+//            System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
             Pair<Node, Pair<Integer,Integer>> p2 = new Pair<Node, Pair<Integer,Integer>>(node, p);
@@ -1122,8 +1121,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 }
             }
 
-            if (prodName_.get(node.function).inputs.length != children)
+            if (prodName_.get(node.function).inputs.length != children) {
                 partial_ = true;
+            }
 
             if (prodName_.get(node.function).inputs.length == children) {
                 ast_node.setConcrete(true);
@@ -1509,6 +1509,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             if (step_ == 3) {
 
                 // Fill line-by-line and only ask the deduction system after we have a full line
+                assert (currentLine_ < trail_.size());
                     while (currentChild_ < trail_.get(currentLine_).size()) {
                         Constr conflict = satUtils_.getSolver().propagate();
                         if (conflict != null) {
@@ -1522,10 +1523,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                             currentLine_ = trailNeo_.get(trailNeo_.size()-1).t1.t0;
                             currentChild_ = trailNeo_.get(trailNeo_.size()-1).t1.t1+1;
+                            assert(currentLine_ < trail_.size());
                             if (currentChild_ >= trail_.get(currentLine_).size()){
                                 currentLine_++;
                                 currentChild_=0;
                             }
+                            assert(currentLine_ < trail_.size());
 
                             if (currentLine_ == trail_.size()){
                                 // go to step 2?
@@ -1554,8 +1557,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                     step_ = backtrackStep(level_);
                                     break;
                                 }
-                            } else
+                            } else {
                                 currentChild_++;
+                            }
                         }
                     }
 
@@ -1621,9 +1625,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 }
                             }
                             partial_ = true;
-                            //System.out.println("CACHED-STEP3 = " + ast);
                         } else {
-                            //cacheAST_.put(ast.toString(), true);
 
                             ast_ = ast;
                             return ast;
