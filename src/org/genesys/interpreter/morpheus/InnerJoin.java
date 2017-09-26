@@ -2,6 +2,7 @@ package org.genesys.interpreter.morpheus;
 
 import kotlin.Pair;
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.JoinsKt;
 import org.genesys.interpreter.Unop;
 import org.genesys.type.Maybe;
@@ -44,6 +45,8 @@ public class InnerJoin implements Unop {
         commons.retainAll(df2.getNames());
         if(commons.isEmpty()) return new org.genesys.models.Pair<>(false, new Maybe<>());
         DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
+        System.out.println("InnerJoin-------------");
+        Extensions.print(res);
         return new org.genesys.models.Pair<>(true, new Maybe<>(res));
     }
 

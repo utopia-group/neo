@@ -54,7 +54,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-//        System.out.println("Verifying.... " + node);
+        System.out.println("Verifying.... " + node);
         Pair<Boolean, Maybe<Object>> validRes = validator_.validate(node, example.getInput());
         if (!validRes.t0) {
 //            System.out.println("Refuting.... " + node);

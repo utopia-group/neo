@@ -1,8 +1,6 @@
 package org.genesys.interpreter.morpheus;
 
-import krangl.DataFrame;
-import krangl.StringCol;
-import krangl.TableFormula;
+import krangl.*;
 import org.genesys.interpreter.Unop;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
@@ -43,13 +41,9 @@ public class Summarise implements Unop {
 
         DataFrame res = df.summarize(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
             if (aggr.equals("mean")) {
-                return mean(asDoubles(df.get(colName)));
+                return ColumnsKt.mean(df.get(colName), true);
             } else if (aggr.equals("sum")) {
-                List list = new ArrayList();
-                list.add(df.get(colName));
-                //FIXME: cumSum != sum. I will fix it
-                return mean(asDoubles(df.get(colName)));
-//                return cumSum(list, false);
+                return sum(df.get(colName), true);
             } else if (aggr.equals("min")) {
                 return min(df.get(colName), false);
             } else {
@@ -71,14 +65,18 @@ public class Summarise implements Unop {
         String aggr = (String) arg1.t1.get();
         int colIdx = (int) arg2.t1.get();
         if (df.getNcol() <= colIdx) return new Pair<>(false, new Maybe<>());
+        System.out.println("summarise==================" + df.getCols().get(colIdx));
+
         if (df.getCols().get(colIdx) instanceof StringCol) return new Pair<>(false, new Maybe<>());
 
         String colName = df.getNames().get(colIdx);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
 
+
         DataFrame res = df.summarize(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
             if (aggr.equals("mean")) {
-                return mean(asDoubles(df.get(colName)));
+                return ColumnsKt.mean(df.get(colName), true);
+//                return mean(asDoubles(df.get(colName)));
             } else if (aggr.equals("sum")) {
                 return sum(df.get(colName), true);
             } else if (aggr.equals("min")) {
@@ -87,7 +85,7 @@ public class Summarise implements Unop {
                 throw new UnsupportedOperationException("Unsupported aggr:" + aggr);
             }
         }));
-
+        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
 

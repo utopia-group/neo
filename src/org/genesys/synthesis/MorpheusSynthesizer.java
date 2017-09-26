@@ -3,6 +3,7 @@ package org.genesys.synthesis;
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.ReshapeKt;
 import krangl.SimpleDataFrame;
 import org.genesys.decide.AbstractSolver;
@@ -199,10 +200,12 @@ public class MorpheusSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
-//                System.out.println("result target:\n" + ((SimpleDataFrame)tgt.get()).getCols());
+                System.out.println("result target:\n" + ((SimpleDataFrame)tgt.get()).getCols());
 //                System.out.println("result target:\n" + tgt.get());
-//                System.out.println("expected target:\n" + ((SimpleDataFrame)output).getCols());
+                Extensions.print((SimpleDataFrame)tgt.get());
+                System.out.println("expected target:\n" + ((SimpleDataFrame)output).getCols());
 //                System.out.println("expected target:\n" + output);
+                Extensions.print((SimpleDataFrame)output);
 
                 if (output instanceof DataFrame) {
                     boolean flag = ReshapeKt.hasSameContents((DataFrame) tgt.get(), (SimpleDataFrame) output);

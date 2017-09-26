@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.SimpleDataFrameKt;
 import org.genesys.decide.Decider;
 import org.genesys.decide.FileDecider;
@@ -35,11 +36,11 @@ public class MorpheusMain {
         String json = "./problem/Morpheus/p4.json";
         String specLoc = "./specs/Morpheus";
         if (args.length != 0) json = args[0];
-        Gson gson = new Gson();
+//        Gson gson = new Gson();
 
-//        GsonBuilder gsonBuilder = new GsonBuilder();
-//        gsonBuilder.registerTypeAdapter(Problem.class, new ProblemDeserializer());
-//        Gson gson = gsonBuilder.create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Problem.class, new ProblemDeserializer());
+        Gson gson = gsonBuilder.create();
         Problem problem = gson.fromJson(new FileReader(json), Problem.class);
         System.out.println("Run Morpheus main..." + problem);
 
@@ -55,6 +56,8 @@ public class MorpheusMain {
                 List<String> inContent = (List) out.get("content");
                 String[] arrIn = inHeader.toArray(new String[inHeader.size()]);
                 DataFrame inDf = SimpleDataFrameKt.dataFrameOf(arrIn).invoke(inContent.toArray());
+                System.out.println("INPUT===================");
+                Extensions.print(inDf);
                 inputTgt.add(inDf);
             }
             tgt.setInput(inputTgt);
@@ -68,6 +71,8 @@ public class MorpheusMain {
             DataFrame outDf = SimpleDataFrameKt.dataFrameOf(arr).invoke(outContent.toArray());
             tgt.setOutput(outDf);
             tgtExamples.add(tgt);
+            System.out.println("OUTPUT=================");
+            Extensions.print(outDf);
         }
         tableProblem.setExamples(tgtExamples);
 
