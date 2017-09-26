@@ -46,32 +46,46 @@ class DeepCoderTestParams:
 class DeepCoderModel:
     # params: DeepCoderModelParams (parameters for the deep coder model)
     def __init__(self, params):
-        # Step 1: Inputs (input list, output list, DSL operator n-gram)
-        self.input_values = tf.placeholder(tf.int32, [None, params.input_length])
-        self.output_values = tf.placeholder(tf.int32, [None, params.output_length])
 
-        # Step 2: Embedding layers
+        self.input_values_first = []
+        self.input_values_second = []
+        self.output_values = []
+        self.dsl_ops = []
+
+        hidden2 = []
+
+        for i in range(5):
         
-        # input value embedding
-        input_value_embeddings = tf.get_variable('input_value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
-        embedded_input_values = tf.nn.embedding_lookup(input_value_embeddings, self.input_values)
-        embedded_input_values_flat = tf.reshape(embedded_input_values, [-1, params.input_length * params.val_embedding_dim])
+            # Step 1: Inputs (input list, output list, DSL operator n-gram)
+            self.input_values_first.append(tf.placeholder(tf.int32, [None, params.input_length]))
+            self.input_values_second.append(tf.placeholder(tf.int32, [None, params.input_length]))
+            self.output_values.append(tf.placeholder(tf.int32, [None, params.output_length]))
 
-        # output value embedding
-        output_value_embeddings = tf.get_variable('output_value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
-        embedded_output_values = tf.nn.embedding_lookup(output_value_embeddings, self.output_values)
-        embedded_output_values_flat = tf.reshape(embedded_output_values, [-1, params.output_length * params.val_embedding_dim])
+            # Step 2: Embedding layers
+        
+            # input value embedding
+            input_value_embeddings = tf.get_variable('input_value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
+            embedded_input_values = tf.nn.embedding_lookup(input_value_embeddings, self.input_values)
+            embedded_input_values_flat = tf.reshape(embedded_input_values, [-1, params.input_length * params.val_embedding_dim])
 
-        # Step 3: Concatenation layer
-        merged = tf.concat([embedded_input_values_flat, embedded_output_values_flat], 1)
+            # output value embedding
+            output_value_embeddings = tf.get_variable('output_value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
+            embedded_output_values = tf.nn.embedding_lookup(output_value_embeddings, self.output_values)
+            embedded_output_values_flat = tf.reshape(embedded_output_values, [-1, params.output_length * params.val_embedding_dim])
 
-        # Step 4: Hidden layer
-        hidden0 = tf.layers.dense(inputs=merged, units=params.hidden_layer_dim, activation=tf.nn.relu)
-        hidden1 = tf.layers.dense(inputs=hidden0, units=params.hidden_layer_dim, activation=tf.nn.relu)
-        hidden2 = tf.layers.dense(inputs=hidden1, units=params.hidden_layer_dim, activation=tf.nn.relu)
+            # Step 3: Concatenation layer
+            merged = tf.concat([embedded_input_values_flat, embedded_output_values_flat], 1)
 
-        # Step 5: Logits
-        dsl_op_logits = tf.layers.dense(inputs=hidden2, units=params.num_dsl_ops, activation=None)
+            # Step 4: Hidden layer
+            hidden0 = tf.layers.dense(inputs=merged, units=params.hidden_layer_dim, activation=tf.nn.relu)
+            hidden1 = tf.layers.dense(inputs=hidden0, units=params.hidden_layer_dim, activation=tf.nn.relu)
+            hidden2.append(tf.layers.dense(inputs=hidden1, units=params.hidden_layer_dim, activation=tf.nn.relu))
+
+        # Step 5: Pool hidden layers
+        pooled = tf.reduce_mean(hidden2, 0)
+
+        # Step 6: Logits
+        dsl_op_logits = tf.layers.dense(inputs=dense, units=params.num_dsl_ops, activation=None)
 
         # Step 6: Output (probability of each DSL operator)
         self.dsl_op_scores = tf.nn.sigmoid(dsl_op_logits)
