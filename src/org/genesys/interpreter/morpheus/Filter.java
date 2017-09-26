@@ -65,8 +65,7 @@ public class Filter implements Unop {
         DataFrame df = (DataFrame) arg0.t1.get();
         Binop op = (Binop) arg1.t1.get();
         int lhs = (int) arg2.t1.get();
-        //FIXME: the root cause is on json.
-        int rhs = ((Double) arg3.t1.get()).intValue();
+        int rhs = (Integer) arg3.t1.get();
         if(df.getNcol() <= lhs) return new Pair<>(false, new Maybe<>());
         if(df.getCols().get(lhs) instanceof StringCol) return new Pair<>(false, new Maybe<>());
         String colName = df.getNames().get(lhs);
