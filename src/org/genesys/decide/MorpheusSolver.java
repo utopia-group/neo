@@ -260,6 +260,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private void buildSATFormula() {
 
+        boolean conflict = false;
+
         // If a production is used in a parent node then this implies restrictions on the children
         for (Node node : nodes_) {
             for (Production p : node.domain) {
@@ -290,14 +292,17 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             occurs.add(pc);
                         }
                     }
-                    if (clause.size() > 1)
-                        satUtils_.addClause(clause);
+                    if (clause.size() > 1) {
+                        conflict = satUtils_.addClause(clause);
+                        assert(!conflict);
+                    }
 
                     for (Production pc : node.children.get(i).domain) {
                         if (!occurs.contains(pc)) {
                             VecInt lits = new VecInt(new int[]{-productionVar, -varNodes_.get(new Pair<Integer, Production>(node.children.get(i).id, pc))});
                             // Parent restricts the domain of child (negatively)
-                            satUtils_.addClause(lits);
+                            conflict = satUtils_.addClause(lits);
+                            assert(!conflict);
                         }
                     }
                 }
@@ -307,7 +312,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     for (int i = p.inputs.length; i < maxChildren_; i++) {
                         for (Production pc : node.children.get(i).domain) {
                             VecInt lits = new VecInt(new int[]{-productionVar, -varNodes_.get(new Pair<Integer, Production>(node.children.get(i).id, pc))});
-                            satUtils_.addClause(lits);
+                            conflict = satUtils_.addClause(lits);
+                            assert(!conflict);
                         }
                     }
                 }
@@ -326,7 +332,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 int v1 = varNodes_.get(new Pair<Integer, Production>(parent.id, g));
                 int v2 = varNodes_.get(new Pair<Integer, Production>(child.id, s));
                 VecInt lits = new VecInt(new int[]{-v1, v2});
-                satUtils_.addClause(lits);
+                conflict = satUtils_.addClause(lits);
+                assert(!conflict);
             }
 
             // group_by cannot be at the root level
@@ -334,7 +341,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             Production gg = prodName_.get("group_by");
             int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
             VecInt lits = new VecInt(new int[]{-var});
-            satUtils_.addClause(lits);
+            conflict = satUtils_.addClause(lits);
+            assert(!conflict);
         }
 
         if (prodName_.containsKey("filter") && prodName_.containsKey("select")){
@@ -348,7 +356,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 int v1 = varNodes_.get(new Pair<Integer, Production>(node.id, s));
                 int v2 = varNodes_.get(new Pair<Integer, Production>(next.id, f));
                 VecInt clause = new VecInt(new int[]{-v1,-v2});
-                satUtils_.addClause(clause);
+                conflict = satUtils_.addClause(clause);
+                assert(!conflict);
             }
         }
 
@@ -361,7 +370,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
                 clause.push(var);
             }
-            satUtils_.addAMK(clause, 1);
+            conflict = satUtils_.addAMK(clause, 1);
+            assert(!conflict);
         }
 
         if (prodName_.containsKey("filter")) {
@@ -372,7 +382,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 int var = varNodes_.get(new Pair<Integer, Production>(node.id, p));
                 clause.push(var);
             }
-            satUtils_.addAMK(clause, 1);
+            conflict = satUtils_.addAMK(clause, 1);
+            assert(!conflict);
         }
 
         /*
@@ -551,14 +562,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 //        }
 
 
-        // At most one variable is assigned at each node
+        // FIXME: At most one variable is assigned at each node -- this has some issue
         for (Node node : nodes_) {
             VecInt clause = new VecInt();
             for (Production p : node.domain){
+                assert (varNodes_.containsKey(new Pair<Integer, Production>(node.id, p)));
                 int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
-                clause.push(productionVar);
+                if (p.function.startsWith("input") || p.function.startsWith("line"))
+                    clause.push(productionVar);
             }
-            satUtils_.addAMK(clause,1);
+            if (clause.size() > 0){
+                // only consider inputs
+                conflict = satUtils_.addAMK(clause, 1);
+                assert (!conflict);
+            }
+            //conflict = satUtils_.addAMK(clause,1);
+            //assert (!conflict);
         }
 
         Iterator it = higherGrouping_.entrySet().iterator();
@@ -576,21 +595,23 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 //                }
             }
             // At most 2 occurrences of each higher order component in the sketch
-            satUtils_.addAMK(amk, 2);
+            conflict = satUtils_.addAMK(amk, 2);
+            assert(!conflict);
             it.remove();
         }
 
         // At least one input must be used in the first line of code
 
-//        VecInt clause_input = new VecInt();
-//        for (Node node : highTrail_.get(0).t0.children){
-//
-//            for (Production p : inputProductions_){
-//                int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
-//                clause_input.push(productionVar);
-//            }
-//        }
-//        satUtils_.addClause(clause_input);
+        VecInt clause_input = new VecInt();
+        for (Node node : highTrail_.get(0).t0.children){
+
+            for (Production p : inputProductions_){
+                int productionVar = varNodes_.get(new Pair<Integer, Production>(node.id, p));
+                clause_input.push(productionVar);
+            }
+        }
+        conflict = satUtils_.addClause(clause_input);
+        assert(!conflict);
 
         // The intermediate results cannot be used before they are created
         // ---> This is encoded in the domain
@@ -614,7 +635,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         for (int i = 0; i < maxLen_; i++){
             if (!letbind.get(i).isEmpty()) {
-                satUtils_.addEO(letbind.get(i),1);
+                conflict = satUtils_.addEO(letbind.get(i),1);
+                assert(!conflict);
             }
         }
 
@@ -640,8 +662,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             for (int j = 0; j < inputs_used.get(i).size(); j++){
                 clause.push(inputs_used.get(i).get(j));
             }
-            satUtils_.addClause(clause); // at least once
-            satUtils_.addAMK(clause, 2); // at most twice
+            conflict = satUtils_.addClause(clause); // at least once
+            assert(!conflict);
+            conflict = satUtils_.addAMK(clause, 2); // at most twice
+            assert(!conflict);
             //satUtils_.addEO(clause, 1);
         }
 
@@ -664,7 +688,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 int lineVar = varNodes_.get(new Pair<Integer, Production>(n.id, l));
                                 if (!p.source.equals(l.source)) {
                                     VecInt clause = new VecInt(new int[]{-productionVar, -lineVar});
-                                    satUtils_.addClause(clause);
+                                    conflict = satUtils_.addClause(clause);
+                                    assert(!conflict);
                                 }
                             }
                         }
@@ -682,7 +707,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 int lineVar = varNodes_.get(new Pair<Integer, Production>(n.id, l));
                                 if (!p.source.equals(l.source)) {
                                     VecInt clause = new VecInt(new int[]{-productionVar, -lineVar});
-                                    satUtils_.addClause(clause);
+                                    conflict = satUtils_.addClause(clause);
+                                    assert(!conflict);
                                 }
                             }
                         }
@@ -691,8 +717,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
         }
 
-        Constr conflict = satUtils_.propagate();
-        assert (conflict == null);
+        Constr conf = satUtils_.propagate();
+        assert (conf == null);
     }
 
     private <T> void loadGrammar() {
@@ -1461,6 +1487,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                     // Check that we are in a consistent state
                     Constr conflict = satUtils_.getSolver().propagate();
+
                     if (conflict != null) {
                         int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                         int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
