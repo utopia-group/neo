@@ -1536,7 +1536,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             if (step_ == 3) {
 
                 // Fill line-by-line and only ask the deduction system after we have a full line
-                assert (currentLine_ < trail_.size());
+                    //assert (currentLine_ < trail_.size());
                     while (currentChild_ < trail_.get(currentLine_).size()) {
                         Constr conflict = satUtils_.getSolver().propagate();
                         if (conflict != null) {
@@ -1555,7 +1555,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                 currentLine_++;
                                 currentChild_=0;
                             }
-                            assert(currentLine_ < trail_.size());
 
                             if (currentLine_ == trail_.size()){
                                 // go to step 2?
