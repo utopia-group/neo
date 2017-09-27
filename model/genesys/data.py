@@ -33,6 +33,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
 
     dataset = []
     counter = 0
+    total_read = 0
     
     for line in f:
 
@@ -76,7 +77,11 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
                 dataset.append((input_value, output_value, ngram, label))
                 ngram = [ngram[1], funcs[func]]
 
+        total_read += 1
+        
     f.close()
+
+    print 'Total read:', total_read
 
     return dataset
 
