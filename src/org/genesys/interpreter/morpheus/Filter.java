@@ -72,8 +72,16 @@ public class Filter implements Unop {
         if (df.getNcol() <= lhs) return new Pair<>(false, new Maybe<>());
         if ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
             return new Pair<>(false, new Maybe<>());
+
         String colName = df.getNames().get(lhs);
         String opStr = op.toString();
+        if (opStr.equals("l(a,b).(> a b)")) {
+            if (rhs instanceof String) return new Pair<>(false, new Maybe<>());
+        } else if (opStr.equals("l(a,b).(< a b)")) {
+            if (rhs instanceof String) return new Pair<>(false, new Maybe<>());
+        } else if (opStr.equals("l(a,b).(!= a b)")) {
+            if (!(rhs instanceof String)) return new Pair<>(false, new Maybe<>());
+        }
 
         DataFrame res = df.filter((df1, df2) -> {
             if (opStr.equals("l(a,b).(> a b)")) {
