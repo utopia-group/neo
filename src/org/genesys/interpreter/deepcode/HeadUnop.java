@@ -14,7 +14,7 @@ public class HeadUnop implements Unop {
     public Object apply(Object obj) {
         assert obj instanceof List : obj;
         List<Integer> list = LibUtils.cast(obj);
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? 256 : list.get(0);
     }
 
     public String toString() {

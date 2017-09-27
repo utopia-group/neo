@@ -1,22 +1,22 @@
 package org.genesys.type;
 
-
 /**
- * Created by yufeng on 5/31/17.
+ * Created by yufeng on 9/15/17.
  */
-public class StringType implements AbstractType {
+public class BinopStringType implements AbstractType {
+
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof StringType;
+        return obj instanceof BinopStringType;
     }
 
     @Override
     public int hashCode() {
-        return 111 * this.hashCode() + 1;
+        return 611;
     }
 
     @Override
     public String toString() {
-        return "String";
+        return "BinopStringType";
     }
 }

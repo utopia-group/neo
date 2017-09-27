@@ -16,7 +16,7 @@ public class AccessUnop implements Unop {
         assert pair.get(1) instanceof Integer;
         List xs = (List) pair.get(0);
         int n = (Integer) pair.get(1);
-        Object res = null;
+        Object res = 256;
         if (xs.size() > n) {
             res = xs.get(n);
         }

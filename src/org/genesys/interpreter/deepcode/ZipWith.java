@@ -28,10 +28,14 @@ public class ZipWith implements Unop {
         List input1 = pair.get(0);
         List input2 = pair.get(1);
         List targetList = new ArrayList();
-        if (input1.size() != input2.size()) {
-            throw new UnsupportedOperationException("Size of inputs need to be equal.");
-        } else {
-            for (int i = 0; i < input1.size(); i++) {
+        int min = Math.min(input1.size(), input2.size());
+//
+//        if (input1.size() != input2.size()) {
+//            System.out.println("intput1 = " + input1);
+//            System.out.println("intput2 = " + input2);
+//            throw new UnsupportedOperationException("Size of inputs need to be equal.");
+//        } else {
+            for (int i = 0; i < min; i++) {
                 Object elem0 = input1.get(i);
                 Object elem1 = input2.get(i);
                 Object val = binop.apply(elem0, elem1);
@@ -39,7 +43,7 @@ public class ZipWith implements Unop {
 
             }
             return targetList;
-        }
+        //}
     }
 
     public String toString() {

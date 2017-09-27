@@ -1,1 +1,1 @@
-l(a,b).(> a b) gather filter spread
+gather filter spread
