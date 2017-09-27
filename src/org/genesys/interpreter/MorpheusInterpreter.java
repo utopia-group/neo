@@ -112,6 +112,7 @@ public class MorpheusInterpreter extends BaseInterpreter {
         executors.put("sum", (objects, input) -> new Maybe<>("sum"));
         executors.put("mean", (objects, input) -> new Maybe<>("mean"));
         executors.put("min", (objects, input) -> new Maybe<>("min"));
+        executors.put("count", (objects, input) -> new Maybe<>("count"));
     }
 
     public void initMorpheusConstants(List<Production<AbstractType>> inits) {

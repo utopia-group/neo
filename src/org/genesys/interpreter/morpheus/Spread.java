@@ -59,10 +59,9 @@ public class Spread implements Unop {
             }
             Object fstElem = df.getCols().get(k).values$krangl_main()[0];
             if (df.getNames().contains(fstElem)) return new Pair<>(false, new Maybe<>());
-            ;
             DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
-            System.out.println("Spread--------------");
-            Extensions.print(res);
+//            System.out.println("Spread--------------");
+//            Extensions.print(res);
             if (res.getNcol() == 0) {
                 return new Pair<>(false, new Maybe<>());
             }

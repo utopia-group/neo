@@ -63,9 +63,9 @@ public class Separate implements Unop {
         colArgs.add(col1);
         colArgs.add(col2);
         DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
-        System.out.println("Running separate...." + orgCol);
+//        System.out.println("Running separate...." + orgCol);
 //        System.out.println(df);
-        System.out.println(res);
+//        System.out.println(res);
 
         return new Pair<>(true, new Maybe<>(res));
     }

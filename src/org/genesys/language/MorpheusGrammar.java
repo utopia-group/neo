@@ -122,10 +122,10 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new BinopStringType(), "l(a,b).(!= a b)"));
 
         // Aggregator Type
-        productions.add(new Production<>(new AggrType(), "mean"));
-        productions.add(new Production<>(new AggrType(), "min"));
-        productions.add(new Production<>(new AggrType(), "sum"));
-
+//        productions.add(new Production<>(new AggrType(), "mean"));
+//        productions.add(new Production<>(new AggrType(), "min"));
+//        productions.add(new Production<>(new AggrType(), "sum"));
+        productions.add(new Production<>(new AggrType(), "count"));
         return productions;
     }
 
