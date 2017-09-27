@@ -192,8 +192,9 @@ class DeepCoderModel:
 
     # input_values:  np.array([num_run, input_length])
     # output_values: np.array([num_run, output_length])
+    # dsl_ops:       np.array([num_test, ngram_length])
     # params:        DeepCoderTestParams
-    def run(self, input_values, output_values, params):
+    def run(self, input_values, output_values, dsl_ops, params):
 
         with tf.Session() as sess:
             # Step 1: Directory path
@@ -207,6 +208,7 @@ class DeepCoderModel:
             feed_dict = {
                 self.input_values: input_values,
                 self.output_values: output_values,
+                self.dsl_ops: dsl_ops,
             }
 
             # Step 4: Run prediction

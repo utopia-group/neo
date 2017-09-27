@@ -1,5 +1,7 @@
 package org.genesys.clients;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -39,7 +41,7 @@ public class DeepCoderDeciderMain {
         List<String> functions = DeepCoderPythonDecider.getDeepCoderFunctions();
         
         // featurizers
-        XFeaturizer<Object> xFeaturizer = new DeepCoderXFeaturizer(inputSamplerParameters);
+        XFeaturizer<Object> xFeaturizer = new DeepCoderXFeaturizer(inputSamplerParameters, functions);
         YFeaturizer yFeaturizer = new YFeaturizer(functions);
         
         // sampler
@@ -53,14 +55,19 @@ public class DeepCoderDeciderMain {
 		System.out.println("SAMPLED INPUT: " + input);
 		Object output = interpreter.execute(program, input).get();
 		System.out.println("COMPUTED OUTPUT: " + output);
+		
+		input = Arrays.asList(new Integer[]{-17, -3, 4, 11, 0, -5, -9, 13, 6, 6, -8, 11});
+		output = Arrays.asList(new Integer[]{-12, -20, -32, -36, -68});
         
         // decider
         DeepCoderPythonDecider decider = new DeepCoderPythonDecider(xFeaturizer, yFeaturizer, input, output);
         
         // test decider
+        List<String> ancestors = new ArrayList<String>();
         for(String function : functions) {
-        	double probability = decider.getProbability(function);
+        	double probability = decider.getProbability(ancestors, function);
         	System.out.println(function + ": " + probability);
+        	ancestors.add(function);
         }
 	}
 }
