@@ -96,7 +96,7 @@ public class MorpheusInterpreter extends BaseInterpreter {
             assert objects.size() == 4;
             Binop op = (Binop) objects.get(1);
             int colIdx = (int) objects.get(2);
-            int val = (int) objects.get(3);
+            Object val = objects.get(3);
             return new Maybe<>(new org.genesys.interpreter.morpheus.Filter(op, colIdx, val).apply(objects.get(0)));
         });
 
@@ -104,6 +104,7 @@ public class MorpheusInterpreter extends BaseInterpreter {
         executors.put("l(a,b).(> a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop(">")));
         executors.put("l(a,b).(< a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("<")));
         executors.put("l(a,b).(== a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("==")));
+        executors.put("l(a,b).(!= a b)", (objects, input) -> new Maybe<>(new PrimitiveBinop("!=")));
         executors.put("l(a).(> a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop(">", objects.get(0))));
         executors.put("l(a).(< a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("<", objects.get(0))));
         executors.put("l(a).(== a b)", (objects, input) -> new Maybe<>(new PrimitiveUnop("==", objects.get(0))));

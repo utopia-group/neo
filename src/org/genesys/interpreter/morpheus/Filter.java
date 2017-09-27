@@ -2,6 +2,7 @@ package org.genesys.interpreter.morpheus;
 
 import krangl.ColumnsKt;
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.StringCol;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
@@ -20,9 +21,9 @@ public class Filter implements Unop {
 
     private int lhs;
 
-    private int rhs;
+    private Object rhs;
 
-    public Filter(Binop bin, int l, int r) {
+    public Filter(Binop bin, int l, Object r) {
         binop = bin;
         lhs = l;
         rhs = r;
@@ -40,11 +41,13 @@ public class Filter implements Unop {
 
         DataFrame res = df.filter((df1, df2) -> {
             if (op.equals("l(a,b).(> a b)")) {
-                return ColumnsKt.gt(df.get(colName), rhs);
+                return ColumnsKt.gt(df.get(colName), (int) rhs);
             } else if (op.equals("l(a,b).(< a b)")) {
-                return ColumnsKt.lt(df.get(colName), rhs);
+                return ColumnsKt.lt(df.get(colName), (int) rhs);
             } else if (op.equals("l(a,b).(== a b)")) {
                 return ColumnsKt.eq(df.get(colName), rhs);
+            } else if (op.equals("l(a,b).(!= a b)")) {
+                return ColumnsKt.neq(df.get(colName), rhs);
             } else {
                 throw new UnsupportedOperationException("Unsupported operator:" + op);
             }
@@ -65,23 +68,29 @@ public class Filter implements Unop {
         DataFrame df = (DataFrame) arg0.t1.get();
         Binop op = (Binop) arg1.t1.get();
         int lhs = (int) arg2.t1.get();
-        int rhs = (Integer) arg3.t1.get();
-        if(df.getNcol() <= lhs) return new Pair<>(false, new Maybe<>());
-        if(df.getCols().get(lhs) instanceof StringCol) return new Pair<>(false, new Maybe<>());
+        Object rhs = arg3.t1.get();
+        if (df.getNcol() <= lhs) return new Pair<>(false, new Maybe<>());
+        if ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
+            return new Pair<>(false, new Maybe<>());
         String colName = df.getNames().get(lhs);
         String opStr = op.toString();
 
         DataFrame res = df.filter((df1, df2) -> {
             if (opStr.equals("l(a,b).(> a b)")) {
-                return ColumnsKt.gt(df.get(colName), rhs);
+                return ColumnsKt.gt(df.get(colName), (int) rhs);
             } else if (opStr.equals("l(a,b).(< a b)")) {
-                return ColumnsKt.lt(df.get(colName), rhs);
+                return ColumnsKt.lt(df.get(colName), (int) rhs);
             } else if (opStr.equals("l(a,b).(== a b)")) {
                 return ColumnsKt.eq(df.get(colName), rhs);
+            } else if (opStr.equals("l(a,b).(!= a b)")) {
+                return ColumnsKt.neq(df.get(colName), rhs);
             } else {
                 throw new UnsupportedOperationException("Unsupported OP:" + opStr);
             }
         });
+        System.out.println("Filter--------------" + colName);
+        Extensions.print(df);
+        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
 

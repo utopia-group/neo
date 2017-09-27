@@ -54,6 +54,7 @@ public class MorpheusValidator extends BaseValidatorDriver {
         validators.put("l(a,b).(> a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop(">"))));
         validators.put("l(a,b).(< a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop("<"))));
         validators.put("l(a,b).(== a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop("=="))));
+        validators.put("l(a,b).(!= a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveBinop("!="))));
         validators.put("l(a).(> a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveUnop(">", objects.get(0)))));
         validators.put("l(a).(< a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveUnop("<", objects.get(0)))));
         validators.put("l(a).(== a b)", (objects, input) -> new Pair<>(true, new Maybe<>(new PrimitiveUnop("==", objects.get(0)))));

@@ -49,6 +49,10 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
                 Production prod = new Production<>(new IntType(), o.toString());
                 prod.setValue(o);
                 initProductions.add(prod);
+            } else {
+                Production prod = new Production<>(new StringType(), o.toString());
+                prod.setValue(o);
+                initProductions.add(prod);
             }
         }
 
@@ -103,6 +107,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(true, new TableType(), "summarise", new TableType(), new AggrType(), new ColIndexType()));
         productions.add(new Production<>(true, new TableType(), "separate", new TableType(), new ColIndexType()));
         productions.add(new Production<>(true, new TableType(), "filter", new TableType(), new BinopBoolType(), new ColIndexType(), new IntType()));
+        productions.add(new Production<>(true, new TableType(), "filter", new TableType(), new BinopStringType(), new ColIndexType(), new StringType()));
         productions.add(new Production<>(true, new TableType(), "mutate", new TableType(), new BinopIntType(),new ColIndexType(),new ColIndexType()));
 
         //FunctionType
@@ -111,6 +116,9 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new BinopBoolType(), "l(a,b).(> a b)"));
         productions.add(new Production<>(new BinopBoolType(), "l(a,b).(< a b)"));
         productions.add(new Production<>(new BinopBoolType(), "l(a,b).(== a b)"));
+
+        productions.add(new Production<>(new BinopStringType(), "l(a,b).(== a b)"));
+        productions.add(new Production<>(new BinopStringType(), "l(a,b).(!= a b)"));
 
         // Aggregator Type
         productions.add(new Production<>(new AggrType(), "mean"));
