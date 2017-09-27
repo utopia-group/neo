@@ -550,17 +550,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         */
 
         /* Domain specific constraints for DeepCoder */
-//        if (prodName_.containsKey("ACCESS")){
-//            // ACCESS cannot be the first line
-//            Node root = highTrail_.get(0).t0;
-//            Production gg = prodName_.get("ACCESS");
-//            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
-//                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
-//                VecInt lits = new VecInt(new int[]{-var});
-//                satUtils_.addClause(lits);
-//            }
-//        }
-
+        if (prodName_.containsKey("ACCESS")){
+            // ACCESS cannot be the first line
+            Node root = highTrail_.get(0).t0;
+            Production gg = prodName_.get("ACCESS");
+            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
+                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+                VecInt lits = new VecInt(new int[]{-var});
+                satUtils_.addClause(lits);
+            }
+        }
 
         // FIXME: At most one variable is assigned at each node -- this has some issue
         for (Node node : nodes_) {
@@ -635,7 +634,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         for (int i = 0; i < maxLen_; i++){
             if (!letbind.get(i).isEmpty()) {
-                conflict = satUtils_.addEO(letbind.get(i),1);
+                conflict = satUtils_.addClause(letbind.get(i));
+                assert(!conflict);
+                conflict = satUtils_.addAMK(letbind.get(i),1);
                 assert(!conflict);
             }
         }

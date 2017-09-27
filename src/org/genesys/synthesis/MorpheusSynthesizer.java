@@ -200,12 +200,17 @@ public class MorpheusSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
-                System.out.println("result target:\n" + ((SimpleDataFrame)tgt.get()).getCols());
+                if (tgt == null){
+                    passed = false;
+                    break;
+                }
+
+//                System.out.println("result target:\n" + ((SimpleDataFrame)tgt.get()).getCols());
 //                System.out.println("result target:\n" + tgt.get());
-                Extensions.print((SimpleDataFrame)tgt.get());
-                System.out.println("expected target:\n" + ((SimpleDataFrame)output).getCols());
+//                Extensions.print((SimpleDataFrame)tgt.get());
+//                System.out.println("expected target:\n" + ((SimpleDataFrame)output).getCols());
 //                System.out.println("expected target:\n" + output);
-                Extensions.print((SimpleDataFrame)output);
+//                Extensions.print((SimpleDataFrame)output);
 
                 if (output instanceof DataFrame) {
                     boolean flag = ReshapeKt.hasSameContents((DataFrame) tgt.get(), (SimpleDataFrame) output);
@@ -222,8 +227,8 @@ public class MorpheusSynthesizer implements Synthesizer {
             } catch (Exception e) {
                 if (!silent_) System.out.println("Exception= " + e);
                 passed = false;
-                e.printStackTrace();
-                assert false;
+                //e.printStackTrace();
+                //assert false;
                 break;
             }
         }

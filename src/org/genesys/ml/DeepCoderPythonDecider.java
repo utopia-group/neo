@@ -178,7 +178,7 @@ public class DeepCoderPythonDecider implements Decider {
 			int counter = 0;
 			while((line = br.readLine()) != null) {
 				if(line.startsWith("RESULT: ")) {
-					System.out.println("PROCESSING: " + line);
+					//System.out.println("PROCESSING: " + line);
 					
 					// Step 5a: Build the probabilities
 					String[] tokens = line.substring(9, line.length()-1).split(", ");

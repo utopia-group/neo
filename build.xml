@@ -102,6 +102,7 @@
       <arg value="${depth}"/>
       <arg value="${learn}"/>
       <arg value="${stat}"/>
+      <arg value="${file}"/>
   </java>
   </target>
 
