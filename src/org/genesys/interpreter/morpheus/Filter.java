@@ -96,9 +96,9 @@ public class Filter implements Unop {
                 throw new UnsupportedOperationException("Unsupported OP:" + opStr);
             }
         });
-        System.out.println("Filter--------------" + colName);
-        Extensions.print(df);
-        Extensions.print(res);
+//        System.out.println("Filter--------------" + colName);
+//        Extensions.print(df);
+//        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
 

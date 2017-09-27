@@ -58,8 +58,8 @@ public class GroupBy implements Unop {
             DataFrame res = df.groupBy(colArgs);
             //strange bug in the interpreter
             if(!res.getRows().iterator().hasNext()) return new Pair<>(false, new Maybe<>());
-            System.out.println("groupBy==================");
-            System.out.println(res);
+//            System.out.println("groupBy==================");
+//            System.out.println(res);
             return new Pair<>(true, new Maybe<>(res));
         }
     }

@@ -9,9 +9,7 @@ import org.genesys.utils.MorpheusUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static krangl.ColumnsKt.asDoubles;
-import static krangl.ColumnsKt.min;
-import static krangl.ColumnsKt.sum;
+import static krangl.ColumnsKt.*;
 import static krangl.MathHelpersKt.cumSum;
 import static krangl.MathHelpersKt.mean;
 
@@ -46,6 +44,8 @@ public class Summarise implements Unop {
                 return sum(df.get(colName), true);
             } else if (aggr.equals("min")) {
                 return min(df.get(colName), false);
+            } else if (aggr.equals("count")) {
+                return count(df.get(colName));
             } else {
                 throw new UnsupportedOperationException("Unsupported aggregator:" + aggr);
             }
@@ -65,7 +65,7 @@ public class Summarise implements Unop {
         String aggr = (String) arg1.t1.get();
         int colIdx = (int) arg2.t1.get();
         if (df.getNcol() <= colIdx) return new Pair<>(false, new Maybe<>());
-        System.out.println("summarise==================" + df.getCols().get(colIdx));
+//        System.out.println("summarise==================" + df.getCols().get(colIdx));
 
         if (df.getCols().get(colIdx) instanceof StringCol) return new Pair<>(false, new Maybe<>());
 
@@ -81,11 +81,13 @@ public class Summarise implements Unop {
                 return sum(df.get(colName), true);
             } else if (aggr.equals("min")) {
                 return min(df.get(colName), true);
+            } else if (aggr.equals("count")) {
+                return count(df.get(colName));
             } else {
                 throw new UnsupportedOperationException("Unsupported aggr:" + aggr);
             }
         }));
-        Extensions.print(res);
+//        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
 

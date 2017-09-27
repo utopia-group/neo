@@ -62,6 +62,7 @@ public class MorpheusValidator extends BaseValidatorDriver {
         validators.put("sum", (objects, input) -> new Pair<>(true, new Maybe<>("sum")));
         validators.put("mean", (objects, input) -> new Pair<>(true, new Maybe<>("mean")));
         validators.put("min", (objects, input) -> new Pair<>(true, new Maybe<>("min")));
+        validators.put("count", (objects, input) -> new Pair<>(true, new Maybe<>("count")));
 
         for (Production<AbstractType> prod : inits) {
             validators.put(prod.function, (objects, input) -> new Pair<>(true, new Maybe<>(prod.getValue())));

@@ -101,9 +101,9 @@ public class Gather implements Unop {
             } else  {
                 res = ReshapeKt.gather(df, key, value, colArgs, false);
             }
-            System.out.println("Gather--------------" + cols);
-            Extensions.print(df);
-            Extensions.print(res);
+//            System.out.println("Gather--------------" + cols);
+//            Extensions.print(df);
+//            Extensions.print(res);
             return new Pair<>(true, new Maybe<>(res));
         }
     }
