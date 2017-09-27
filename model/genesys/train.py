@@ -4,7 +4,7 @@ from params import *
 
 def main():
     # Step 1: Build parameters
-    model_params = DeepCoderModelParams(num_vals, val_embedding_dim, input_length, output_length, hidden_layer_dim, num_dsl_ops)
+    model_params = DeepCoderModelParams(num_vals, val_embedding_dim, input_length, output_length, num_dsl_ops, dsl_embedding_dim, ngram_length, hidden_layer_dim)
     train_params = DeepCoderTrainParams(num_epochs, batch_size, step_size, save_path, load_prev)
 
     # Step 2: Build neural net
@@ -17,7 +17,7 @@ def main():
     (train_dataset, test_dataset) = split_train_test(dataset, train_frac)
 
     # Step 4: Train model
-    model.train(train_dataset[0], train_dataset[1], train_dataset[2], test_dataset[0], test_dataset[1], test_dataset[2], train_params)
+    model.train(train_dataset[0], train_dataset[1], train_dataset[2], train_dataset[3], test_dataset[0], test_dataset[1], test_dataset[2], test_dataset[3], train_params)
 
 if __name__ == '__main__':
     main()
