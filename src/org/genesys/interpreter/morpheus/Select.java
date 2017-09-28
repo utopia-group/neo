@@ -90,9 +90,9 @@ public class Select implements Unop {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
                 res = Extensions.select(df, argNegs);
             }
-            System.out.println("Running select....");
+//            System.out.println("Running select....");
 //            System.out.println(df);
-            System.out.println(res);
+//            System.out.println(res);
             return new Pair<>(true, new Maybe<>(res));
         }
     }
