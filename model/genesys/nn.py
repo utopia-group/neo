@@ -204,7 +204,7 @@ class DeepCoderModel:
     # output_values:  np.array([num_run, output_length])
     # dsl_ops:        np.array([num_test, ngram_length])
     # params:         DeepCoderTestParams
-    def run(self, input_values, output_values, dsl_ops, params):
+    def run(self, input_values_0, input_values_1, output_values, dsl_ops, params):
 
         with tf.Session() as sess:
             # Step 1: Directory path
@@ -216,7 +216,8 @@ class DeepCoderModel:
 
             # Step 3: Build inputs
             feed_dict = {
-                self.input_values: input_values,
+                self.input_values_0: input_values_0,
+                self.input_values_1: input_values_1,
                 self.output_values: output_values,
                 self.dsl_ops: dsl_ops,
             }

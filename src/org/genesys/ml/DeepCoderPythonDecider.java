@@ -156,7 +156,7 @@ public class DeepCoderPythonDecider implements Decider {
 					// Step 3a: Build the datapoint
 					List<String> nGram = Arrays.asList(new String[]{function0, function1});
 					Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(this.input, this.output, nGram);
-					String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + Utils.toString(features.t3) + ")";
+					String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + ", " + Utils.toString(features.t3) + ")";
 					
 					// Step 3b: Print to test set file
 					pw.println(datapoint);
@@ -197,7 +197,7 @@ public class DeepCoderPythonDecider implements Decider {
 			}
 			br.close();
 			if(probabilities.size() != newFunctions.size() * newFunctions.size()) {
-				throw new RuntimeException();
+				throw new RuntimeException(probabilities.size() + ", " + newFunctions.size());
 			}
 			
 			// Step 6: Wait for the process to finish
