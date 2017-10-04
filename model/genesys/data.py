@@ -89,7 +89,6 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
                 label[funcs[func]] = 1
                 dataset.append((input_value_0, input_value_1, output_value, ngram, label))
                 ngram = [ngram[1], funcs[func]]
-                break
 
         total_read += 1
         
