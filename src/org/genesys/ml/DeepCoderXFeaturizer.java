@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.genesys.models.Trio;
+import org.genesys.models.Quad;
 
 public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
 	private static final Integer NO_VALUE = null;
@@ -41,35 +41,52 @@ public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
 
 	// (function n-gram, list values)
 	@Override
-	public Trio<List<Integer>,List<Integer>,List<Integer>> getFeatures(Object input, Object output, List<String> ancestors) {
+	public Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>> getFeatures(Object input, Object output, List<String> ancestors) {
 		// Step 1: Flatten input and output
-		List<Integer> flatInput = new ArrayList<Integer>();
+		List<Integer> flatInput0 = new ArrayList<Integer>();
+		List<Integer> flatInput1 = new ArrayList<Integer>();
 		List<Integer> flatOutput = new ArrayList<Integer>();
-		this.flatten(((List<Integer>)input).get(0), flatInput);
+		
+		List inputList = (List)input;
+		this.flatten(inputList.get(0), flatInput0);
 		this.flatten(output, flatOutput);
 		
-		// Step 2: Featurize input example
-		List<Integer> inputValueFeatures = new ArrayList<Integer>();
-		for(int i=0; i<this.parameters.maxLength; i++) {
-			Integer curValue = flatInput.size() > i ? flatInput.get(i) : NO_VALUE;
-			inputValueFeatures.add(this.valueLookup.get(curValue));
+		if(inputList.size() == 2) {
+			this.flatten(inputList.get(1), flatInput1);
+		} else if(inputList.size() == 1) {
+		} else {
+			throw new RuntimeException("Invalid input example size: " + inputList.size());
 		}
 		
-		// Step 3: Featurize output example
+		// Step 2: Featurize first part of input example
+		List<Integer> inputValue0Features = new ArrayList<Integer>();
+		for(int i=0; i<this.parameters.maxLength; i++) {
+			Integer curValue = flatInput0.size() > i ? flatInput0.get(i) : NO_VALUE;
+			inputValue0Features.add(this.valueLookup.get(curValue));
+		}
+		
+		// Step 3: Featurize second part of input example
+		List<Integer> inputValue1Features = new ArrayList<Integer>();
+		for(int i=0; i<this.parameters.maxLength; i++) {
+			Integer curValue = flatInput1.size() > i ? flatInput1.get(i) : NO_VALUE;
+			inputValue1Features.add(this.valueLookup.get(curValue));
+		}
+		
+		// Step 4: Featurize output example
 		List<Integer> outputValueFeatures = new ArrayList<Integer>();
 		for(int i=0; i<this.parameters.maxLength; i++) {
 			Integer curValue = flatOutput.size() > i ? flatOutput.get(i) : NO_VALUE;
 			outputValueFeatures.add(this.valueLookup.getOrDefault(curValue, this.valueLookup.get(NO_VALUE)));
 		}
 		
-		// Step 4: Featurize ancestors
+		// Step 5: Featurize ancestors
 		List<String> nGram = getNGram(ancestors);
 		List<Integer> nGramFeatures = new ArrayList<Integer>();
 		for(int i=0; i<N_GRAM_LENGTH; i++) {
 			nGramFeatures.add(this.functionLookup.get(nGram.get(i)));
 		}
 		
-		return new Trio<List<Integer>,List<Integer>,List<Integer>>(inputValueFeatures, outputValueFeatures, nGramFeatures);
+		return new Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>>(inputValue0Features, inputValue1Features, outputValueFeatures, nGramFeatures);
 	}
 	
 	private void flatten(Object t, List<Integer> result) {

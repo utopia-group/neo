@@ -56,7 +56,7 @@ public class DeepCoderDeciderMain {
 		Object output = interpreter.execute(program, input).get();
 		System.out.println("COMPUTED OUTPUT: " + output);
 		
-		input = Arrays.asList(new Integer[]{-17, -3, 4, 11, 0, -5, -9, 13, 6, 6, -8, 11});
+		input = Arrays.asList(new List[]{Arrays.asList(new Integer[]{-17, -3, 4, 11, 0, -5, -9, 13, 6, 6, -8, 11})});
 		output = Arrays.asList(new Integer[]{-12, -20, -32, -36, -68});
         
         // decider

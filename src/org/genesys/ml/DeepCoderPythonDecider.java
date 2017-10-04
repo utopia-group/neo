@@ -16,7 +16,7 @@ import java.util.Map;
 import org.genesys.decide.Decider;
 import org.genesys.models.Example;
 import org.genesys.models.Problem;
-import org.genesys.models.Trio;
+import org.genesys.models.Quad;
 import org.genesys.utils.LibUtils;
 
 public class DeepCoderPythonDecider implements Decider {
@@ -155,8 +155,8 @@ public class DeepCoderPythonDecider implements Decider {
 				for(String function1 : newFunctions) {
 					// Step 3a: Build the datapoint
 					List<String> nGram = Arrays.asList(new String[]{function0, function1});
-					Trio<List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(this.input, this.output, nGram);
-					String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + ")";
+					Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(this.input, this.output, nGram);
+					String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + Utils.toString(features.t3) + ")";
 					
 					// Step 3b: Print to test set file
 					pw.println(datapoint);
