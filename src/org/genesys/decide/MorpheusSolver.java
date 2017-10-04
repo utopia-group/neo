@@ -345,21 +345,21 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             assert(!conflict);
         }
 
-        if (prodName_.containsKey("filter") && prodName_.containsKey("select")){
-            // Filter select is equivalent to select filter
-            // Only allow one of them to happen
-            for (int i = 0; i < highTrail_.size()-1; i++){
-                Production f = prodName_.get("filter");
-                Production s = prodName_.get("select");
-                Node node = highTrail_.get(i).t0;
-                Node next = highTrail_.get(i+1).t0;
-                int v1 = varNodes_.get(new Pair<Integer, Production>(node.id, s));
-                int v2 = varNodes_.get(new Pair<Integer, Production>(next.id, f));
-                VecInt clause = new VecInt(new int[]{-v1,-v2});
-                conflict = satUtils_.addClause(clause);
-                assert(!conflict);
-            }
-        }
+//        if (prodName_.containsKey("filter") && prodName_.containsKey("select")){
+//            // Filter select is equivalent to select filter
+//            // Only allow one of them to happen
+//            for (int i = 0; i < highTrail_.size()-1; i++){
+//                Production f = prodName_.get("filter");
+//                Production s = prodName_.get("select");
+//                Node node = highTrail_.get(i).t0;
+//                Node next = highTrail_.get(i+1).t0;
+//                int v1 = varNodes_.get(new Pair<Integer, Production>(node.id, s));
+//                int v2 = varNodes_.get(new Pair<Integer, Production>(next.id, f));
+//                VecInt clause = new VecInt(new int[]{-v1,-v2});
+//                conflict = satUtils_.addClause(clause);
+//                assert(!conflict);
+//            }
+//        }
 
         if (prodName_.containsKey("mutate")){
             // At most one mutate
@@ -1371,17 +1371,17 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     } else {
                         // No conflict
                         Node decision = decideHigh();
+                        if (decision == null && level_ == 0){
+                            unsat = true;
+                            break;
+                        }
+
                         if (level_ == -1){ // FIXME: quick hack to exit after all programs are checked
                             unsat = true;
                             break;
                         }
                         if (level_ != 0) { // FIXME: quick hack to go to the next program
                             if (decision == null) {
-                                if (level_ == 0) {
-                                    unsat = true;
-                                    break;
-                                }
-
                                 while (backtrackStep1(level_ - 1, true)) {
                                     if (level_ == 0) {
                                         unsat = true;
