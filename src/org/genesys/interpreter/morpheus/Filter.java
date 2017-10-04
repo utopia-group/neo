@@ -85,9 +85,9 @@ public class Filter implements Unop {
 
         DataFrame res = df.filter((df1, df2) -> {
             if (opStr.equals("l(a,b).(> a b)")) {
-                return ColumnsKt.gt(df.get(colName), (int) rhs);
+                return ColumnsKt.gt(df.get(colName), (Number) rhs);
             } else if (opStr.equals("l(a,b).(< a b)")) {
-                return ColumnsKt.lt(df.get(colName), (int) rhs);
+                return ColumnsKt.lt(df.get(colName), (Number) rhs);
             } else if (opStr.equals("l(a,b).(== a b)")) {
                 return ColumnsKt.eq(df.get(colName), rhs);
             } else if (opStr.equals("l(a,b).(!= a b)")) {

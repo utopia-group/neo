@@ -78,14 +78,15 @@ public class Mutate implements Unop {
 
         DataFrame res = df.mutate(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
             if (opStr.equals("l(a,b).(/ a b)")) {
+                System.out.println("Types: " + df.get(lhsColName) + "||||||" + df.get(rhsColName) );
                 return df.get(lhsColName).div(df.get(rhsColName));
             } else {
                 throw new UnsupportedOperationException("Unsupported op:" + opStr);
-
             }
         }));
-        System.out.println("Mutate:==============");
-        Extensions.print(res);
+//        System.out.println("Mutate:==============" + df.get(lhsColName) + " " + lhsColName + " " + df.get(rhsColName) + " " + rhsColName);
+//        Extensions.print(df);
+//        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
 
