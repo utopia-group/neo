@@ -1,4 +1,5 @@
 import io
+import random
 import numpy as np
 
 from consts import *
@@ -15,8 +16,25 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
     funcs = {line[:-1]: i for (i, line) in enumerate(f)}
     f.close()
 
-    # Step 2: Read training set
+    # Step 2: Read programs
 
+    f = open(DATA_PATH + '/' + filename)
+
+    dataset = []
+    counter = 0
+    total_read = 0
+
+    lines = []
+    for line in f:
+        lines.append(line)
+
+    # Step 3: Shuffle dataset
+    random.shuffle(lines)
+
+    f.close()
+
+    # Step 4: Build data set
+    
     # helper function
     def process(ex):
         if type(ex) is np.int64 or type(ex) is int:
@@ -29,13 +47,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
         value[:len(partial_value)] = partial_value
         return value.tolist()
 
-    f = open(DATA_PATH + '/' + filename)
-
-    dataset = []
-    counter = 0
-    total_read = 0
-    
-    for line in f:
+    for line in lines:
 
         if counter > 1000000:
             break
@@ -44,13 +56,13 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
             print 'Reading:', counter
         counter += 1
         
-        # Step 2a: Convert to source code accepted by DeepCoder compiler
+        # Step 4a: Convert to source code accepted by DeepCoder compiler
         source_code = '\n'.join(line.strip().split(' | '))
 
-        # Step 2b: Compile the program
+        # Step 4b: Compile the program
         program = compiler(source_code, num_vals/2, max_len)
 
-        # Step 2c: Generate the IO examples
+        # Step 4c: Generate the IO examples
         try:
             io_examples = generate_IO_examples([program], 1, max_len)[0]
         except:
@@ -77,11 +89,10 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
                 label[funcs[func]] = 1
                 dataset.append((input_value_0, input_value_1, output_value, ngram, label))
                 ngram = [ngram[1], funcs[func]]
+                break
 
         total_read += 1
         
-    f.close()
-
     print 'Total read:', total_read
 
     return dataset
