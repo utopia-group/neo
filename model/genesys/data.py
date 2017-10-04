@@ -20,14 +20,14 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
     # helper function
     def process(ex):
         if type(ex) is np.int64 or type(ex) is int:
-            return int(ex + num_vals/2)
+            partial_value = np.zeros(1, dtype=np.int64) + int(ex + num_vals/2)
         elif type(ex) is list:
             partial_value = np.array(ex, dtype=np.int64) + num_vals/2
-            value = np.zeros(max_len, dtype=np.int64) + num_vals
-            value[:len(partial_value)] = partial_value
-            return value.tolist()
         else:
             raise Exception('Not recognized: ' + str(type(ex)))
+        value = np.zeros(max_len, dtype=np.int64) + num_vals
+        value[:len(partial_value)] = partial_value
+        return value.tolist()
 
     f = open(DATA_PATH + '/' + filename)
 
@@ -36,6 +36,9 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
     total_read = 0
     
     for line in f:
+
+        if counter > 1000000:
+            break
 
         if counter%10000 == 0:
             print 'Reading:', counter
@@ -55,18 +58,16 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
 
         # construct the input value
         if len(io_examples[0][0]) == 2:
-            input_value = [process(io_examples[0][0][0]), process(io_examples[0][0][1])]
+            input_value_0 = process(io_examples[0][0][0])
+            input_value_1 = process(io_examples[0][0][1])
         elif len(io_examples[0][0]) == 1:
-            input_value = process(io_examples[0][0][0])
+            input_value_0 = process(io_examples[0][0][0])
+            input_value_1 = process([])
         else:
             raise Exception('Invalid input example: ' + str(io_examples[0][0]))
 
         # construct the output value
         output_value = process(io_examples[0][1])
-
-        # TODO: only retaining list -> list functions for now
-        if len(io_examples[0][0]) == 2 or type(output_value) is int:
-            continue
 
         # construct the label by iterating over functions in the program
         ngram = [len(funcs), len(funcs)]
@@ -74,7 +75,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
             if func in funcs:
                 label = np.zeros([len(funcs)], dtype=np.int64).tolist()
                 label[funcs[func]] = 1
-                dataset.append((input_value, output_value, ngram, label))
+                dataset.append((input_value_0, input_value_1, output_value, ngram, label))
                 ngram = [ngram[1], funcs[func]]
 
         total_read += 1
@@ -106,6 +107,7 @@ def write_deep_coder_train_dataset(filename, dataset):
 # filename: str (path of the dataset to read)
 # num_dsl_ops: int (number of DSL operators)
 # return: (np.array([num_points, input_length], int),
+#          np.array([num_points, input_length], int),
 #          np.array([num_points, output_length], int),
 #          np.array([num_points, n_gram_length], int),
 #          np.array([num_points, num_dsl_ops], int))
@@ -114,7 +116,8 @@ def read_train_dataset(filename, num_dsl_ops):
     
     f = open(DATA_PATH + '/' + filename)
 
-    input_values = []
+    input_values_0 = []
+    input_values_1 = []
     output_values = []
     dsl_ops = []
     labels = []
@@ -131,13 +134,15 @@ def read_train_dataset(filename, num_dsl_ops):
             # Step 1: Obtain (DSL ops, input values, output values) tuples
             toks = line[2:-3].split('], [')
 
-            input_value = _process_list(toks[0])
-            output_value = _process_list(toks[1])
-            dsl_op = _process_list(toks[2])
-            label = _process_list(toks[3])
+            input_value_0 = _process_list(toks[0])
+            input_value_1 = _process_list(toks[1])
+            output_value = _process_list(toks[2])
+            dsl_op = _process_list(toks[3])
+            label = _process_list(toks[4])
 
             # Step 2: Process values
-            input_values.append(input_value)
+            input_values_0.append(input_value_0)
+            input_values_1.append(input_value_1)
             output_values.append(output_value)
             dsl_ops.append(dsl_op)
             labels.append(label)
@@ -147,7 +152,7 @@ def read_train_dataset(filename, num_dsl_ops):
 
     print 'Total read: ' + str(len(labels))
 
-    return (np.array(input_values), np.array(output_values), np.array(dsl_ops), np.array(labels))
+    return (np.array(input_values_0), np.array(input_values_1), np.array(output_values), np.array(dsl_ops), np.array(labels))
 
 # filename: str (path of the dataset to read)
 # return: (np.array([num_points, input_length], int),
@@ -156,7 +161,8 @@ def read_train_dataset(filename, num_dsl_ops):
 def read_test_dataset(filename):
     f = open(TMP_PATH + '/' + filename)
 
-    input_values = []
+    input_values_0 = []
+    input_values_1 = []
     output_values = []
     dsl_ops = []
     for line in f:
@@ -164,11 +170,12 @@ def read_test_dataset(filename):
         toks = line[2:-3].split('], [')
 
         # Step 2: Process values
-        input_values.append(_process_list(toks[0]))
-        output_values.append(_process_list(toks[1]))
-        dsl_ops.append(_process_list(toks[2]))
+        input_values_0.append(_process_list(toks[0]))
+        input_values_1.append(_process_list(toks[1]))
+        output_values.append(_process_list(toks[2]))
+        dsl_ops.append(_process_list(toks[3]))
 
-    return (np.array(input_values), np.array(output_values), np.array(dsl_ops))
+    return (np.array(input_values_0), np.array(input_values_1), np.array(output_values), np.array(dsl_ops))
     
 # s: str
 # return: [int]
@@ -176,6 +183,7 @@ def _process_list(s):
     return [int(v) for v in s.split(', ')]
 
 # dataset: (np.array([num_points, input_length], int),
+#           np.array([num_points, input_length], int),
 #           np.array([num_points, output_length], int),
 #           np.array([num_points, n_gram_length], int))
 #          (a (input values, output values, label) tuple)
@@ -183,7 +191,7 @@ def _process_list(s):
 # return: (train_dataset, test_dataset) where train_dataset, test_dataset each have the same type as dataset
 def split_train_test(dataset, train_frac):
     split_dataset = tuple(_split_train_test_single(dataset_single, train_frac) for dataset_single in dataset)
-    return (tuple(split_dataset[i][0] for i in range(4)), tuple(split_dataset[i][1] for i in range(4)))
+    return (tuple(split_dataset[i][0] for i in range(5)), tuple(split_dataset[i][1] for i in range(5)))
 
 # dataset_single: np.array([num_points, num_vals], int)
 # train_frac: float (proportion of points to use for training)

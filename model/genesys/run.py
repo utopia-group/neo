@@ -14,7 +14,7 @@ def main():
     dataset = read_test_dataset(deep_coder_dataset_filename)
 
     # Step 4: Train model
-    results = model.run(dataset[0], dataset[1], dataset[2], test_params)
+    results = model.run(dataset[0], dataset[1], dataset[2], dataset[3], test_params)
     for result in results:
         print 'RESULT:', list(result)
 

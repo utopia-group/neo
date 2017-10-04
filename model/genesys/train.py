@@ -17,7 +17,7 @@ def main():
     (train_dataset, test_dataset) = split_train_test(dataset, train_frac)
 
     # Step 4: Train model
-    model.train(train_dataset[0], train_dataset[1], train_dataset[2], train_dataset[3], test_dataset[0], test_dataset[1], test_dataset[2], test_dataset[3], train_params)
+    model.train(train_dataset[0], train_dataset[1], train_dataset[2], train_dataset[3], train_dataset[4], test_dataset[0], test_dataset[1], test_dataset[2], test_dataset[3], test_dataset[4], train_params)
 
 if __name__ == '__main__':
     main()
