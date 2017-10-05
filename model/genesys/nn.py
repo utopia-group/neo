@@ -50,43 +50,81 @@ class DeepCoderTestParams:
 class DeepCoderModel:
     # params: DeepCoderModelParams (parameters for the deep coder model)
     def __init__(self, params):
-        # Step 1: Inputs (input list, output list, DSL operator n-gram)
-        self.input_values_0 = tf.placeholder(tf.int32, [None, params.input_length])
-        self.input_values_1 = tf.placeholder(tf.int32, [None, params.input_length])
-        self.output_values = tf.placeholder(tf.int32, [None, params.output_length])
-        self.dsl_ops = tf.placeholder(tf.int32, [None, params.ngram_length])
 
-        # Step 2: Embedding layers
-
-        # embedding variables
-        value_embeddings = tf.get_variable('value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
-        dsl_op_embeddings = tf.get_variable('dsl_op_embeddings', [params.num_dsl_ops + 1, params.dsl_embedding_dim])
+        # Step 1: Variables
 
         # input value embedding
-        embedded_input_values_0 = tf.nn.embedding_lookup(value_embeddings, self.input_values_0)
-        embedded_input_values_0_flat = tf.reshape(embedded_input_values_0, [-1, params.input_length * params.val_embedding_dim])
+        value_embeddings = tf.get_variable('value_embeddings', [params.num_vals + 1, params.val_embedding_dim])
 
-        embedded_input_values_1 = tf.nn.embedding_lookup(value_embeddings, self.input_values_1)
-        embedded_input_values_1_flat = tf.reshape(embedded_input_values_1, [-1, params.input_length * params.val_embedding_dim])
+        # dsl op embedding
+        dsl_op_embeddings = tf.get_variable('dsl_op_embeddings', [params.num_dsl_ops + 1, params.dsl_embedding_dim])
 
-        # output value embedding
-        embedded_output_values = tf.nn.embedding_lookup(value_embeddings, self.output_values)
-        embedded_output_values_flat = tf.reshape(embedded_output_values, [-1, params.output_length * params.val_embedding_dim])
+        # hidden layers
+        embedding_dim = 2 * params.input_length * params.val_embedding_dim
+        embedding_dim += params.output_length * params.val_embedding_dim
+        embedding_dim += params.ngram_length * params.dsl_embedding_dim
+        
+        W0 = tf.Variable(tf.truncated_normal([embedding_dim, params.hidden_layer_dim], stddev=0.1))
+        b0 = tf.Variable(tf.constant(0.1, shape=[params.hidden_layer_dim]))
+        
+        W1 = tf.Variable(tf.truncated_normal([params.hidden_layer_dim, params.hidden_layer_dim], stddev=0.1))
+        b1 = tf.Variable(tf.constant(0.1, shape=[params.hidden_layer_dim]))
+        
+        W2 = tf.Variable(tf.truncated_normal([params.hidden_layer_dim, params.hidden_layer_dim], stddev=0.1))
+        b2 = tf.Variable(tf.constant(0.1, shape=[params.hidden_layer_dim]))
+
+        # Step 2: Layers
+
+        # Step 2a: Inputs (input list, output list, DSL operator n-gram)
+        self.input_values_0 = []
+        self.input_values_1 = []
+        self.output_values = []
+
+        for i in range(5):
+            self.input_values_0.append(tf.placeholder(tf.int32, [None, params.input_length]))
+            self.input_values_1.append(tf.placeholder(tf.int32, [None, params.input_length]))
+            self.output_values.append(tf.placeholder(tf.int32, [None, params.output_length]))
+
+        self.dsl_ops = tf.placeholder(tf.int32, [None, params.ngram_length])
+
+        # Step 2b: Embeddings
+        embedded_input_values_0_flat = []
+        embedded_input_values_1_flat = []
+        embedded_output_values_flat = []
+        
+        for i in range(5):
+            # input value embedding
+            embedded_input_values_0 = tf.nn.embedding_lookup(value_embeddings, self.input_values_0[i])
+            embedded_input_values_0_flat.append(tf.reshape(embedded_input_values_0, [-1, params.input_length * params.val_embedding_dim]))
+
+            embedded_input_values_1 = tf.nn.embedding_lookup(value_embeddings, self.input_values_1[i])
+            embedded_input_values_1_flat.append(tf.reshape(embedded_input_values_1, [-1, params.input_length * params.val_embedding_dim]))
+
+            # output value embedding
+            embedded_output_values = tf.nn.embedding_lookup(value_embeddings, self.output_values[i])
+            embedded_output_values_flat.append(tf.reshape(embedded_output_values, [-1, params.output_length * params.val_embedding_dim]))
 
         # dsl ngram embedding
         embedded_dsl_ops = tf.nn.embedding_lookup(dsl_op_embeddings, self.dsl_ops)
         embedded_dsl_ops_flat = tf.reshape(embedded_dsl_ops, [-1, params.ngram_length * params.dsl_embedding_dim])
 
-        # Step 3: Concatenation layer
-        merged = tf.concat([embedded_input_values_0_flat, embedded_input_values_1_flat, embedded_output_values_flat, embedded_dsl_ops_flat], 1)
+        # Step 2c: Concatenation
+        merged = []
+        for i in range(5):
+            merged.append(tf.concat([embedded_input_values_0_flat[i], embedded_input_values_1_flat[i], embedded_output_values_flat[i], embedded_dsl_ops_flat], 1))
 
-        # Step 4: Hidden layer
-        hidden0 = tf.layers.dense(inputs=merged, units=params.hidden_layer_dim, activation=tf.nn.relu)
-        hidden1 = tf.layers.dense(inputs=hidden0, units=params.hidden_layer_dim, activation=tf.nn.relu)
-        hidden2 = tf.layers.dense(inputs=hidden1, units=params.hidden_layer_dim, activation=tf.nn.relu)
+        # Step 2d: Hidden
+        hidden2 = []
+        for i in range(5):
+            hidden0 = tf.nn.relu(tf.matmul(merged[i], W0) + b0)
+            hidden1 = tf.nn.relu(tf.matmul(hidden0, W1) + b1)
+            hidden2.append(tf.matmul(hidden1, W2) + b2)
 
-        # Step 5: Logits
-        dsl_op_logits = tf.layers.dense(inputs=hidden2, units=params.num_dsl_ops, activation=None)
+        # Step 2e: Average pooling
+        pool = tf.reduce_mean(hidden2, 0)
+
+        # Step 2f: Logits
+        dsl_op_logits = tf.layers.dense(inputs=pool, units=params.num_dsl_ops, activation=None)
 
         # Step 6: Output (probability of each DSL operator)
         self.dsl_op_scores = tf.nn.softmax(dsl_op_logits)
@@ -114,7 +152,7 @@ class DeepCoderModel:
         save_path = self.save_path(params)
         
         # Step 2: Compute number of batches
-        num_batches = len(input_values_0_train)/params.batch_size
+        num_batches = len(labels_train)/params.batch_size
 
         # Step 3: Training step
         train_step = tf.train.AdamOptimizer(params.step_size).minimize(self.loss)
@@ -135,7 +173,7 @@ class DeepCoderModel:
                 print 'epoch: %d' % i
                 for j in range(num_batches):
 
-                    if j%1000 == 0:
+                    if j%10000 == 0:
                         print 'Batch:', j
                     
                     # Step 4c: Compute batch bounds
@@ -143,14 +181,14 @@ class DeepCoderModel:
                     hi = (j+1)*params.batch_size
                     
                     # Step 4d: Compute batch
-                    feed_dict = {
-                        self.input_values_0: input_values_0_train[lo:hi],
-                        self.input_values_1: input_values_1_train[lo:hi],
-                        self.output_values: output_values_train[lo:hi],
-                        self.dsl_ops: dsl_ops_train[lo:hi],
-                        self.labels: labels_train[lo:hi],
-                    }
-
+                    feed_dict = {}
+                    feed_dict[self.dsl_ops] = dsl_ops_train[lo:hi]
+                    feed_dict[self.labels] = labels_train[lo:hi]
+                    for i in range(5):
+                        feed_dict[self.input_values_0[i]] = input_values_0_train[i][lo:hi]
+                        feed_dict[self.input_values_1[i]] = input_values_1_train[i][lo:hi]
+                        feed_dict[self.output_values[i]] = output_values_train[i][lo:hi]
+                        
                     # Step 4e: Run training step
                     sess.run(train_step, feed_dict=feed_dict)
 
@@ -185,13 +223,13 @@ class DeepCoderModel:
             print 'Loaded deep coder model in: %s' % save_path
 
             # Test neural net
-            feed_dict = {
-                self.input_values_0: input_values_0,
-                self.input_values_1: input_values_1,
-                self.output_values: output_values,
-                self.dsl_ops: dsl_ops,
-                self.labels: labels,
-            }
+            feed_dict = {}
+            feed_dict[self.dsl_ops] = dsl_ops
+            feed_dict[self.labels] = labels
+            for i in range(5):
+                feed_dict[self.input_values_0[i]] = input_values_0[i]
+                feed_dict[self.input_values_1[i]] = input_values_1[i]
+                feed_dict[self.output_values[i]] = output_values[i]
             loss = sess.run(self.loss, feed_dict=feed_dict)
             print 'Loss: %g' % loss
             accuracy = sess.run(self.accuracy, feed_dict=feed_dict)

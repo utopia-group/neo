@@ -49,7 +49,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
 
     for line in lines:
 
-        if counter > 1000000:
+        if counter > 400000:
             break
 
         if counter%10000 == 0:
@@ -64,22 +64,27 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
 
         # Step 4c: Generate the IO examples
         try:
-            io_examples = generate_IO_examples([program], 1, max_len)[0]
+            io_examples = generate_IO_examples([program], 5, max_len)[0]
         except:
             continue
 
         # construct the input value
-        if len(io_examples[0][0]) == 2:
-            input_value_0 = process(io_examples[0][0][0])
-            input_value_1 = process(io_examples[0][0][1])
-        elif len(io_examples[0][0]) == 1:
-            input_value_0 = process(io_examples[0][0][0])
-            input_value_1 = process([])
-        else:
-            raise Exception('Invalid input example: ' + str(io_examples[0][0]))
+        input_value_0 = []
+        input_value_1 = []
+        output_value = []
+        
+        for i in range(5):
+            if len(io_examples[i][0]) == 2:
+                input_value_0.append(process(io_examples[i][0][0]))
+                input_value_1.append(process(io_examples[i][0][1]))
+            elif len(io_examples[i][0]) == 1:
+                input_value_0.append(process(io_examples[i][0][0]))
+                input_value_1.append(process([]))
+            else:
+                raise Exception('Invalid input example: ' + str(io_examples[i][0]))
 
-        # construct the output value
-        output_value = process(io_examples[0][1])
+            # construct the output value
+            output_value.append(process(io_examples[i][1]))
 
         # construct the label by iterating over functions in the program
         ngram = [len(funcs), len(funcs)]
@@ -87,7 +92,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
             if func in funcs:
                 label = np.zeros([len(funcs)], dtype=np.int64).tolist()
                 label[funcs[func]] = 1
-                dataset.append((input_value_0, input_value_1, output_value, ngram, label))
+                dataset.append(tuple([x for x in input_value_0] + [x for x in input_value_1] + [x for x in output_value] + [ngram, label]))
                 ngram = [ngram[1], funcs[func]]
 
         total_read += 1
@@ -129,6 +134,12 @@ def read_train_dataset(filename, num_dsl_ops):
     input_values_0 = []
     input_values_1 = []
     output_values = []
+
+    for i in range(5):
+        input_values_0.append([])
+        input_values_1.append([])
+        output_values.append([])
+    
     dsl_ops = []
     labels = []
 
@@ -136,29 +147,23 @@ def read_train_dataset(filename, num_dsl_ops):
 
     for line in f:
 
+        if counter > 1000000:
+            break
+
         if counter%100000 == 0:
             print 'Read ' + str(counter)
         counter += 1
 
-        try:
-            # Step 1: Obtain (DSL ops, input values, output values) tuples
-            toks = line[2:-3].split('], [')
+        # Obtain (DSL ops, input values, output values) tuples
+        toks = line[2:-3].split('], [')
 
-            input_value_0 = _process_list(toks[0])
-            input_value_1 = _process_list(toks[1])
-            output_value = _process_list(toks[2])
-            dsl_op = _process_list(toks[3])
-            label = _process_list(toks[4])
+        for i in range(5):
+            input_values_0[i].append(_process_list(toks[i]))
+            input_values_1[i].append(_process_list(toks[i+5]))
+            output_values[i].append(_process_list(toks[i+10]))
 
-            # Step 2: Process values
-            input_values_0.append(input_value_0)
-            input_values_1.append(input_value_1)
-            output_values.append(output_value)
-            dsl_ops.append(dsl_op)
-            labels.append(label)
-
-        except:
-            pass
+        dsl_ops.append(_process_list(toks[15]))
+        labels.append(_process_list(toks[16]))
 
     print 'Total read: ' + str(len(labels))
 
@@ -200,8 +205,16 @@ def _process_list(s):
 # train_frac: float (proportion of points to use for training)
 # return: (train_dataset, test_dataset) where train_dataset, test_dataset each have the same type as dataset
 def split_train_test(dataset, train_frac):
-    split_dataset = tuple(_split_train_test_single(dataset_single, train_frac) for dataset_single in dataset)
-    return (tuple(split_dataset[i][0] for i in range(5)), tuple(split_dataset[i][1] for i in range(5)))
+    input_values_0 = [_split_train_test_single(input_value_0, train_frac) for input_value_0 in dataset[0]]
+    input_values_1 = [_split_train_test_single(input_value_1, train_frac) for input_value_1 in dataset[1]]
+    output_values = [_split_train_test_single(output_value, train_frac) for output_value in dataset[2]]
+    dsl_ops = _split_train_test_single(dataset[3], train_frac)
+    labels = _split_train_test_single(dataset[4], train_frac)
+    return tuple(tuple([[input_values_0[i][t] for i in range(5)],
+                        [input_values_1[i][t] for i in range(5)],
+                        [output_values[i][t] for i in range(5)],
+                        dsl_ops[t],
+                        labels[t]]) for t in range(2))
 
 # dataset_single: np.array([num_points, num_vals], int)
 # train_frac: float (proportion of points to use for training)
