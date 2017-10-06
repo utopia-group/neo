@@ -975,8 +975,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             }
             if (decision == ""){
                 // we need to go to the next program
-                if (level_ != 0)
+                if (level_ != 0) {
                     backtrackStep2(0, false, false);
+                }
+                level_ = -2;
                 return null;
             }
             Pair<Production, Integer> p = decideMap.get(decision);
@@ -1371,6 +1373,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     } else {
                         // No conflict
                         Node decision = decideHigh();
+
+                        if (level_ == -2){
+                            // FIXME: quick hack to go to next sketch
+                            level_ = 0;
+                            assert (decision == null);
+                            // go to next sketch
+                            continue;
+                        }
+
                         if (decision == null && level_ == 0){
                             unsat = true;
                             break;
@@ -1380,6 +1391,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             unsat = true;
                             break;
                         }
+
                         if (level_ != 0) { // FIXME: quick hack to go to the next program
                             if (decision == null) {
                                 while (backtrackStep1(level_ - 1, true)) {
