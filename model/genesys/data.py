@@ -147,9 +147,6 @@ def read_train_dataset(filename, num_dsl_ops):
 
     for line in f:
 
-        if counter > 1000000:
-            break
-
         if counter%100000 == 0:
             print 'Read ' + str(counter)
         counter += 1
