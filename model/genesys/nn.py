@@ -253,12 +253,12 @@ class DeepCoderModel:
             print 'Loaded deep coder model in: %s' % save_path
 
             # Step 3: Build inputs
-            feed_dict = {
-                self.input_values_0: input_values_0,
-                self.input_values_1: input_values_1,
-                self.output_values: output_values,
-                self.dsl_ops: dsl_ops,
-            }
+            feed_dict = {}
+            feed_dict[self.dsl_ops] = dsl_ops
+            for i in range(5):
+                feed_dict[self.input_values_0[i]] = input_values_0[i]
+                feed_dict[self.input_values_1[i]] = input_values_1[i]
+                feed_dict[self.output_values[i]] = output_values[i]
 
             # Step 4: Run prediction
             scores = sess.run(self.dsl_op_scores, feed_dict=feed_dict)

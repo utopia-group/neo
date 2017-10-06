@@ -41,42 +41,51 @@ public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
 
 	// (function n-gram, list values)
 	@Override
-	public Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>> getFeatures(Object input, Object output, List<String> ancestors) {
-		// Step 1: Flatten input and output
-		List<Integer> flatInput0 = new ArrayList<Integer>();
-		List<Integer> flatInput1 = new ArrayList<Integer>();
-		List<Integer> flatOutput = new ArrayList<Integer>();
+	public Quad<List<List<Integer>>,List<List<Integer>>,List<List<Integer>>,List<Integer>> getFeatures(List<Object> inputs, List<Object> outputs, List<String> ancestors) {
+		List<List<Integer>> inputValues0Features = new ArrayList<List<Integer>>();
+		List<List<Integer>> inputValues1Features = new ArrayList<List<Integer>>();
+		List<List<Integer>> outputValuesFeatures = new ArrayList<List<Integer>>();
 		
-		List inputList = (List)input;
-		this.flatten(inputList.get(0), flatInput0);
-		this.flatten(output, flatOutput);
-		
-		if(inputList.size() == 2) {
-			this.flatten(inputList.get(1), flatInput1);
-		} else if(inputList.size() == 1) {
-		} else {
-			throw new RuntimeException("Invalid input example size: " + inputList.size());
-		}
-		
-		// Step 2: Featurize first part of input example
-		List<Integer> inputValue0Features = new ArrayList<Integer>();
-		for(int i=0; i<this.parameters.maxLength; i++) {
-			Integer curValue = flatInput0.size() > i ? flatInput0.get(i) : NO_VALUE;
-			inputValue0Features.add(this.valueLookup.get(curValue));
-		}
-		
-		// Step 3: Featurize second part of input example
-		List<Integer> inputValue1Features = new ArrayList<Integer>();
-		for(int i=0; i<this.parameters.maxLength; i++) {
-			Integer curValue = flatInput1.size() > i ? flatInput1.get(i) : NO_VALUE;
-			inputValue1Features.add(this.valueLookup.get(curValue));
-		}
-		
-		// Step 4: Featurize output example
-		List<Integer> outputValueFeatures = new ArrayList<Integer>();
-		for(int i=0; i<this.parameters.maxLength; i++) {
-			Integer curValue = flatOutput.size() > i ? flatOutput.get(i) : NO_VALUE;
-			outputValueFeatures.add(this.valueLookup.getOrDefault(curValue, this.valueLookup.get(NO_VALUE)));
+		for(int j=0; j<5; j++) {
+			// Step 1: Flatten input and output
+			List<Integer> flatInput0 = new ArrayList<Integer>();
+			List<Integer> flatInput1 = new ArrayList<Integer>();
+			List<Integer> flatOutput = new ArrayList<Integer>();
+			
+			List inputList = (List)inputs.get(j);
+			this.flatten(inputList.get(0), flatInput0);
+			this.flatten(outputs.get(j), flatOutput);
+			
+			if(inputList.size() == 2) {
+				this.flatten(inputList.get(1), flatInput1);
+			} else if(inputList.size() == 1) {
+			} else {
+				throw new RuntimeException("Invalid input example size: " + inputList.size());
+			}
+			
+			// Step 2: Featurize first part of input example
+			List<Integer> inputValue0Features = new ArrayList<Integer>();
+			for(int i=0; i<this.parameters.maxLength; i++) {
+				Integer curValue = flatInput0.size() > i ? flatInput0.get(i) : NO_VALUE;
+				inputValue0Features.add(this.valueLookup.get(curValue));
+			}
+			inputValues0Features.add(inputValue0Features);
+			
+			// Step 3: Featurize second part of input example
+			List<Integer> inputValue1Features = new ArrayList<Integer>();
+			for(int i=0; i<this.parameters.maxLength; i++) {
+				Integer curValue = flatInput1.size() > i ? flatInput1.get(i) : NO_VALUE;
+				inputValue1Features.add(this.valueLookup.get(curValue));
+			}
+			inputValues1Features.add(inputValue1Features);
+			
+			// Step 4: Featurize output example
+			List<Integer> outputValueFeatures = new ArrayList<Integer>();
+			for(int i=0; i<this.parameters.maxLength; i++) {
+				Integer curValue = flatOutput.size() > i ? flatOutput.get(i) : NO_VALUE;
+				outputValueFeatures.add(this.valueLookup.getOrDefault(curValue, this.valueLookup.get(NO_VALUE)));
+			}
+			outputValuesFeatures.add(outputValueFeatures);
 		}
 		
 		// Step 5: Featurize ancestors
@@ -86,7 +95,7 @@ public class DeepCoderXFeaturizer implements XFeaturizer<Object> {
 			nGramFeatures.add(this.functionLookup.get(nGram.get(i)));
 		}
 		
-		return new Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>>(inputValue0Features, inputValue1Features, outputValueFeatures, nGramFeatures);
+		return new Quad<List<List<Integer>>,List<List<Integer>>,List<List<Integer>>,List<Integer>>(inputValues0Features, inputValues1Features, outputValuesFeatures, nGramFeatures);
 	}
 	
 	private void flatten(Object t, List<Integer> result) {

@@ -39,8 +39,8 @@ public class DeepCoderPythonDecider implements Decider {
 	
 	private final XFeaturizer<Object> xFeaturizer;
 	private final YFeaturizer yFeaturizer;
-	private final Object input;
-	private final Object output;
+	private final List<Object> inputs = new ArrayList<Object>();
+	private final List<Object> outputs = new ArrayList<Object>();
 	
 	private final Map<String,double[]> probabilities;
 	
@@ -80,19 +80,21 @@ public class DeepCoderPythonDecider implements Decider {
 		this.yFeaturizer  = new YFeaturizer(functions);
 
 		//FIXME: Osbert is assuming we only have one input from ONE example.
-		Example example = problem.getExamples().get(0);
-		input = LibUtils.fixGsonBug(example.getInput());
-		// Always one output table
-		output = LibUtils.fixGsonBug(example.getOutput());
+		for(int i=0; i<5; i++) {
+			Example example = problem.getExamples().get(i);
+			inputs.add(LibUtils.fixGsonBug(example.getInput()));
+			// Always one output table
+			outputs.add(LibUtils.fixGsonBug(example.getOutput()));
+		}
 
 		this.probabilities = this.build(functions);
 	}
 	
-	public DeepCoderPythonDecider(XFeaturizer<Object> xFeaturizer, YFeaturizer yFeaturizer, Object input, Object output) {
+	public DeepCoderPythonDecider(XFeaturizer<Object> xFeaturizer, YFeaturizer yFeaturizer, List<Object> inputs, List<Object> outputs) {
 		this.xFeaturizer = xFeaturizer;
 		this.yFeaturizer = yFeaturizer;
-		this.input = input;
-		this.output = output;
+		this.inputs.addAll(inputs);
+		this.outputs.addAll(outputs);
 		
 		this.probabilities = this.build(getDeepCoderFunctions());
 	}
@@ -155,11 +157,23 @@ public class DeepCoderPythonDecider implements Decider {
 				for(String function1 : newFunctions) {
 					// Step 3a: Build the datapoint
 					List<String> nGram = Arrays.asList(new String[]{function0, function1});
-					Quad<List<Integer>,List<Integer>,List<Integer>,List<Integer>> features = this.xFeaturizer.getFeatures(this.input, this.output, nGram);
-					String datapoint = "(" + Utils.toString(features.t0) + ", " + Utils.toString(features.t1) + ", " + Utils.toString(features.t2) + ", " + Utils.toString(features.t3) + ")";
+					Quad<List<List<Integer>>,List<List<Integer>>,List<List<Integer>>,List<Integer>> features = this.xFeaturizer.getFeatures(this.inputs, this.outputs, nGram);
+					List<List<Integer>> lists = new ArrayList<List<Integer>>();
+					lists.addAll(features.t0);
+					lists.addAll(features.t1);
+					lists.addAll(features.t2);
+					lists.add(features.t3);
+					
+					StringBuilder datapoint = new StringBuilder();
+					datapoint.append("(");
+					for(List<Integer> list : lists) {
+						datapoint.append(Utils.toString(list)).append(", ");
+					}
+					datapoint.delete(datapoint.length()-2, datapoint.length());
+					datapoint.append(")");
 					
 					// Step 3b: Print to test set file
-					pw.println(datapoint);
+					pw.println(datapoint.toString());
 					
 					// Step 3c: Save the n-gram
 					nGrams.add(Utils.toString(nGram));

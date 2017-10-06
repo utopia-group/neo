@@ -176,16 +176,23 @@ def read_test_dataset(filename):
     input_values_0 = []
     input_values_1 = []
     output_values = []
+    for i in range(5):
+        input_values_0.append([])
+        input_values_1.append([])
+        output_values.append([])
     dsl_ops = []
+    
     for line in f:
         # Step 1: Obtain (DSL ops, input values, output values) tuples
         toks = line[2:-3].split('], [')
 
         # Step 2: Process values
-        input_values_0.append(_process_list(toks[0]))
-        input_values_1.append(_process_list(toks[1]))
-        output_values.append(_process_list(toks[2]))
-        dsl_ops.append(_process_list(toks[3]))
+        for i in range(5):
+            input_values_0[i].append(_process_list(toks[i]))
+            input_values_1[i].append(_process_list(toks[i+5]))
+            output_values[i].append(_process_list(toks[i+10]))
+        
+        dsl_ops.append(_process_list(toks[15]))
 
     return (np.array(input_values_0), np.array(input_values_1), np.array(output_values), np.array(dsl_ops))
     
