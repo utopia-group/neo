@@ -132,7 +132,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
-    public boolean learnCore(List<Pair<Integer, List<String>>> core) {
+    public boolean learnCoreSet(List<List<Pair<Integer, List<String>>>> core) {
+        boolean confl = false;
+        for (List<Pair<Integer, List<String>>> s : core){
+            confl = confl & learnCore(s);
+        }
+
+        return confl;
+    }
+
+        public boolean learnCore(List<Pair<Integer, List<String>>> core) {
         boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
@@ -203,6 +212,31 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         Node node = search();
         return node;
     }
+
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+        if (!init_) {
+            init_ = true;
+            loadGrammar();
+            initDataStructures();
+        } else {
+            boolean conflict = blockModel();
+            if (conflict) {
+                return null;
+            }
+            else {
+                boolean confl = learnCoreSet(core);
+                if (confl){
+                    System.out.println("s UNSATISFIABLE - learning core");
+                    return null;
+                }
+            }
+            partial_ = true;
+        }
+
+        Node node = search();
+        return node;
+    }
+
 
     @Override
     public boolean isPartial(){

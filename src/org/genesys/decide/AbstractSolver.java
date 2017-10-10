@@ -12,6 +12,8 @@ public interface AbstractSolver<C, T> {
 
     T getCoreModel(List<Pair<Integer, List<String>>> core, boolean block);
 
+    T getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block);
+
     boolean isPartial();
 
     void cacheAST(String program, boolean block);

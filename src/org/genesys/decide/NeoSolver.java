@@ -201,6 +201,11 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
+    @Override
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+        return null;
+    }
+
 
     public String nextDecision(List<String> ancestors, List<String> domain) {
 

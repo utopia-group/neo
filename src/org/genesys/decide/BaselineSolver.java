@@ -80,6 +80,11 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
         return null;
     }
 
+    @Override
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+        return null;
+    }
+
 
         @Override
     public Node getModel(BoolExpr core, boolean block) {

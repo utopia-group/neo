@@ -56,6 +56,12 @@ public class SATSolver<C, T> implements AbstractSolver<C, T> {
     }
 
     @Override
+    public T getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+        return null;
+    }
+
+
+    @Override
     public T getModel(C core, boolean block) {
         return null;
     }
