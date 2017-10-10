@@ -72,7 +72,7 @@ public class MorpheusSynthesizer implements Synthesizer {
         }
     }
 
-    public MorpheusSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider){
+    public MorpheusSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider) {
         learning_ = learning;
         solver_ = new MorpheusSolver(grammar, depth, decider);
         checker_ = checker;
@@ -120,24 +120,16 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (!isSatisfiable) {
                 if (learning_) {
                     Z3Utils z3 = Z3Utils.getInstance();
-                    List<Pair<Integer, List<Integer>>> conflicts = z3.getConflicts();
-                    List<Pair<Integer, List<String>>> convert = new ArrayList<>();
-                    for (Pair<Integer, List<Integer>> p : conflicts) {
-                        Pair<Integer, List<String>> new_p = new Pair<>(p.t0, new ArrayList<>());
-                        for (Integer l : p.t1) {
-                            assert components_.containsKey(l);
-                            new_p.t1.add(components_.get(l).getName());
-                        }
-                        convert.add(new_p);
-                    }
+                    List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
                     long start2 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(),true);
-                    ast = solver_.getCoreModel(convert, true);
+                    solver_.cacheAST(ast.toString(), true);
+                    ast = solver_.getCoreModel(conflicts, true);
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 } else {
+                    System.out.println("########" + checker_.learnCore());
                     long start2 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(),true);
+                    solver_.cacheAST(ast.toString(), true);
                     ast = solver_.getModel(null, true);
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
@@ -148,10 +140,10 @@ public class MorpheusSynthesizer implements Synthesizer {
             }
 
 
-            if (solver_.isPartial()){
-                if(!silent_) System.out.println("Partial Program: " + ast);
+            if (solver_.isPartial()) {
+                if (!silent_) System.out.println("Partial Program: " + ast);
                 long start2 = LibUtils.tick();
-                solver_.cacheAST(ast.toString(),false);
+                solver_.cacheAST(ast.toString(), false);
                 ast = solver_.getModel(null, false);
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
@@ -162,14 +154,14 @@ public class MorpheusSynthesizer implements Synthesizer {
                 long start2 = LibUtils.tick();
                 boolean isCorrect = verify(ast);
                 long end2 = LibUtils.tick();
-                totalTest += LibUtils.computeTime(start2,end2);
+                totalTest += LibUtils.computeTime(start2, end2);
 
                 if (isCorrect) {
                     System.out.println("Synthesized PROGRAM: " + ast);
                     break;
                 } else {
                     long start3 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(),true);
+                    solver_.cacheAST(ast.toString(), true);
                     ast = solver_.getModel(null, true);
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
@@ -182,8 +174,8 @@ public class MorpheusSynthesizer implements Synthesizer {
         System.out.println("Deduction time=:" + (totalDeduction));
         System.out.println("Test time=:" + (totalTest));
         System.out.println("Total=:" + total);
-        System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial*100.0/partial);
-        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete*100.0/concrete);
+        System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
+        System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / concrete);
 
         return ast;
     }
@@ -192,7 +184,7 @@ public class MorpheusSynthesizer implements Synthesizer {
     private boolean verify(Node program) {
         long start = LibUtils.tick();
         boolean passed = true;
-        if (!silent_)  System.out.println("Program: " + program);
+        if (!silent_) System.out.println("Program: " + program);
         for (Example example : problem_.getExamples()) {
             //FIXME:lets assume we only have at most two input tables for now.
             Object input = LibUtils.fixGsonBug(example.getInput());
@@ -200,7 +192,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             Object output = LibUtils.fixGsonBug(example.getOutput());
             try {
                 Maybe<Object> tgt = interpreter_.execute(program, input);
-                if (tgt == null){
+                if (tgt == null) {
                     passed = false;
                     break;
                 }

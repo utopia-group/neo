@@ -4,12 +4,13 @@ import krangl.DataFrame;
 import krangl.Extensions;
 import krangl.ReshapeKt;
 import org.genesys.interpreter.Unop;
+import org.genesys.language.MorpheusGrammar;
+import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 import org.genesys.utils.MorpheusUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -75,6 +76,49 @@ public class Unite implements Unop {
 //        System.out.println("Unite==================");
 //        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
+    }
+
+    public Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<Pair<Object, List<Map<Integer, List<String>>>>> args = (List<Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        Pair<Object, List<Map<Integer, List<String>>>> arg2 = args.get(2);
+        List<Map<Integer, List<String>>> conflictList = arg0.t1;
+        DataFrame df = (DataFrame) arg0.t0;
+        int lhs = (int) arg1.t0;
+        int rhs = (int) arg2.t0;
+        int nCol = df.getNcol();
+
+        if (conflictList.isEmpty())
+            conflictList.add(new HashMap<>());
+
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            Node fstChild = ast.children.get(0);
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+
+            //arg1
+            Node sndChild = ast.children.get(1);
+            partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+        }
+
+        if ((nCol <= lhs) || (nCol <= rhs) || (lhs == rhs)) {
+            return new Pair<>(null, conflictList);
+        }
+
+        String lhsCol = df.getNames().get(lhs);
+        String rhsCol = df.getNames().get(rhs);
+        List<String> colList = new ArrayList<>();
+        colList.add(lhsCol);
+        colList.add(rhsCol);
+        String colName = MorpheusUtil.getInstance().getMorpheusString();
+        DataFrame res = ReshapeKt.unite(df, colName, colList, sep_, remove);
+//        System.out.println("Unite==================");
+//        Extensions.print(res);
+        return new Pair<>(res, conflictList);
+
     }
 
     public String toString() {

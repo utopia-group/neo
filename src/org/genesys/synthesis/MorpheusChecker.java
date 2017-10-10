@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
 import krangl.DataFrame;
 import org.genesys.interpreter.MorpheusValidator;
+import org.genesys.interpreter.MorpheusValidator2;
 import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.*;
 import org.genesys.type.Maybe;
@@ -19,13 +20,17 @@ import java.util.*;
  * Created by yufeng on 9/3/17.
  * Deduction for Morpheus
  */
-public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List<Integer>>>> {
+public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer, List<String>>>>> {
 
     private HashMap<String, Component> components_ = new HashMap<>();
 
     private Gson gson = new Gson();
 
-    private MorpheusValidator validator_;
+    private MorpheusValidator2 validator_;
+
+    private int counter_ = 0;
+
+    private List<List<Pair<Integer, List<String>>>> core_ = new ArrayList<>();
 
     public MorpheusChecker(String specLoc, MorpheusGrammar g) throws FileNotFoundException {
         File[] files = new File(specLoc).listFiles();
@@ -35,7 +40,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
             Component comp = gson.fromJson(new FileReader(json), Component.class);
             components_.put(comp.getName(), comp);
         }
-        validator_ = new MorpheusValidator(g.getInitProductions());
+        validator_ = new MorpheusValidator2(g.getInitProductions());
     }
 
     /**
@@ -45,7 +50,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
      */
     @Override
     public boolean check(Problem specification, Node node) {
-
+        core_.clear();
         Example example = specification.getExamples().get(0);
         Object output = example.getOutput();
         assert output instanceof DataFrame;
@@ -54,14 +59,15 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-//        System.out.println("Verifying.... " + node);
-        Pair<Boolean, Maybe<Object>> validRes = validator_.validate(node, example.getInput());
-        if (!validRes.t0) {
-//            System.out.println("Refuting.... " + node);
-            return false;
-        } else {
-//            System.out.println("Verifying.... " + node);
-        }
+        System.out.println("Verifying.... " + node);
+//        validator_.validate(node, example.getInput());
+//        if (!validRes.t0) {
+//            counter_++;
+//            System.out.println("Refuting.... " + node + " " + counter_);
+//            return false;
+//        } else {
+////            System.out.println("Verifying.... " + node);
+//        }
 
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
@@ -70,21 +76,21 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
         Map<String, Integer> clauseToNodeMap_ = new HashMap<>();
 
         // Generate constraints from PE.
-        for (int i : validator_.getPeMap().keySet()) {
-            Object o = validator_.getPE(i);
-            if( o instanceof DataFrame) {
-                DataFrame peDf = (DataFrame) o;
-                int peRow = peDf.getNrow();
-                int peCol = peDf.getNcol();
-                String peRowVar = "V_ROW" + i;
-                String peColVar = "V_COL" + i;
-                BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
-                BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
-
-                cstList.add(peRowCst);
-                cstList.add(peColCst);
-            }
-        }
+//        for (int i : validator_.getPeMap().keySet()) {
+//            Object o = validator_.getPE(i);
+//            if (o instanceof DataFrame) {
+//                DataFrame peDf = (DataFrame) o;
+//                int peRow = peDf.getNrow();
+//                int peCol = peDf.getNcol();
+//                String peRowVar = "V_ROW" + i;
+//                String peColVar = "V_COL" + i;
+//                BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
+//                BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
+//
+//                cstList.add(peRowCst);
+//                cstList.add(peColCst);
+//            }
+//        }
 
         queue.add(node);
         while (!queue.isEmpty()) {
@@ -96,7 +102,7 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
 
             //Get component spec.
             Component comp = components_.get(func);
-//            System.out.println("working on : " + func + " id:" + workerVar);
+//            System.out.println("working on : " + func + " id:" + worker.id + " isconcrete:" + worker.isConcrete());
             if ("root".equals(func)) {
                 //attach output
                 int outCol = outDf.getNcol();
@@ -142,6 +148,23 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
                     if (comp != null) {
                         for (String cstStr : comp.getConstraint()) {
 
+                            if (worker.isConcrete()) {
+                                Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
+                                if (validRes.t0 == null) {
+                                    parseCore(validRes.t1);
+                                    return false;
+                                } else {
+                                    DataFrame workerDf = (DataFrame) validRes.t0;
+                                    int peRow = workerDf.getNrow();
+                                    int peCol = workerDf.getNcol();
+                                    String peRowVar = "V_ROW" + worker.id;
+                                    String peColVar = "V_COL" + worker.id;
+                                    BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
+                                    BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
+                                    cstList.add(peRowCst);
+                                    cstList.add(peColCst);
+                                }
+                            }
                             String targetCst = cstStr.replace("RO_SPEC", rowVar);
                             targetCst = targetCst.replace("CO_SPEC", colVar);
 
@@ -177,8 +200,17 @@ public class MorpheusChecker implements Checker<Problem, List<Pair<Integer, List
     }
 
     @Override
-    public List<Pair<Integer, List<Integer>>> learnCore() {
-        Z3Utils z3 = Z3Utils.getInstance();
-        return z3.getConflicts();
+    public List<List<Pair<Integer, List<String>>>> learnCore() {
+        return core_;
+    }
+
+    private void parseCore(List<Map<Integer, List<String>>> coreList) {
+        for (Map<Integer, List<String>> conflict : coreList) {
+            List<Pair<Integer, List<String>>> c = new ArrayList<>();
+            for (int key : conflict.keySet()) {
+                c.add(new Pair<>(key, conflict.get(key)));
+            }
+            core_.add(c);
+        }
     }
 }

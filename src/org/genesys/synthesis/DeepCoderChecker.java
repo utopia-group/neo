@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Created by yufeng on 6/3/17.
  */
-public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, List<Integer>>>> {
+public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, List<String>>>> {
 
     private HashMap<String, Component> components_ = new HashMap<>();
 
@@ -201,7 +201,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
     }
 
     @Override
-    public List<Pair<Integer, List<Integer>>> learnCore() {
+    public List<Pair<Integer, List<String>>> learnCore() {
         Z3Utils z3 = Z3Utils.getInstance();
         return z3.getConflicts();
     }

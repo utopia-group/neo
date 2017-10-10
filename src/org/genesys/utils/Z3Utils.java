@@ -36,7 +36,7 @@ public class Z3Utils {
 
     private Map<BoolExpr, BoolExpr> cstMap_ = new HashMap<>();
 
-    private List<Pair<Integer, List<Integer>>> conflicts_ = new ArrayList<>();
+    private List<Pair<Integer, List<String>>> conflicts_ = new ArrayList<>();
 
     protected Z3Utils() {
         ctx_ = new Context();
@@ -223,7 +223,7 @@ public class Z3Utils {
                 String[] items = subCore.split(" ");
                 // right now only handle easy cores.
                 if(items.length != 3) {
-                    Pair<Integer, List<Integer>> conflict = new Pair<>(nodeId, new ArrayList<>());
+                    Pair<Integer, List<String>> conflict = new Pair<>(nodeId, new ArrayList<>());
 //                    System.out.println("adding missing core:" + core);
                     if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
                     continue;
@@ -235,7 +235,7 @@ public class Z3Utils {
 //                System.out.println("[unsat core]" + core + " replace:" + core_cst_str);
                 BoolExpr my_core = convertStrToExpr2(core_cst_str);
 
-                List<Integer> eq_vec = new ArrayList<>();
+                List<String> eq_vec = new ArrayList<>();
                 for(Component comp : components) {
                     List<BoolExpr> expr_vector = new ArrayList<>();
                     solver_core.push();
@@ -248,18 +248,18 @@ public class Z3Utils {
                     boolean flag = (solver_core.check() == Status.SATISFIABLE);
                     solver_core.pop();
                     if(!flag && !eq_vec.contains(comp.getId())) {
-                        eq_vec.add(comp.getId());
+                        eq_vec.add(comp.getName());
 //                        System.out.println("Checking cmp: " + comp.getName() + " CST:" + expr_vector);
                     }
                 }
-                Pair<Integer, List<Integer>> conflict = new Pair<>(nodeId, eq_vec);
+                Pair<Integer, List<String>> conflict = new Pair<>(nodeId, eq_vec);
                 if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
 
     }
 
-    public List<Pair<Integer, List<Integer>>> getConflicts() {
+    public List<Pair<Integer, List<String>>> getConflicts() {
         return conflicts_;
     }
 }

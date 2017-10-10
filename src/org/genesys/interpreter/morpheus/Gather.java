@@ -5,12 +5,13 @@ import krangl.DataFrame;
 import krangl.Extensions;
 import krangl.ReshapeKt;
 import org.genesys.interpreter.Unop;
+import org.genesys.language.MorpheusGrammar;
+import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 import org.genesys.utils.MorpheusUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -45,11 +46,11 @@ public class Gather implements Unop {
         String value = MorpheusUtil.getInstance().getMorpheusString();
 
         DataFrame res;
-        if(hasNeg) {
+        if (hasNeg) {
             Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
             res = ReshapeKt.gather(df, key, value, argNegs, false);
         } else {
-             res = ReshapeKt.gather(df, key, value, colArgs, false);
+            res = ReshapeKt.gather(df, key, value, colArgs, false);
         }
 //        System.out.println("----------------Gather------------------");
 //        Extensions.print(df);
@@ -93,12 +94,12 @@ public class Gather implements Unop {
             String key = MorpheusUtil.getInstance().getMorpheusString();
             String value = MorpheusUtil.getInstance().getMorpheusString();
             DataFrame res;
-            if(hasNeg) {
+            if (hasNeg) {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
 //                System.out.println("Running gather...." + argNegs) ;
 
                 res = ReshapeKt.gather(df, key, value, argNegs, false);
-            } else  {
+            } else {
                 res = ReshapeKt.gather(df, key, value, colArgs, false);
             }
 //            System.out.println("Gather--------------" + cols);
@@ -107,6 +108,73 @@ public class Gather implements Unop {
             return new Pair<>(true, new Maybe<>(res));
         }
     }
+
+    public Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<Pair<Object, List<Map<Integer, List<String>>>>> args = (List<Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        List<Map<Integer, List<String>>> conflictList = arg0.t1;
+
+        DataFrame df = (DataFrame) arg0.t0;
+        List cols = (List) arg1.t0;
+        int nCol = df.getNcol();
+
+        if (conflictList.isEmpty())
+            conflictList.add(new HashMap<>());
+
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            Node fstChild = ast.children.get(0);
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+
+            //arg1
+            Node sndChild = ast.children.get(1);
+            partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+        }
+
+        if (nCol <= cols.size()) {
+            return new Pair<>(null, conflictList);
+        } else {
+            List<String> colArgs = new ArrayList<>();
+            List<Function1> colNegs = new ArrayList<>();
+            boolean hasNeg = false;
+
+            for (Object o : cols) {
+                Integer index = (Integer) o;
+                int absIndx = index;
+                if (index == -99) absIndx = 0;
+
+                if (nCol <= Math.abs(absIndx)) {
+                    return new Pair<>(null, conflictList);
+                }
+                String arg = df.getNames().get(Math.abs(absIndx));
+                colArgs.add(arg);
+                if (index < 0) {
+                    hasNeg = true;
+                    colNegs.add(Extensions.unaryMinus(arg));
+                }
+            }
+            assert !colArgs.isEmpty();
+            String key = MorpheusUtil.getInstance().getMorpheusString();
+            String value = MorpheusUtil.getInstance().getMorpheusString();
+            DataFrame res;
+            if (hasNeg) {
+                Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
+//                System.out.println("Running gather...." + argNegs) ;
+
+                res = ReshapeKt.gather(df, key, value, argNegs, false);
+            } else {
+                res = ReshapeKt.gather(df, key, value, colArgs, false);
+            }
+//            System.out.println("Gather--------------" + cols);
+//            Extensions.print(df);
+//            Extensions.print(res);
+            return new Pair<>(res, conflictList);
+        }
+    }
+
 
     public String toString() {
         return "l(x).(gather " + " x)";

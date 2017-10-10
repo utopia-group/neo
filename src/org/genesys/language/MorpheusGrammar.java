@@ -27,6 +27,10 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     private List<Production<AbstractType>> inputProductions = new ArrayList<>();
 
+    public static Map<Integer, List<String>> colMap = new HashMap<>();
+
+    public static Map<Integer, List<String>> colListMap = new HashMap<>();
+
     public MorpheusGrammar(Problem p) {
         assert !p.getExamples().isEmpty();
         //FIXME: assume we always only have one example in table domain.
@@ -66,6 +70,17 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
             Production prod = new Production<>(new ColIndexType(), i + "");
             prod.setValue(i);
             initProductions.add(prod);
+            for (int listSize = 1; listSize < 10; listSize++) {
+                List<String> l = new ArrayList<>();
+                if (colMap.containsKey(listSize)) {
+                    l = colMap.get(listSize);
+                } else {
+                    colMap.put(listSize, l);
+                }
+                if (listSize <= i) {
+                    l.add(String.valueOf(i));
+                }
+            }
             allCols.add(i);
         }
         List<Set<Integer>> cols = MorpheusUtil.getInstance().getSubsets(allCols, 1);
@@ -75,6 +90,28 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
             negSets.add(MorpheusUtil.getInstance().negateSet(col));
         }
         cols.addAll(negSets);
+        for (Set<Integer> ss : cols) {
+            for (int listSize = 1; listSize < 10; listSize++) {
+                List<String> l = new ArrayList<>();
+                if (colListMap.containsKey(listSize)) {
+                    l = colListMap.get(listSize);
+                } else {
+                    colListMap.put(listSize, l);
+                }
+                if (ss.size() > listSize) {
+                    l.add(ss.toString());
+                    continue;
+                }
+
+                for (int si : ss) {
+                    if (si == -99) continue;
+                    if (Math.abs(si) >= listSize) {
+                        l.add(ss.toString());
+                        break;
+                    }
+                }
+            }
+        }
         for (Set<Integer> col : cols) {
             Production prod = new Production<>(new ListType(new IntType()), col.toString());
             prod.setValue(new ArrayList(col));
@@ -109,7 +146,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(true, new TableType(), "filter", new TableType(), new BinopBoolType(), new ColIndexType(), new ConstType()));
 //        productions.add(new Production<>(true, new TableType(), "filter", new TableType(), new BinopBoolType(), new ColIndexType(), new IntType()));
 //        productions.add(new Production<>(true, new TableType(), "filter2", new TableType(), new BinopStringType(), new ColIndexType(), new StringType()));
-        productions.add(new Production<>(true, new TableType(), "mutate", new TableType(), new BinopIntType(),new ColIndexType(),new ColIndexType()));
+        productions.add(new Production<>(true, new TableType(), "mutate", new TableType(), new BinopIntType(), new ColIndexType(), new ColIndexType()));
 
         //FunctionType
         productions.add(new Production<>(new BinopIntType(), "l(a,b).(/ a b)"));

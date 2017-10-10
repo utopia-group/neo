@@ -111,17 +111,8 @@ public class NeoSynthesizer implements Synthesizer {
                 long start = LibUtils.tick();
                 if (learning_) {
                     Z3Utils z3 = Z3Utils.getInstance();
-                    List<Pair<Integer, List<Integer>>> conflicts = z3.getConflicts();
-                    List<Pair<Integer, List<String>>> convert = new ArrayList<>();
-                    for (Pair<Integer, List<Integer>> p : conflicts) {
-                        Pair<Integer, List<String>> new_p = new Pair<>(p.t0, new ArrayList<>());
-                        for (Integer l : p.t1) {
-                            assert components_.containsKey(l);
-                            new_p.t1.add(components_.get(l).getName());
-                        }
-                        convert.add(new_p);
-                    }
-                    ast = solver_.getCoreModel(convert, true);
+                    List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
+                    ast = solver_.getCoreModel(conflicts, true);
                 } else ast = solver_.getModel(null, true);
                 long end = LibUtils.tick();
                 if (solver_.isPartial()) prune_partial++;
