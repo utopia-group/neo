@@ -47,7 +47,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
-        Map<String, Integer> clauseToNodeMap_ = new HashMap<>();
+        Map<String, Object> clauseToNodeMap_ = new HashMap<>();
 
         queue.add(node);
         while (!queue.isEmpty()) {
