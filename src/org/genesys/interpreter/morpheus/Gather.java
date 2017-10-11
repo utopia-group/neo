@@ -119,6 +119,9 @@ public class Gather implements Unop {
         List cols = (List) arg1.t0;
         int nCol = df.getNcol();
 
+//        System.out.println("Gather--------------" + cols);
+//        Extensions.print(df);
+
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
@@ -168,8 +171,6 @@ public class Gather implements Unop {
             } else {
                 res = ReshapeKt.gather(df, key, value, colArgs, false);
             }
-//            System.out.println("Gather--------------" + cols);
-//            Extensions.print(df);
 //            Extensions.print(res);
             return new Pair<>(res, conflictList);
         }

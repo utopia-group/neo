@@ -89,6 +89,9 @@ public class Unite implements Unop {
         int rhs = (int) arg2.t0;
         int nCol = df.getNcol();
 
+//        System.out.println("Unite==================");
+//        System.out.println("input+++++" + df);
+
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
@@ -101,7 +104,11 @@ public class Unite implements Unop {
 
             //arg1
             Node sndChild = ast.children.get(1);
-            partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+            partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
+
+            //arg2
+            Node thdChild = ast.children.get(2);
+            partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
         }
 
         if ((nCol <= lhs) || (nCol <= rhs) || (lhs == rhs)) {
@@ -115,7 +122,6 @@ public class Unite implements Unop {
         colList.add(rhsCol);
         String colName = MorpheusUtil.getInstance().getMorpheusString();
         DataFrame res = ReshapeKt.unite(df, colName, colList, sep_, remove);
-//        System.out.println("Unite==================");
 //        Extensions.print(res);
         return new Pair<>(res, conflictList);
 

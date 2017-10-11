@@ -173,7 +173,7 @@ public class Z3Utils {
         return e;
     }
 
-    public boolean isSat(List<BoolExpr> exprList, Map<String, Integer> clauseToNodeMap, Collection<Component> components ) {
+    public boolean isSat(List<BoolExpr> exprList, Map<String, Object> clauseToNodeMap, Collection<Component> components) {
         solver_.push();
         for (BoolExpr expr : exprList) {
 //            solver_.add(expr);
@@ -202,30 +202,38 @@ public class Z3Utils {
         }
     }
 
-    public void printUnsatCore(Map<String, Integer> clauseToNodeMap, Collection<Component> components) {
+    public void printUnsatCore(Map<String, Object> clauseToNodeMap, Collection<Component> components) {
 //        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
         String inExpr = "IN0_LEN_SPEC";
         String outExpr = "OUT_LEN_SPEC";
         conflicts_.clear();
         for (BoolExpr e : solver_.getUnsatCore()) {
-//            System.out.println(e + " " + cstMap_.get(e));
             String core = cstMap_.get(e).toString();
+//            System.out.println(e + " " + cstMap_.get(e) + " *****" + clauseToNodeMap.containsKey(core));
             // only consider useful core for now.
             if (clauseToNodeMap.containsKey(core)) {
 //                System.out.println("***" + core);
-                int nodeId = clauseToNodeMap.get(core);
+                int nodeId;
+                Object nodeObj = clauseToNodeMap.get(core);
+                if (nodeObj instanceof Integer)
+                    nodeId = (Integer) nodeObj;
+                else {
+                    List<Pair<Integer, List<String>>> folComp = (List<Pair<Integer, List<String>>>) nodeObj;
+                    conflicts_.addAll(folComp);
+                    continue;
+                }
                 // remove brackets.
                 String subCore = core.substring(1, core.length() - 1);
-                if(core.contains("MAX")) {
+                if (core.contains("MAX")) {
                     inExpr = "IN0_MAX_SPEC";
                     outExpr = "OUT_MAX_SPEC";
                 }
                 String[] items = subCore.split(" ");
                 // right now only handle easy cores.
-                if(items.length != 3) {
+                if (items.length != 3) {
                     Pair<Integer, List<String>> conflict = new Pair<>(nodeId, new ArrayList<>());
 //                    System.out.println("adding missing core:" + core);
-                    if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
+                    if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
                     continue;
                 }
                 String core_str = core.replaceFirst(items[1], inExpr);
@@ -236,7 +244,7 @@ public class Z3Utils {
                 BoolExpr my_core = convertStrToExpr2(core_cst_str);
 
                 List<String> eq_vec = new ArrayList<>();
-                for(Component comp : components) {
+                for (Component comp : components) {
                     List<BoolExpr> expr_vector = new ArrayList<>();
                     solver_core.push();
                     for (String cst : comp.getConstraint()) {
@@ -247,13 +255,13 @@ public class Z3Utils {
                     solver_core.add(ctx_core.mkNot(my_core));
                     boolean flag = (solver_core.check() == Status.SATISFIABLE);
                     solver_core.pop();
-                    if(!flag && !eq_vec.contains(comp.getId())) {
+                    if (!flag && !eq_vec.contains(comp.getId())) {
                         eq_vec.add(comp.getName());
 //                        System.out.println("Checking cmp: " + comp.getName() + " CST:" + expr_vector);
                     }
                 }
                 Pair<Integer, List<String>> conflict = new Pair<>(nodeId, eq_vec);
-                if(!conflicts_.contains(conflict)) conflicts_.add(conflict);
+                if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
 

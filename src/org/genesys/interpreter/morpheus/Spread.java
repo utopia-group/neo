@@ -81,6 +81,9 @@ public class Spread implements Unop {
         int v = (int) arg2.t0;
         int nCol = df.getNcol();
 
+//        System.out.println("Spread--------------");
+//        System.out.println("input+++++" + df);
+
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
@@ -93,7 +96,11 @@ public class Spread implements Unop {
 
             //arg1
             Node sndChild = ast.children.get(1);
-            partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+            partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
+
+            //arg2
+            Node thdChild = ast.children.get(2);
+            partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
         }
 
         if ((df.getNcol() <= k) || (df.getNcol() <= v) || (k >= v) || (df.getNrow() == 0)) {
@@ -107,7 +114,7 @@ public class Spread implements Unop {
 //            Object fstElem = df.getCols().get(k).values$krangl_main()[0];
 //            if (df.getNames().contains(fstElem)) return new Pair<>(false, new Maybe<>());
             DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
-//            System.out.println("Spread--------------");
+
 //            Extensions.print(res);
             return new Pair<>(res, conflictList);
         }

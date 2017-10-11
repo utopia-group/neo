@@ -59,7 +59,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-        System.out.println("Verifying.... " + node);
+//        System.out.println("Verifying.... " + node);
 //        validator_.validate(node, example.getInput());
 //        if (!validRes.t0) {
 //            counter_++;
@@ -73,7 +73,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
-        Map<String, Integer> clauseToNodeMap_ = new HashMap<>();
+        Map<String, Object> clauseToNodeMap_ = new HashMap<>();
 
         // Generate constraints from PE.
 //        for (int i : validator_.getPeMap().keySet()) {
@@ -124,7 +124,6 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
                 cstList.add(outRowCst);
                 cstList.add(eqRowCst);
-
             } else if (func.contains("input")) {
                 //attach inputs
                 List<String> nums = LibUtils.extractNums(func);
@@ -152,6 +151,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                 Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
                                 if (validRes.t0 == null) {
                                     parseCore(validRes.t1);
+                                    System.out.println("prune by type inhabitation: " + worker);
+                                    assert core_.size() == 1;
                                     return false;
                                 } else {
                                     DataFrame workerDf = (DataFrame) validRes.t0;
@@ -163,6 +164,16 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                     BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
                                     cstList.add(peRowCst);
                                     cstList.add(peColCst);
+                                    List<Pair<Integer, List<String>>> folComp = new ArrayList<>();
+                                    for (int c = 1; c < worker.children.size(); c++) {
+                                        Node folChild = worker.children.get(c);
+                                        folComp.add(new Pair<>(folChild.id, Arrays.asList(folChild.function)));
+                                    }
+//                                    System.out.println("current node for PE: " + worker);
+                                    clauseToNodeMap_.put(peRowCst.toString(), folComp);
+                                    clauseToNodeMap_.put(peColCst.toString(), folComp);
+
+//                                    System.out.println("current PE constraint:" + peColCst);
                                 }
                             }
                             String targetCst = cstStr.replace("RO_SPEC", rowVar);

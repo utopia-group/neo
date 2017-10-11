@@ -119,15 +119,22 @@ public class MorpheusSynthesizer implements Synthesizer {
 
             if (!isSatisfiable) {
                 if (learning_) {
+                    List<List<Pair<Integer, List<String>>>> conflictsType = (List<List<Pair<Integer, List<String>>>>) checker_.learnCore();
                     Z3Utils z3 = Z3Utils.getInstance();
                     List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
                     long start2 = LibUtils.tick();
                     solver_.cacheAST(ast.toString(), true);
-                    ast = solver_.getCoreModel(conflicts, true);
+                    if (!conflictsType.isEmpty()) {
+                        ast = solver_.getCoreModelSet(conflictsType, true);
+                    } else {
+                        if (ast.children.get(0).isConcrete())
+                            ast = solver_.getModel(null, true);
+                        else
+                            ast = solver_.getCoreModel(conflicts, true);
+                    }
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 } else {
-                    System.out.println("########" + checker_.learnCore());
                     long start2 = LibUtils.tick();
                     solver_.cacheAST(ast.toString(), true);
                     ast = solver_.getModel(null, true);
