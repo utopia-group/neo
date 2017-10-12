@@ -5,10 +5,12 @@ import krangl.DataFrame;
 import krangl.Extensions;
 import krangl.JoinsKt;
 import org.genesys.interpreter.Unop;
+import org.genesys.models.Node;
 import org.genesys.type.Maybe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -43,14 +45,33 @@ public class InnerJoin implements Unop {
 
         List<String> commons = new ArrayList<>(df.getNames());
         commons.retainAll(df2.getNames());
-        if(commons.isEmpty()) return new org.genesys.models.Pair<>(false, new Maybe<>());
+        if (commons.isEmpty()) return new org.genesys.models.Pair<>(false, new Maybe<>());
         DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
 //        System.out.println("InnerJoin-------------");
 //        Extensions.print(res);
         return new org.genesys.models.Pair<>(true, new Maybe<>(res));
     }
 
+    public org.genesys.models.Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<org.genesys.models.Pair<Object, List<Map<Integer, List<String>>>>> args = (List<org.genesys.models.Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        org.genesys.models.Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        org.genesys.models.Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        List<Map<Integer, List<String>>> mergeMap = new ArrayList<>();
+        mergeMap.addAll(arg0.t1);
+        mergeMap.addAll(arg1.t1);
+
+        DataFrame df = (DataFrame) arg0.t0;
+        DataFrame df2 = (DataFrame) arg1.t0;
+
+        List<String> commons = new ArrayList<>(df.getNames());
+        commons.retainAll(df2.getNames());
+        if (commons.isEmpty()) return new org.genesys.models.Pair<>(null, mergeMap);
+        DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
+        return new org.genesys.models.Pair<>(res, mergeMap);
+
+    }
+
     public String toString() {
-        return "l(x).(select " + " x)";
+        return "l(x).(InnerJoin " + " x y)";
     }
 }

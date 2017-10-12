@@ -4,12 +4,13 @@ import krangl.DataFrame;
 import krangl.ReshapeKt;
 import krangl.StringCol;
 import org.genesys.interpreter.Unop;
+import org.genesys.language.MorpheusGrammar;
+import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 import org.genesys.utils.MorpheusUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -68,6 +69,60 @@ public class Separate implements Unop {
 //        System.out.println(res);
 
         return new Pair<>(true, new Maybe<>(res));
+    }
+
+    public Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<Pair<Object, List<Map<Integer, List<String>>>>> args = (List<Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        List<Map<Integer, List<String>>> conflictList = arg0.t1;
+
+        DataFrame df = (DataFrame) arg0.t0;
+        int colIdx = (int) arg1.t0;
+        int nCol = df.getNcol();
+        Node fstChild = ast.children.get(0);
+        Node sndChild = ast.children.get(1);
+
+        if (conflictList.isEmpty())
+            conflictList.add(new HashMap<>());
+
+        List<String> noStrList = new ArrayList<>();
+        for (int i = 0; i < nCol; i++) {
+            if (!(df.getCols().get(i) instanceof StringCol)) {
+                noStrList.add(String.valueOf(i));
+            }
+        }
+
+        if ((nCol <= colIdx) || !(df.getCols().get(colIdx) instanceof StringCol)) {
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                //arg1
+                List<String> blackList = new ArrayList<>(MorpheusGrammar.colListMap.get(nCol));
+                blackList.addAll(noStrList);
+                partialConflictMap.put(sndChild.id, blackList);
+            }
+            return new Pair<>(null, conflictList);
+        }
+        List<String> colArgs = new ArrayList<>();
+        String col1 = MorpheusUtil.getInstance().getMorpheusString();
+        String col2 = MorpheusUtil.getInstance().getMorpheusString();
+        String orgCol = df.getNames().get(colIdx);
+        colArgs.add(col1);
+        colArgs.add(col2);
+        DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
+
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+            //arg1
+            partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+        }
+        return new Pair<>(res, conflictList);
     }
 
     public String toString() {

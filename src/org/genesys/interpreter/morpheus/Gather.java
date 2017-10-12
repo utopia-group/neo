@@ -125,19 +125,19 @@ public class Gather implements Unop {
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
-        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
-            //current node.
-            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-            //arg0
-            Node fstChild = ast.children.get(0);
-            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-
-            //arg1
-            Node sndChild = ast.children.get(1);
-            partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
-        }
 
         if (nCol <= cols.size()) {
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                Node fstChild = ast.children.get(0);
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+
+                //arg1
+                Node sndChild = ast.children.get(1);
+                partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+            }
             return new Pair<>(null, conflictList);
         } else {
             List<String> colArgs = new ArrayList<>();
@@ -150,6 +150,17 @@ public class Gather implements Unop {
                 if (index == -99) absIndx = 0;
 
                 if (nCol <= Math.abs(absIndx)) {
+                    for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                        //current node.
+                        partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                        //arg0
+                        Node fstChild = ast.children.get(0);
+                        partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+
+                        //arg1
+                        Node sndChild = ast.children.get(1);
+                        partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+                    }
                     return new Pair<>(null, conflictList);
                 }
                 String arg = df.getNames().get(Math.abs(absIndx));
@@ -162,6 +173,17 @@ public class Gather implements Unop {
             assert !colArgs.isEmpty();
             String key = MorpheusUtil.getInstance().getMorpheusString();
             String value = MorpheusUtil.getInstance().getMorpheusString();
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                Node fstChild = ast.children.get(0);
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+
+                //arg1
+                Node sndChild = ast.children.get(1);
+                partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+            }
             DataFrame res;
             if (hasNeg) {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);

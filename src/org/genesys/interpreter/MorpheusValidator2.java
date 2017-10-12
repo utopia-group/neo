@@ -27,23 +27,23 @@ public class MorpheusValidator2 extends BaseValidatorDriver2 {
         validators.put("input1", (objects, input, ast) -> new Pair<>(((List) input).get(1), new ArrayList<>()));
 
         validators.put("spread", (objects, input, ast) -> new Spread().verify2(objects, ast));
-//
+
         validators.put("select", (objects, input, ast) -> new Select().verify2(objects, ast));
-//
-//        validators.put("inner_join", (objects, input, ast) -> new InnerJoin().verify2(objects ));
-//
-//        validators.put("group_by", (objects, input, ast) -> new GroupBy().verify2(objects));
-//
-//        validators.put("filter", (objects, input, ast) -> new org.genesys.interpreter.morpheus.Filter().verify2(objects));
-//
-//        validators.put("mutate", (objects, input, ast) -> new Mutate().verify2(objects));
-//
-//        validators.put("summarise", (objects, input, ast) -> new Summarise().verify2(objects));
-//
-//        validators.put("separate", (objects, input, ast) -> new Separate().verify2(objects));
-//
+
+        validators.put("inner_join", (objects, input, ast) -> new InnerJoin().verify2(objects, ast));
+
+        validators.put("group_by", (objects, input, ast) -> new GroupBy().verify2(objects, ast));
+
+        validators.put("filter", (objects, input, ast) -> new org.genesys.interpreter.morpheus.Filter().verify2(objects, ast));
+
+        validators.put("mutate", (objects, input, ast) -> new Mutate().verify2(objects, ast));
+
+        validators.put("summarise", (objects, input, ast) -> new Summarise().verify2(objects, ast));
+
+        validators.put("separate", (objects, input, ast) -> new Separate().verify2(objects, ast));
+
         validators.put("unite", (objects, input, ast) -> new Unite().verify2(objects, ast));
-//
+
         validators.put("gather", (objects, input, ast) -> new Gather().verify2(objects, ast));
 
         validators.put("l(a,b).(/ a b)", (objects, input, ast) -> new Pair<>(new PrimitiveBinop("/"), new ArrayList<>()));

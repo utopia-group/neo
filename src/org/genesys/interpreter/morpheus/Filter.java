@@ -6,11 +6,13 @@ import krangl.Extensions;
 import krangl.StringCol;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
+import org.genesys.language.MorpheusGrammar;
+import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
+import org.genesys.utils.LibUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -100,6 +102,113 @@ public class Filter implements Unop {
 //        Extensions.print(df);
 //        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
+    }
+
+    public Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<Pair<Object, List<Map<Integer, List<String>>>>> args = (List<Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        Pair<Object, List<Map<Integer, List<String>>>> arg2 = args.get(2);
+        Pair<Object, List<Map<Integer, List<String>>>> arg3 = args.get(3);
+        List<Map<Integer, List<String>>> conflictList = arg0.t1;
+
+        DataFrame df = (DataFrame) arg0.t0;
+        Binop op = (Binop) arg1.t0;
+        int lhs = (int) arg2.t0;
+        Object rhs = arg3.t0;
+        int nCol = df.getNcol();
+
+        Node fstChild = ast.children.get(0);
+        Node sndChild = ast.children.get(1);
+        Node thdChild = ast.children.get(2);
+        Node frdChild = ast.children.get(3);
+
+        if (conflictList.isEmpty())
+            conflictList.add(new HashMap<>());
+
+        String colName = df.getNames().get(lhs);
+        String opStr = op.toString();
+        if (df.getNcol() <= lhs || ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
+                || (opStr.equals("l(a,b).(> a b)") && (rhs instanceof String)) || ((rhs instanceof String) && opStr.equals("l(a,b).(< a b)"))) {
+
+            // no out of bound access
+            List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
+            for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(thdChild.id, MorpheusGrammar.colListMap.get(nCol));
+            }
+
+            // > < can't work for string
+            List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);
+            for (Map<Integer, List<String>> partialConflictMap : conflicts2) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(sndChild.id, Arrays.asList("l(a,b).(> a b)", "l(a,b).(< a b)"));
+                partialConflictMap.put(frdChild.id, MorpheusGrammar.strList);
+            }
+            // same type
+            List<String> strList = new ArrayList<>();
+            List<String> noStrList = new ArrayList<>();
+            for (int i = 0; i < nCol; i++) {
+                if (df.getCols().get(i) instanceof StringCol) {
+                    strList.add(String.valueOf(i));
+                } else {
+                    noStrList.add(String.valueOf(i));
+                }
+            }
+            List<Map<Integer, List<String>>> conflicts3 = LibUtils.deepClone(conflictList);
+            for (Map<Integer, List<String>> partialConflictMap : conflicts3) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(thdChild.id, noStrList);
+                partialConflictMap.put(frdChild.id, MorpheusGrammar.strList);
+            }
+            List<Map<Integer, List<String>>> conflicts4 = LibUtils.deepClone(conflictList);
+            for (Map<Integer, List<String>> partialConflictMap : conflicts4) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(thdChild.id, strList);
+                partialConflictMap.put(frdChild.id, MorpheusGrammar.numList);
+            }
+            List<Map<Integer, List<String>>> all = new ArrayList<>();
+
+            all.addAll(conflicts1);
+            all.addAll(conflicts2);
+            all.addAll(conflicts3);
+            all.addAll(conflicts4);
+            return new Pair<>(null, all);
+        }
+
+
+        DataFrame res = df.filter((df1, df2) -> {
+            if (opStr.equals("l(a,b).(> a b)")) {
+                return ColumnsKt.gt(df.get(colName), (Number) rhs);
+            } else if (opStr.equals("l(a,b).(< a b)")) {
+                return ColumnsKt.lt(df.get(colName), (Number) rhs);
+            } else if (opStr.equals("l(a,b).(== a b)")) {
+                return ColumnsKt.eq(df.get(colName), rhs);
+            } else if (opStr.equals("l(a,b).(!= a b)")) {
+                return ColumnsKt.neq(df.get(colName), rhs);
+            } else {
+                throw new UnsupportedOperationException("Unsupported OP:" + opStr);
+            }
+        });
+
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+            partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+            partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
+            partialConflictMap.put(frdChild.id, Arrays.asList(frdChild.function));
+        }
+        return new Pair<>(res, conflictList);
     }
 
     public String toString() {

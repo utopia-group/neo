@@ -8,6 +8,7 @@ import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
+import org.genesys.utils.LibUtils;
 import org.genesys.utils.MorpheusUtil;
 
 import java.util.*;
@@ -95,24 +96,55 @@ public class Unite implements Unop {
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
-        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
-            //current node.
-            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-            //arg0
-            Node fstChild = ast.children.get(0);
-            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-
-            //arg1
-            Node sndChild = ast.children.get(1);
-            partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
-
-            //arg2
-            Node thdChild = ast.children.get(2);
-            partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
-        }
+        //arg0
+        Node fstChild = ast.children.get(0);
+        //arg1
+        Node sndChild = ast.children.get(1);
+        //arg2
+        Node thdChild = ast.children.get(2);
 
         if ((nCol <= lhs) || (nCol <= rhs) || (lhs == rhs)) {
-            return new Pair<>(null, conflictList);
+            List<Map<Integer, List<String>>> bakList2 = LibUtils.deepClone(conflictList);
+            List<Map<Integer, List<String>>> bakList3 = new ArrayList<>();
+            List<Map<Integer, List<String>>> total = new ArrayList<>();
+
+
+            for (Map<Integer, List<String>> partialConflictMap : bakList2) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
+                bakList3.add(partialConflictMap);
+            }
+
+            List<Map<Integer, List<String>>> bakList4 = LibUtils.deepClone(conflictList);
+            List<Map<Integer, List<String>>> bakList5 = new ArrayList<>();
+            for (Map<Integer, List<String>> partialConflictMap : bakList4) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
+                bakList5.add(partialConflictMap);
+            }
+
+            total.addAll(bakList3);
+            total.addAll(bakList5);
+
+            List<Map<Integer, List<String>>> bakList = new ArrayList<>();
+            for (Map<Integer, List<String>> partialConflictMap : bakList2) {
+                for (int j = 0; j < 5; j++) {
+                    Map<Integer, List<String>> newConflictMap = new HashMap<>(partialConflictMap);
+                    newConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    newConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    newConflictMap.put(sndChild.id, Arrays.asList(String.valueOf(j)));
+                    newConflictMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
+                    bakList.add(newConflictMap);
+                }
+            }
+            total.addAll(bakList);
+            return new Pair<>(null, total);
         }
 
         String lhsCol = df.getNames().get(lhs);
@@ -122,6 +154,16 @@ public class Unite implements Unop {
         colList.add(rhsCol);
         String colName = MorpheusUtil.getInstance().getMorpheusString();
         DataFrame res = ReshapeKt.unite(df, colName, colList, sep_, remove);
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+            //arg1
+            partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+            //arg2
+            partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
+        }
 //        Extensions.print(res);
         return new Pair<>(res, conflictList);
 

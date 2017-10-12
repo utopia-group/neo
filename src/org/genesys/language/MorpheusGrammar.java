@@ -31,6 +31,12 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     public static Map<Integer, List<String>> colListMap = new HashMap<>();
 
+    public static List<String> numList = new ArrayList<>();
+
+    public static List<String> strList = new ArrayList<>();
+
+    public static List<String> negColList = new ArrayList<>();
+
     public MorpheusGrammar(Problem p) {
         assert !p.getExamples().isEmpty();
         //FIXME: assume we always only have one example in table domain.
@@ -53,10 +59,12 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
                 Production prod = new Production<>(new ConstType(), o.toString());
                 prod.setValue(o);
                 initProductions.add(prod);
+                numList.add(String.valueOf(o));
             } else {
                 Production prod = new Production<>(new ConstType(), o.toString());
                 prod.setValue(o);
                 initProductions.add(prod);
+                strList.add(String.valueOf(o));
             }
         }
 
@@ -87,7 +95,9 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         cols.addAll(MorpheusUtil.getInstance().getSubsets(allCols, maxColListSize));
         List<Set<Integer>> negSets = new ArrayList<>();
         for (Set<Integer> col : cols) {
-            negSets.add(MorpheusUtil.getInstance().negateSet(col));
+            Set<Integer> negInt = MorpheusUtil.getInstance().negateSet(col);
+            negColList.add(negInt.toString());
+            negSets.add(negInt);
         }
         cols.addAll(negSets);
         for (Set<Integer> ss : cols) {

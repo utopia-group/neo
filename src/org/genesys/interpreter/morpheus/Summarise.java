@@ -2,12 +2,13 @@ package org.genesys.interpreter.morpheus;
 
 import krangl.*;
 import org.genesys.interpreter.Unop;
+import org.genesys.language.MorpheusGrammar;
+import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 import org.genesys.utils.MorpheusUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static krangl.ColumnsKt.*;
 import static krangl.MathHelpersKt.cumSum;
@@ -89,6 +90,76 @@ public class Summarise implements Unop {
         }));
 //        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
+    }
+
+    public Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<Pair<Object, List<Map<Integer, List<String>>>>> args = (List<Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        Pair<Object, List<Map<Integer, List<String>>>> arg2 = args.get(2);
+        List<Map<Integer, List<String>>> conflictList = arg0.t1;
+        DataFrame df = (DataFrame) arg0.t0;
+        int nCol = df.getNcol();
+        String aggr = (String) arg1.t0;
+        int colIdx = (int) arg2.t0;
+        Node fstChild = ast.children.get(0);
+        Node sndChild = ast.children.get(1);
+        Node thdChild = ast.children.get(2);
+
+        if (conflictList.isEmpty())
+            conflictList.add(new HashMap<>());
+
+        List<String> strList = new ArrayList<>();
+        for (int i = 0; i < nCol; i++) {
+            if (df.getCols().get(i) instanceof StringCol) {
+                strList.add(String.valueOf(i));
+            }
+        }
+
+        if ((nCol <= colIdx) || (df.getCols().get(colIdx) instanceof StringCol)) {
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                //arg1
+                List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
+                blackList.addAll(strList);
+                partialConflictMap.put(thdChild.id, blackList);
+            }
+            return new Pair<>(null, conflictList);
+        }
+
+        String colName = df.getNames().get(colIdx);
+        String newColName = MorpheusUtil.getInstance().getMorpheusString();
+
+        DataFrame res = df.summarize(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
+            if (aggr.equals("mean")) {
+                return ColumnsKt.mean(df.get(colName), true);
+//                return mean(asDoubles(df.get(colName)));
+            } else if (aggr.equals("sum")) {
+                return sum(df.get(colName), true);
+            } else if (aggr.equals("min")) {
+                return min(df.get(colName), true);
+            } else if (aggr.equals("count")) {
+                return count(df.get(colName));
+            } else {
+                throw new UnsupportedOperationException("Unsupported aggr:" + aggr);
+            }
+        }));
+//        Extensions.print(res);
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+            //arg1
+            partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+            //arg2
+            partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
+        }
+        return new Pair<>(res, conflictList);
+
     }
 
     public String toString() {

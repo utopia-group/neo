@@ -6,6 +6,7 @@ import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
+import org.genesys.utils.LibUtils;
 
 import java.util.*;
 
@@ -87,34 +88,69 @@ public class Spread implements Unop {
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
-        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
-            //current node.
-            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-            //arg0
-            Node fstChild = ast.children.get(0);
-            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+        //arg0
+        Node fstChild = ast.children.get(0);
+        //arg1
+        Node sndChild = ast.children.get(1);
+        //arg2
+        Node thdChild = ast.children.get(2);
 
-            //arg1
-            Node sndChild = ast.children.get(1);
-            partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
+        if ((df.getNcol() <= k) || (df.getNcol() <= v) || (k >= v)) {
+            List<Map<Integer, List<String>>> bakList2 = LibUtils.deepClone(conflictList);
+            List<Map<Integer, List<String>>> bakList3 = new ArrayList<>();
+            List<Map<Integer, List<String>>> total = new ArrayList<>();
 
-            //arg2
-            Node thdChild = ast.children.get(2);
-            partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
-        }
+            for (Map<Integer, List<String>> partialConflictMap : bakList2) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
 
-        if ((df.getNcol() <= k) || (df.getNcol() <= v) || (k >= v) || (df.getNrow() == 0)) {
-            return new Pair<>(null, conflictList);
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
+                bakList3.add(partialConflictMap);
+            }
+
+            List<Map<Integer, List<String>>> bakList4 = LibUtils.deepClone(conflictList);
+            List<Map<Integer, List<String>>> bakList5 = new ArrayList<>();
+            for (Map<Integer, List<String>> partialConflictMap : bakList4) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
+                bakList5.add(partialConflictMap);
+            }
+
+            total.addAll(bakList3);
+            total.addAll(bakList5);
+
+            List<Map<Integer, List<String>>> bakList = new ArrayList<>();
+            for (Map<Integer, List<String>> partialConflictMap : bakList2) {
+                for (int j = 0; j < 5; j++) {
+                    Map<Integer, List<String>> newConflictMap = new HashMap<>(partialConflictMap);
+                    newConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    newConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    newConflictMap.put(sndChild.id, Arrays.asList(String.valueOf(j)));
+                    newConflictMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
+                    bakList.add(newConflictMap);
+                }
+            }
+            total.addAll(bakList);
+            return new Pair<>(null, total);
         } else {
             String keyCol = df.getNames().get(k);
             String valCol = df.getNames().get(v);
-            if (!(df.get(keyCol) instanceof StringCol)) {
-                return new Pair<>(null, conflictList);
-            }
-//            Object fstElem = df.getCols().get(k).values$krangl_main()[0];
-//            if (df.getNames().contains(fstElem)) return new Pair<>(false, new Maybe<>());
             DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);
 
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                //arg1
+                partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+                //arg2
+                partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
+            }
 //            Extensions.print(res);
             return new Pair<>(res, conflictList);
         }

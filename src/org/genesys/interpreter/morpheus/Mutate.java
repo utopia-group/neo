@@ -3,12 +3,14 @@ package org.genesys.interpreter.morpheus;
 import krangl.*;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
+import org.genesys.language.MorpheusGrammar;
+import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
+import org.genesys.utils.LibUtils;
 import org.genesys.utils.MorpheusUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -78,7 +80,7 @@ public class Mutate implements Unop {
 
         DataFrame res = df.mutate(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
             if (opStr.equals("l(a,b).(/ a b)")) {
-                System.out.println("Types: " + df.get(lhsColName) + "||||||" + df.get(rhsColName) );
+                System.out.println("Types: " + df.get(lhsColName) + "||||||" + df.get(rhsColName));
                 return df.get(lhsColName).div(df.get(rhsColName));
             } else {
                 throw new UnsupportedOperationException("Unsupported op:" + opStr);
@@ -88,6 +90,85 @@ public class Mutate implements Unop {
 //        Extensions.print(df);
 //        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
+    }
+
+    public Pair<Object, List<Map<Integer, List<String>>>> verify2(Object obj, Node ast) {
+        List<Pair<Object, List<Map<Integer, List<String>>>>> args = (List<Pair<Object, List<Map<Integer, List<String>>>>>) obj;
+        Pair<Object, List<Map<Integer, List<String>>>> arg0 = args.get(0);
+        Pair<Object, List<Map<Integer, List<String>>>> arg1 = args.get(1);
+        Pair<Object, List<Map<Integer, List<String>>>> arg2 = args.get(2);
+        Pair<Object, List<Map<Integer, List<String>>>> arg3 = args.get(3);
+        List<Map<Integer, List<String>>> conflictList = arg0.t1;
+
+        DataFrame df = (DataFrame) arg0.t0;
+        int lhs = (int) arg2.t0;
+        Binop op = (Binop) arg1.t0;
+        int rhs = (int) arg3.t0;
+        int nCol = df.getNcol();
+
+        Node fstChild = ast.children.get(0);
+        Node sndChild = ast.children.get(1);
+        Node thdChild = ast.children.get(2);
+        Node frdChild = ast.children.get(3);
+
+        if (conflictList.isEmpty())
+            conflictList.add(new HashMap<>());
+
+
+        if (nCol <= lhs || nCol <= rhs || (df.getCols().get(lhs) instanceof StringCol) || (df.getCols().get(rhs) instanceof StringCol) || lhs == rhs) {
+            List<String> blackList = new ArrayList<>();
+            for (int i = 0; i < nCol; i++) {
+                if (!(df.getCols().get(i) instanceof StringCol)) {
+                    blackList.add(String.valueOf(i));
+                }
+            }
+            blackList.addAll(MorpheusGrammar.colMap.get(nCol));
+            List<Map<Integer, List<String>>> conflict1 = LibUtils.deepClone(conflictList);
+            for (Map<Integer, List<String>> partialConflictMap : conflict1) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                //arg1
+                partialConflictMap.put(thdChild.id, blackList);
+            }
+
+            List<Map<Integer, List<String>>> conflict2 = LibUtils.deepClone(conflictList);
+            for (Map<Integer, List<String>> partialConflictMap : conflict2) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                //arg1
+                partialConflictMap.put(frdChild.id, blackList);
+            }
+
+            conflict1.addAll(conflict2);
+            return new Pair<>(null, conflict1);
+        }
+
+        String lhsColName = df.getNames().get(lhs);
+        String rhsColName = df.getNames().get(rhs);
+        String newColName = MorpheusUtil.getInstance().getMorpheusString();
+        String opStr = op.toString();
+
+        DataFrame res = df.mutate(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
+            if (opStr.equals("l(a,b).(/ a b)")) {
+                return df.get(lhsColName).div(df.get(rhsColName));
+            } else {
+                throw new UnsupportedOperationException("Unsupported op:" + opStr);
+            }
+        }));
+        for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+            //current node.
+            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+            //arg0
+            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+            partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+            partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
+            partialConflictMap.put(frdChild.id, Arrays.asList(frdChild.function));
+        }
+        return new Pair<>(res, conflictList);
     }
 
     public String toString() {
