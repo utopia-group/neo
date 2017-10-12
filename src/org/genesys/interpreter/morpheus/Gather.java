@@ -133,7 +133,6 @@ public class Gather implements Unop {
                 //arg0
                 Node fstChild = ast.children.get(0);
                 partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-
                 //arg1
                 Node sndChild = ast.children.get(1);
                 partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
@@ -156,7 +155,6 @@ public class Gather implements Unop {
                         //arg0
                         Node fstChild = ast.children.get(0);
                         partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-
                         //arg1
                         Node sndChild = ast.children.get(1);
                         partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
