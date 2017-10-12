@@ -124,6 +124,9 @@ public class MorpheusSynthesizer implements Synthesizer {
                     long start2 = LibUtils.tick();
                     solver_.cacheAST(ast.toString(), true);
                     if (!conflictsType.isEmpty()) {
+                        for(Object o : conflictsType)
+                            System.out.println("mycore*****" + o);
+
                         if(coreCache_.contains(conflictsType.toString())) {
                             ast = solver_.getModel(null, true);
                         } else {
