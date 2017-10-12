@@ -59,7 +59,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-//        System.out.println("Verifying.... " + node);
+        System.out.println("Verifying.... " + node);
 //        validator_.validate(node, example.getInput());
 //        if (!validRes.t0) {
 //            counter_++;
@@ -152,7 +152,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                 if (validRes.t0 == null) {
                                     parseCore(validRes.t1);
                                     System.out.println("prune by type inhabitation: " + worker);
-                                    assert core_.size() == 1;
+                                    System.out.println(validRes.t1);
                                     return false;
                                 } else {
                                     DataFrame workerDf = (DataFrame) validRes.t0;
