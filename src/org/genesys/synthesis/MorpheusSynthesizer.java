@@ -20,9 +20,7 @@ import org.genesys.utils.Z3Utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by utcs on 9/11/17.
@@ -103,6 +101,7 @@ public class MorpheusSynthesizer implements Synthesizer {
         int prune_partial = 0;
         int concrete = 0;
         int partial = 0;
+        Set<String> coreCache_ = new HashSet<>();
 
         while (ast != null) {
             /* do deduction */
@@ -125,7 +124,12 @@ public class MorpheusSynthesizer implements Synthesizer {
                     long start2 = LibUtils.tick();
                     solver_.cacheAST(ast.toString(), true);
                     if (!conflictsType.isEmpty()) {
-                        ast = solver_.getCoreModelSet(conflictsType, true);
+                        if(coreCache_.contains(conflictsType.toString())) {
+                            ast = solver_.getModel(null, true);
+                        } else {
+                            ast = solver_.getCoreModelSet(conflictsType, true);
+                            coreCache_.add(conflictsType.toString());
+                        }
                     } else {
                         if (ast.children.get(0).isConcrete())
                             ast = solver_.getModel(null, true);
