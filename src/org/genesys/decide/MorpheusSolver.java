@@ -116,13 +116,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             loadGrammar();
             initDataStructures();
         } else {
-            if (step_ == 4 && partial_){
-                // continue the search
-                step_ = 3;
-            } else if (block || !partial_) {
+            if (block || !partial_) {
                 boolean conflict = blockModel();
                 if (conflict) {
                     return null;
+                }
+            } else {
+                if (step_ == 4 && partial_){
+                    // continue the search
+                    step_ = 3;
                 }
             }
             partial_ = true;
