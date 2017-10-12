@@ -158,6 +158,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         List<List<Integer>> eqClauses = new ArrayList<>();
         String learnt = "";
         for (Pair<Integer,List<String>> p : core){
+            //System.out.println("p = " + p);
             List<Integer> eq = new ArrayList<>();
             learnt = learnt + "[(" + p.t0 + ") ";
             //System.out.println("node= " + p.t0);
@@ -165,10 +166,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             learnt = learnt + node2function.get(p.t0);
             Pair<Integer, String> id = new Pair<>(p.t0,node2function.get(p.t0));
             assert (nameNodes_.containsKey(id));
-            eq.add(nameNodes_.get(id));
+            //eq.add(nameNodes_.get(id));
             //System.out.println("function= " + node2function.get(p.t0));
-            // FIXME : this should not hapen!
-            if (!node2function.get(p.t0).contains("input")) {
+            //if (!node2function.get(p.t0).contains("input")) {
                 for (String l : p.t1) {
                     Pair<Integer, String> id2 = new Pair<>(p.t0, l);
                     if (!nameNodes_.containsKey(id2))
@@ -177,8 +177,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                     eq.add(nameNodes_.get(id2));
                     learnt = learnt + " , " + l;
                 }
-            }
-            eqClauses.add(eq);
+            //}
+            if (!eq.isEmpty())
+                eqClauses.add(eq);
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
