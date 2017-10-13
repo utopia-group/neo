@@ -30,6 +30,7 @@ public class BaseValidatorDriver2 implements ValidatorDriver2<Node, Object> {
             Pair<Object, List<Map<Integer, List<String>>>> childObj = validate(child, input);
             arglist.add(childObj);
             if(childObj.t0 instanceof Boolean) return  new Pair<>(true, new ArrayList<>());
+            if(childObj.t0 == null) return childObj;
         }
 
         assert arglist.size() == node.children.size();
