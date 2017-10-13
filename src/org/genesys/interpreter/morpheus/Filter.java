@@ -126,7 +126,6 @@ public class Filter implements Unop {
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
-        String colName = df.getNames().get(lhs);
         String opStr = op.toString();
         if (df.getNcol() <= lhs || ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
                 || (opStr.equals("l(a,b).(> a b)") && (rhs instanceof String)) || ((rhs instanceof String) && opStr.equals("l(a,b).(< a b)"))) {
@@ -184,7 +183,7 @@ public class Filter implements Unop {
             return new Pair<>(null, all);
         }
 
-
+        String colName = df.getNames().get(lhs);
         DataFrame res = df.filter((df1, df2) -> {
             if (opStr.equals("l(a,b).(> a b)")) {
                 return ColumnsKt.gt(df.get(colName), (Number) rhs);

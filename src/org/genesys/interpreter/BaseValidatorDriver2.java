@@ -24,11 +24,12 @@ public class BaseValidatorDriver2 implements ValidatorDriver2<Node, Object> {
     public Pair<Object, List<Map<Integer, List<String>>>> validate(Node node, Object input) {
         List<Pair<Object, List<Map<Integer, List<String>>>>> arglist = new ArrayList<>();
 
-        assert node.isConcrete();
+        if(!node.isConcrete()) return  new Pair<>(true, new ArrayList<>());
 
         for (Node child : node.children) {
             Pair<Object, List<Map<Integer, List<String>>>> childObj = validate(child, input);
             arglist.add(childObj);
+            if(childObj.t0 instanceof Boolean) return  new Pair<>(true, new ArrayList<>());
         }
 
         assert arglist.size() == node.children.size();
