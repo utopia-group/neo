@@ -368,8 +368,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 Production s = prodName_.get("summarise");
                 int v1 = varNodes_.get(new Pair<Integer, Production>(parent.id, g));
                 int v2 = varNodes_.get(new Pair<Integer, Production>(child.id, s));
+                assert (lineProductions_.get(i).size()==1);
+                Production itm = lineProductions_.get(i).get(0);
+                int v3 = varNodes_.get(new Pair<Integer, Production>(child.children.get(0).id, itm));
                 VecInt lits = new VecInt(new int[]{-v1, v2});
                 conflict = satUtils_.addClause(lits);
+                assert(!conflict);
+                VecInt lits2 = new VecInt(new int[]{-v1, v3});
+                conflict = satUtils_.addClause(lits2);
                 assert(!conflict);
             }
 
@@ -382,21 +388,28 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             assert(!conflict);
         }
 
-//        if (prodName_.containsKey("filter") && prodName_.containsKey("select")){
-//            // Filter select is equivalent to select filter
-//            // Only allow one of them to happen
-//            for (int i = 0; i < highTrail_.size()-1; i++){
-//                Production f = prodName_.get("filter");
-//                Production s = prodName_.get("select");
-//                Node node = highTrail_.get(i).t0;
-//                Node next = highTrail_.get(i+1).t0;
-//                int v1 = varNodes_.get(new Pair<Integer, Production>(node.id, s));
-//                int v2 = varNodes_.get(new Pair<Integer, Production>(next.id, f));
-//                VecInt clause = new VecInt(new int[]{-v1,-v2});
-//                conflict = satUtils_.addClause(clause);
-//                assert(!conflict);
-//            }
-//        }
+        if (prodName_.containsKey("filter") && prodName_.containsKey("select")){
+            // Filter select is equivalent to select filter
+            // Only allow one of them to happen
+            for (int i = 0; i < highTrail_.size()-1; i++){
+                Production f = prodName_.get("filter");
+                Production s = prodName_.get("select");
+                Node node = highTrail_.get(i).t0;
+                Node next = highTrail_.get(i+1).t0;
+                int v1 = varNodes_.get(new Pair<Integer, Production>(node.id, s));
+                int v2 = varNodes_.get(new Pair<Integer, Production>(next.id, f));
+                VecInt clause = new VecInt(new int[]{-v1,-v2});
+                conflict = satUtils_.addClause(clause);
+                assert(!conflict);
+
+                assert (lineProductions_.get(i).size()==1);
+                Production itm = lineProductions_.get(i).get(0);
+                int v3 = varNodes_.get(new Pair<Integer, Production>(next.children.get(0).id, itm));
+                VecInt lits2 = new VecInt(new int[]{-v1, v3});
+                conflict = satUtils_.addClause(lits2);
+                assert(!conflict);
+            }
+        }
 
         if (prodName_.containsKey("mutate")){
             // At most one mutate
@@ -587,16 +600,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         */
 
         /* Domain specific constraints for DeepCoder */
-        if (prodName_.containsKey("ACCESS")){
-            // ACCESS cannot be the first line
-            Node root = highTrail_.get(0).t0;
-            Production gg = prodName_.get("ACCESS");
-            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
-                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
-                VecInt lits = new VecInt(new int[]{-var});
-                satUtils_.addClause(lits);
-            }
-        }
+//        if (prodName_.containsKey("ACCESS")){
+//            // ACCESS cannot be the first line
+//            Node root = highTrail_.get(0).t0;
+//            Production gg = prodName_.get("ACCESS");
+//            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
+//                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
+//                VecInt lits = new VecInt(new int[]{-var});
+//                satUtils_.addClause(lits);
+//            }
+//        }
 
         // FIXME: At most one variable is assigned at each node -- this has some issue
         for (Node node : nodes_) {
