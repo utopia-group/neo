@@ -1,5 +1,6 @@
 package org.genesys.interpreter.morpheus;
 
+import kotlin.jvm.functions.Function2;
 import krangl.*;
 import org.genesys.interpreter.Unop;
 import org.genesys.language.MorpheusGrammar;
@@ -32,13 +33,8 @@ public class Summarise implements Unop {
     public Summarise() {
     }
 
-    public Object apply(Object obj) {
-        assert obj instanceof DataFrame;
-        DataFrame df = (DataFrame) obj;
-        String colName = df.getNames().get(colVal);
-        String newColName = MorpheusUtil.getInstance().getMorpheusString();
-
-        DataFrame res = df.summarize(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
+    private TableFormula getFormula(String colName, String newColName, String aggr) {
+        TableFormula tab = new TableFormula(newColName, (df, dataFrame2) -> {
             if (aggr.equals("mean")) {
                 return ColumnsKt.mean(df.get(colName), true);
             } else if (aggr.equals("sum")) {
@@ -50,7 +46,17 @@ public class Summarise implements Unop {
             } else {
                 throw new UnsupportedOperationException("Unsupported aggregator:" + aggr);
             }
-        }));
+        });
+        return tab;
+    }
+
+    public Object apply(Object obj) {
+        assert obj instanceof DataFrame;
+        DataFrame df = (DataFrame) obj;
+        String colName = df.getNames().get(colVal);
+        String newColName = MorpheusUtil.getInstance().getMorpheusString();
+
+        DataFrame res = df.summarize(getFormula(colName, newColName, aggr));
         return res;
     }
 
@@ -74,20 +80,7 @@ public class Summarise implements Unop {
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
 
 
-        DataFrame res = df.summarize(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
-            if (aggr.equals("mean")) {
-                return ColumnsKt.mean(df.get(colName), true);
-//                return mean(asDoubles(df.get(colName)));
-            } else if (aggr.equals("sum")) {
-                return sum(df.get(colName), true);
-            } else if (aggr.equals("min")) {
-                return min(df.get(colName), true);
-            } else if (aggr.equals("count")) {
-                return count(df.get(colName));
-            } else {
-                throw new UnsupportedOperationException("Unsupported aggr:" + aggr);
-            }
-        }));
+        DataFrame res = df.summarize(getFormula(colName, newColName, aggr));
 //        Extensions.print(res);
         return new Pair<>(true, new Maybe<>(res));
     }
@@ -119,7 +112,7 @@ public class Summarise implements Unop {
         if ((nCol <= colIdx) || (df.getCols().get(colIdx) instanceof StringCol)) {
             List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
             blackList.addAll(strList);
-            if(!blackList.isEmpty()) {
+            if (!blackList.isEmpty()) {
                 for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                     //current node.
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));
@@ -135,26 +128,7 @@ public class Summarise implements Unop {
         String colName = df.getNames().get(colIdx);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
 
-        DataFrame res = df.summarize(new TableFormula(newColName, (dataFrame, dataFrame2) -> {
-            if (aggr.equals("mean")) {
-                return ColumnsKt.mean(df.get(colName), true);
-//                return mean(asDoubles(df.get(colName)));
-            } else if (aggr.equals("sum")) {
-                return sum(df.get(colName), true);
-            } else if (aggr.equals("min")) {
-                return min(df.get(colName), true);
-            } else if (aggr.equals("count")) {
-                return count(df.get(colName));
-            } else {
-                throw new UnsupportedOperationException("Unsupported aggr:" + aggr);
-            }
-        }));
-        if(df != null) {
-            System.out.println("Summarise=============");
-            System.out.println(df);
-            System.out.println("output========");
-            Extensions.print(res);
-        }
+        DataFrame res = df.summarize(getFormula(colName, newColName, aggr));
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.
             partialConflictMap.put(ast.id, Arrays.asList(ast.function));
