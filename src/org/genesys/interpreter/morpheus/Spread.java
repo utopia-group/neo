@@ -99,23 +99,25 @@ public class Spread implements Unop {
             List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
             List<Map<Integer, List<String>>> total = new ArrayList<>();
 
-            for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
-            }
+            if (!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+                for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(sndChild.id, MorpheusGrammar.colMap.get(nCol));
+                }
 
-            List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflicts2) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
-            }
+                List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : conflicts2) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
+                }
 
-            total.addAll(conflicts1);
-            total.addAll(conflicts2);
+                total.addAll(conflicts1);
+                total.addAll(conflicts2);
+            }
 
             for (int j = 0; j < 5; j++) {
                 List<Map<Integer, List<String>>> bakList = LibUtils.deepClone(conflictList);

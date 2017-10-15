@@ -129,25 +129,32 @@ public class Filter implements Unop {
         String opStr = op.toString();
         if (df.getNcol() <= lhs || ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
                 || (opStr.equals("l(a,b).(> a b)") && (rhs instanceof String)) || ((rhs instanceof String) && opStr.equals("l(a,b).(< a b)"))) {
-
-            // no out of bound access
-            List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                partialConflictMap.put(thdChild.id, MorpheusGrammar.colListMap.get(nCol));
+            List<Map<Integer, List<String>>> all = new ArrayList<>();
+            if(!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+                // no out of bound access
+                List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
+                }
+                all.addAll(conflicts1);
             }
 
             // > < can't work for string
-            List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflicts2) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                partialConflictMap.put(sndChild.id, Arrays.asList("l(a,b).(> a b)", "l(a,b).(< a b)"));
-                partialConflictMap.put(frdChild.id, MorpheusGrammar.strList);
+            if(!MorpheusGrammar.strList.isEmpty()) {
+                List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : conflicts2) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(sndChild.id, Arrays.asList("l(a,b).(> a b)", "l(a,b).(< a b)"));
+                    partialConflictMap.put(frdChild.id, MorpheusGrammar.strList);
+                }
+                all.addAll(conflicts2);
             }
+
             // same type
             List<String> strList = new ArrayList<>();
             List<String> noStrList = new ArrayList<>();
@@ -158,28 +165,30 @@ public class Filter implements Unop {
                     noStrList.add(String.valueOf(i));
                 }
             }
-            List<Map<Integer, List<String>>> conflicts3 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflicts3) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                partialConflictMap.put(thdChild.id, noStrList);
-                partialConflictMap.put(frdChild.id, MorpheusGrammar.strList);
-            }
-            List<Map<Integer, List<String>>> conflicts4 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflicts4) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                partialConflictMap.put(thdChild.id, strList);
-                partialConflictMap.put(frdChild.id, MorpheusGrammar.numList);
-            }
-            List<Map<Integer, List<String>>> all = new ArrayList<>();
 
-            all.addAll(conflicts1);
-            all.addAll(conflicts2);
-            all.addAll(conflicts3);
-            all.addAll(conflicts4);
+            if(!noStrList.isEmpty() && !MorpheusGrammar.strList.isEmpty()) {
+                List<Map<Integer, List<String>>> conflicts3 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : conflicts3) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(thdChild.id, noStrList);
+                    partialConflictMap.put(frdChild.id, MorpheusGrammar.strList);
+                }
+                all.addAll(conflicts3);
+            }
+
+            if(!strList.isEmpty() && !MorpheusGrammar.numList.isEmpty()) {
+                List<Map<Integer, List<String>>> conflicts4 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : conflicts4) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(thdChild.id, strList);
+                    partialConflictMap.put(frdChild.id, MorpheusGrammar.numList);
+                }
+                all.addAll(conflicts4);
+            }
             return new Pair<>(null, all);
         }
 

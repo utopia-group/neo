@@ -124,26 +124,27 @@ public class Mutate implements Unop {
             }
             blackList.addAll(MorpheusGrammar.colMap.get(nCol));
             List<Map<Integer, List<String>>> conflict1 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflict1) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                //arg0
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                //arg1
-                partialConflictMap.put(thdChild.id, blackList);
-            }
+            if(blackList.isEmpty()) {
+                for (Map<Integer, List<String>> partialConflictMap : conflict1) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    //arg0
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    //arg1
+                    partialConflictMap.put(thdChild.id, blackList);
+                }
 
-            List<Map<Integer, List<String>>> conflict2 = LibUtils.deepClone(conflictList);
-            for (Map<Integer, List<String>> partialConflictMap : conflict2) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                //arg0
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                //arg1
-                partialConflictMap.put(frdChild.id, blackList);
+                List<Map<Integer, List<String>>> conflict2 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : conflict2) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    //arg0
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    //arg1
+                    partialConflictMap.put(frdChild.id, blackList);
+                }
+                conflict1.addAll(conflict2);
             }
-
-            conflict1.addAll(conflict2);
             return new Pair<>(null, conflict1);
         }
 

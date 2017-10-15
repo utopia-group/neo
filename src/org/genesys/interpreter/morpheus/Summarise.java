@@ -117,15 +117,17 @@ public class Summarise implements Unop {
         }
 
         if ((nCol <= colIdx) || (df.getCols().get(colIdx) instanceof StringCol)) {
-            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                //arg0
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                //arg1
-                List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
-                blackList.addAll(strList);
-                partialConflictMap.put(thdChild.id, blackList);
+            List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
+            blackList.addAll(strList);
+            if(!blackList.isEmpty()) {
+                for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    //arg0
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    //arg1
+                    partialConflictMap.put(thdChild.id, blackList);
+                }
             }
             return new Pair<>(null, conflictList);
         }
@@ -147,7 +149,12 @@ public class Summarise implements Unop {
                 throw new UnsupportedOperationException("Unsupported aggr:" + aggr);
             }
         }));
-//        Extensions.print(res);
+        if(df != null) {
+            System.out.println("Summarise=============");
+            System.out.println(df);
+            System.out.println("output========");
+            Extensions.print(res);
+        }
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.
             partialConflictMap.put(ast.id, Arrays.asList(ast.function));

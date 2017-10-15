@@ -94,15 +94,17 @@ public class Separate implements Unop {
         }
 
         if ((nCol <= colIdx) || !(df.getCols().get(colIdx) instanceof StringCol)) {
-            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
-                //current node.
-                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                //arg0
-                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                //arg1
-                List<String> blackList = new ArrayList<>(MorpheusGrammar.colListMap.get(nCol));
-                blackList.addAll(noStrList);
-                partialConflictMap.put(sndChild.id, blackList);
+            List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
+            blackList.addAll(noStrList);
+            if(!blackList.isEmpty()) {
+                for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    //arg0
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    //arg1
+                    partialConflictMap.put(sndChild.id, blackList);
+                }
             }
             return new Pair<>(null, conflictList);
         }
