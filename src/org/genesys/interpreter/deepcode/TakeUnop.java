@@ -17,13 +17,15 @@ public class TakeUnop implements Unop {
     public Object apply(Object obj) {
         assert obj != null;
         List pair = (List) obj;
+        if (!(pair.get(0) instanceof List) || !(pair.get(1) instanceof Integer))
+            return 256;
         assert pair.size() == 2 : pair;
         assert pair.get(0) instanceof List;
         assert pair.get(1) instanceof Integer;
         List input1 = (List) pair.get(0);
         int input2 = (Integer) pair.get(1);
         if (input2 < 0) {
-            throw new UnsupportedOperationException("index can't be negative.");
+            return 256;
         } else if (input2 >= input1.size()) {
             return input1;
         } else {

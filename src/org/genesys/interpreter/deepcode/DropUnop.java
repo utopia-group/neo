@@ -16,6 +16,8 @@ public class DropUnop implements Unop {
     public Object apply(Object obj) {
         List pair = (List) obj;
         assert pair.size() == 2 : pair;
+        if (!(pair.get(0) instanceof List) || !(pair.get(1) instanceof Integer))
+            return new ArrayList<>();
         assert pair.get(0) instanceof List;
         assert pair.get(1) instanceof Integer;
         List xs = (List) pair.get(0);

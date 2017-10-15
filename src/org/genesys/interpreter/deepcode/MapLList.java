@@ -20,6 +20,10 @@ public class MapLList implements Unop {
     }
 
     public Object apply(Object obj) {
+        if (obj instanceof  Integer){
+            assert ((Integer)obj == 256);
+            return new ArrayList<>();
+        }
         List list = (List) obj;
         if (list.isEmpty()) {
             return list;
