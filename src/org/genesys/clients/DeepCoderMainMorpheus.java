@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.genesys.decide.Decider;
 import org.genesys.decide.FileDecider;
 import org.genesys.decide.FirstDecider;
+import org.genesys.decide.RandomDecider;
 import org.genesys.interpreter.DeepCoderInterpreter;
 import org.genesys.interpreter.Interpreter;
 import org.genesys.language.DeepCoderGrammar;

@@ -1332,8 +1332,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     public void cacheAST(String program, boolean block){
-        assert (!cacheAST_.containsKey(program));
-        cacheAST_.put(program, block);
+        //assert (!cacheAST_.containsKey(program));
+        if (!cacheAST_.containsKey(program))
+            cacheAST_.put(program, block);
+
     }
 
     public void printSketches() {
@@ -1575,21 +1577,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         step2lvl_ = level_;
 
                         Node ast = translate();
-                        if (cacheAST_.containsKey(ast.toString())) {
-                            boolean block = cacheAST_.get(ast.toString());
-                            if (block || !partial_) {
-                                boolean confl = blockModel();
-                                if (confl) {
-                                    return null;
-                                }
-                            }
-                            partial_ = true;
-                            //System.out.println("CACHED-STEP2=" + ast);
-                        } else {
-                            //cacheAST_.put(ast.toString(),true);
-                            ast_ = ast;
-                            return ast;
-                        }
+                        //if (!cacheAST_.containsKey(ast.toString())) {
+                        ast_ = ast;
+                        return ast;
+                        //}
 
                     }
                 }
@@ -1693,29 +1684,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         Node ast = translate();
                         step_ = 4; // Line is complete
 
-
-                        // Checking if a program is complete in the translate method
-//                    if (currentLine_ == highTrail_.size()) {
-//                        partial_ = false;
-//                    }
-
                         if (cacheAST_.containsKey(ast.toString())) {
-
-                            if (step_ == 4 && partial_) {
-                                // continue the search
-                                step_ = 3;
-                            } else if (!partial_) {
-                                boolean block = cacheAST_.get(ast.toString());
-                                if (block || !partial_) {
-                                    boolean confl = blockModel();
-                                    if (confl) {
-                                        return null;
-                                    }
-                                }
-                            }
-                            partial_ = true;
+                            assert (partial_);
+                            step_ = 3;
                         } else {
-
                             ast_ = ast;
                             return ast;
                         }

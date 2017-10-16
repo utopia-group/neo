@@ -122,7 +122,6 @@ public class MorpheusSynthesizer implements Synthesizer {
                     Z3Utils z3 = Z3Utils.getInstance();
                     List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
                     long start2 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(), true);
                     if (!conflictsType.isEmpty()) {
                         if(coreCache_.contains(conflictsType.toString())) {
                             ast = solver_.getModel(null, true);
@@ -140,7 +139,6 @@ public class MorpheusSynthesizer implements Synthesizer {
                     totalSearch += LibUtils.computeTime(start2, end2);
                 } else {
                     long start2 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(), true);
                     ast = solver_.getModel(null, true);
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
@@ -172,7 +170,6 @@ public class MorpheusSynthesizer implements Synthesizer {
                     break;
                 } else {
                     long start3 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(), true);
                     ast = solver_.getModel(null, true);
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
