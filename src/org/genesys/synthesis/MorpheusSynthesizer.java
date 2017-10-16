@@ -115,9 +115,6 @@ public class MorpheusSynthesizer implements Synthesizer {
             boolean isSatisfiable = true;
             if (!coreAst_.contains(ast.toString())){
                 isSatisfiable = checker_.check(problem_, ast);
-            } else {
-               boolean ok = checker_.check(problem_, ast);
-               assert (ok);
             }
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
