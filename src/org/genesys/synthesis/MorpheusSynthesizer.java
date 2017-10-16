@@ -102,6 +102,7 @@ public class MorpheusSynthesizer implements Synthesizer {
         int concrete = 0;
         int partial = 0;
         Set<String> coreCache_ = new HashSet<>();
+        Set<String> coreAst_ = new HashSet<>();
 
         while (ast != null) {
             /* do deduction */
@@ -112,7 +113,10 @@ public class MorpheusSynthesizer implements Synthesizer {
 //            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
 //            boolean isSatisfiable = true;
-            boolean isSatisfiable = checker_.check(problem_, ast);
+            boolean isSatisfiable = true;
+            if (!coreAst_.contains(ast.toString())){
+                isSatisfiable = checker_.check(problem_, ast);
+            }
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
 
@@ -152,7 +156,8 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) {
                 if (!silent_) System.out.println("Partial Program: " + ast);
                 long start2 = LibUtils.tick();
-                solver_.cacheAST(ast.toString(), false);
+                //solver_.cacheAST(ast.toString(), false);
+                //coreAst_.add(ast.toString());
                 ast = solver_.getModel(null, false);
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
