@@ -127,6 +127,8 @@ public class Filter implements Unop {
             conflictList.add(new HashMap<>());
 
         String opStr = op.toString();
+//        System.out.println("==============DF header:" + df.getCols());
+//        Extensions.print(df);
         if (df.getNcol() <= lhs || ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
                 || (opStr.equals("l(a,b).(> a b)") && (rhs instanceof String)) || ((rhs instanceof String) && opStr.equals("l(a,b).(< a b)"))) {
             List<Map<Integer, List<String>>> all = new ArrayList<>();

@@ -101,8 +101,8 @@ public class Mutate implements Unop {
         List<Map<Integer, List<String>>> conflictList = arg0.t1;
 
         DataFrame df = (DataFrame) arg0.t0;
-        System.out.println("MUTATE input---------" + df.getCols());
-        Extensions.print(df);
+//        System.out.println("MUTATE input---------" + df.getCols());
+//        Extensions.print(df);
         int lhs = (int) arg2.t0;
         Binop op = (Binop) arg1.t0;
         int rhs = (int) arg3.t0;
@@ -199,8 +199,8 @@ public class Mutate implements Unop {
                 throw new UnsupportedOperationException("Unsupported op:" + opStr);
             }
         }));
-        System.out.println("===============return");
-        Extensions.print(res);
+//        System.out.println("===============return");
+//        Extensions.print(res);
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.
             partialConflictMap.put(ast.id, Arrays.asList(ast.function));

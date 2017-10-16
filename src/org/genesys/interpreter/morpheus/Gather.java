@@ -183,6 +183,8 @@ public class Gather implements Unop {
                 partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
             }
             DataFrame res;
+//            System.out.println("Gather================" + df.getCols());
+//            Extensions.print(df);
             if (hasNeg) {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
 //                System.out.println("Running gather...." + argNegs) ;
@@ -192,6 +194,7 @@ public class Gather implements Unop {
                 res = ReshapeKt.gather(df, key, value, colArgs, false);
             }
 //            Extensions.print(res);
+//            System.out.println("-------------" + res.getCols());
             return new Pair<>(res, conflictList);
         }
     }
