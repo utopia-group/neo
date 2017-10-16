@@ -112,10 +112,12 @@ public class MorpheusSynthesizer implements Synthesizer {
 
 //            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
-//            boolean isSatisfiable = true;
             boolean isSatisfiable = true;
             if (!coreAst_.contains(ast.toString())){
                 isSatisfiable = checker_.check(problem_, ast);
+            } else {
+               boolean ok = checker_.check(problem_, ast);
+               assert (ok);
             }
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
@@ -157,7 +159,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                 if (!silent_) System.out.println("Partial Program: " + ast);
                 long start2 = LibUtils.tick();
                 //solver_.cacheAST(ast.toString(), false);
-                //coreAst_.add(ast.toString());
+                coreAst_.add(ast.toString());
                 ast = solver_.getModel(null, false);
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
