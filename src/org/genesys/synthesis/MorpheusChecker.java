@@ -158,8 +158,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                     DataFrame workerDf = (DataFrame) validRes.t0;
                                     int peRow = workerDf.getNrow();
                                     int peCol = workerDf.getNcol();
-                                    if (peRow == 0 || peCol == 0)
+                                    if (peRow == 0 || peCol == 0) {
+                                        parseCore((validRes.t1));
                                         return false;
+                                    }
                                     String peRowVar = "V_ROW" + worker.id;
                                     String peColVar = "V_COL" + worker.id;
                                     BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
