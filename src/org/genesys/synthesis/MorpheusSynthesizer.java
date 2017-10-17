@@ -127,17 +127,17 @@ public class MorpheusSynthesizer implements Synthesizer {
                     List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
                     long start2 = LibUtils.tick();
                     if (!conflictsType.isEmpty()) {
-                        if(coreCache_.contains(conflictsType.toString())) {
+                        if (coreCache_.contains(conflictsType.toString())) {
                             ast = solver_.getModel(null, true);
                         } else {
-                            ast = solver_.getCoreModelSet(conflictsType, true, true);
+                            ast = solver_.getCoreModelSet(conflictsType, true, false);
                             coreCache_.add(conflictsType.toString());
                         }
                     } else {
-                        if (ast.children.get(0).isConcrete() || conflicts.isEmpty())
+                        if (!solver_.isPartial() || conflicts.isEmpty())
                             ast = solver_.getModel(null, true);
                         else
-                            ast = solver_.getCoreModel(conflicts, true, true);
+                            ast = solver_.getCoreModel(conflicts, true, false);
                     }
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);

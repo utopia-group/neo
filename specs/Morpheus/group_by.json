@@ -10,6 +10,7 @@
   "template":"group_by(#Table0,#Unknown)",
   "constraint":
   [
-  "(declare-const CO_SPEC Int)(declare-const CI0_SPEC Int)(declare-const RO_SPEC Int)(declare-const RI0_SPEC Int)(assert (= RO_SPEC RI0_SPEC))(assert (= CO_SPEC CI0_SPEC))"
+  "(declare-const CO_SPEC Int)(declare-const CI0_SPEC Int)(assert (= CO_SPEC CI0_SPEC))",
+  "(declare-const RO_SPEC Int)(declare-const RI0_SPEC Int)(assert (= RO_SPEC RI0_SPEC))"
   ]
 }

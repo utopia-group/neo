@@ -60,37 +60,11 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         // Perform type-checking and PE.
         validator_.cleanPEMap();
         System.out.println("Verifying.... " + node);
-//        validator_.validate(node, example.getInput());
-//        if (!validRes.t0) {
-//            counter_++;
-//            System.out.println("Refuting.... " + node + " " + counter_);
-//            return false;
-//        } else {
-////            System.out.println("Verifying.... " + node);
-//        }
-
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
         Map<String, Object> clauseToNodeMap_ = new HashMap<>();
-
-        // Generate constraints from PE.
-//        for (int i : validator_.getPeMap().keySet()) {
-//            Object o = validator_.getPE(i);
-//            if (o instanceof DataFrame) {
-//                DataFrame peDf = (DataFrame) o;
-//                int peRow = peDf.getNrow();
-//                int peCol = peDf.getNcol();
-//                String peRowVar = "V_ROW" + i;
-//                String peColVar = "V_COL" + i;
-//                BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
-//                BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
-//
-//                cstList.add(peRowCst);
-//                cstList.add(peColCst);
-//            }
-//        }
 
         queue.add(node);
         while (!queue.isEmpty()) {

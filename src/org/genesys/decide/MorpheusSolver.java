@@ -1333,9 +1333,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     public void cacheAST(String program, boolean block){
-        //assert (!cacheAST_.containsKey(program));
-        if (!cacheAST_.containsKey(program))
-            cacheAST_.put(program, block);
+        assert (!cacheAST_.containsKey(program));
+        //if (!cacheAST_.containsKey(program))
+        cacheAST_.put(program, block);
 
     }
 
@@ -1472,6 +1472,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 }
                 if (!sketches_.containsKey(sketch)){
                     sketches_.put(sketch, true);
+                    SATUtils.getInstance().cleanLearnts();
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                 }
             }
@@ -1577,10 +1578,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         step2lvl_ = level_;
 
                         Node ast = translate();
-                        //if (!cacheAST_.containsKey(ast.toString())) {
-                        ast_ = ast;
-                        return ast;
-                        //}
+                        if (!cacheAST_.containsKey(ast.toString())) {
+                            ast_ = ast;
+                            return ast;
+                        }
 
                     }
                 }
