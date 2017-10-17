@@ -164,9 +164,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new BinopBoolType(), "l(a,b).(> a b)"));
         productions.add(new Production<>(new BinopBoolType(), "l(a,b).(< a b)"));
         productions.add(new Production<>(new BinopBoolType(), "l(a,b).(== a b)"));
-
-        productions.add(new Production<>(new BinopStringType(), "l(a,b).(== a b)"));
-        productions.add(new Production<>(new BinopStringType(), "l(a,b).(!= a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(!= a b)"));
 
         // Aggregator Type
         productions.add(new Production<>(new AggrType(), "mean"));

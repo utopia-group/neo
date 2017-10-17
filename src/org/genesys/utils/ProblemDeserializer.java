@@ -62,7 +62,7 @@ public class ProblemDeserializer implements JsonDeserializer<Problem> {
                 // here you can handle double int/long values
                 // and return any type you want
                 // this solution will transform 3.0 float to long values
-                if (Math.ceil(num.doubleValue()) == num.intValue())
+                if (num.doubleValue() % 1 == 0)
                     list.add(num.intValue());
                 else {
                     list.add(num.doubleValue());

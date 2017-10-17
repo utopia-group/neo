@@ -101,6 +101,8 @@ public class Mutate implements Unop {
         List<Map<Integer, List<String>>> conflictList = arg0.t1;
 
         DataFrame df = (DataFrame) arg0.t0;
+//        System.out.println("MUTATE input---------" + df.getCols());
+//        Extensions.print(df);
         int lhs = (int) arg2.t0;
         Binop op = (Binop) arg1.t0;
         int rhs = (int) arg3.t0;
@@ -118,13 +120,15 @@ public class Mutate implements Unop {
         if (nCol <= lhs || nCol <= rhs || (df.getCols().get(lhs) instanceof StringCol) || (df.getCols().get(rhs) instanceof StringCol) || lhs == rhs) {
             List<String> blackList = new ArrayList<>();
             for (int i = 0; i < nCol; i++) {
-                if (!(df.getCols().get(i) instanceof StringCol)) {
+                if (df.getCols().get(i) instanceof StringCol) {
                     blackList.add(String.valueOf(i));
                 }
             }
             blackList.addAll(MorpheusGrammar.colMap.get(nCol));
-            List<Map<Integer, List<String>>> conflict1 = LibUtils.deepClone(conflictList);
-            if(blackList.isEmpty()) {
+            List<Map<Integer, List<String>>> total = new ArrayList<>();
+
+            if(!blackList.isEmpty()) {
+                List<Map<Integer, List<String>>> conflict1 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflict1) {
                     //current node.
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));
@@ -133,6 +137,7 @@ public class Mutate implements Unop {
                     //arg1
                     partialConflictMap.put(thdChild.id, blackList);
                 }
+                total.addAll(conflict1);
 
                 List<Map<Integer, List<String>>> conflict2 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflict2) {
@@ -143,9 +148,43 @@ public class Mutate implements Unop {
                     //arg1
                     partialConflictMap.put(frdChild.id, blackList);
                 }
-                conflict1.addAll(conflict2);
+                total.addAll(conflict2);
             }
-            return new Pair<>(null, conflict1);
+
+            if(!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+                List<Map<Integer, List<String>>> bakList2 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : bakList2) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(thdChild.id, MorpheusGrammar.colMap.get(nCol));
+                }
+
+                List<Map<Integer, List<String>>> bakList4 = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : bakList4) {
+                    //current node.
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(frdChild.id, MorpheusGrammar.colMap.get(nCol));
+                }
+
+                total.addAll(bakList2);
+                total.addAll(bakList4);
+            }
+
+            for (int j = 0; j < 5; j++) {
+                List<Map<Integer, List<String>>> bakList = LibUtils.deepClone(conflictList);
+                for (Map<Integer, List<String>> partialConflictMap : bakList) {
+                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                    partialConflictMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
+                    partialConflictMap.put(frdChild.id, Arrays.asList(String.valueOf(j)));
+                }
+                total.addAll(bakList);
+            }
+
+            assert !total.isEmpty();
+            return new Pair<>(null, total);
         }
 
         String lhsColName = df.getNames().get(lhs);
@@ -160,6 +199,8 @@ public class Mutate implements Unop {
                 throw new UnsupportedOperationException("Unsupported op:" + opStr);
             }
         }));
+//        System.out.println("===============return");
+//        Extensions.print(res);
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.
             partialConflictMap.put(ast.id, Arrays.asList(ast.function));

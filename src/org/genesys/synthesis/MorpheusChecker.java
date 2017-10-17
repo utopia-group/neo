@@ -158,24 +158,20 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                     DataFrame workerDf = (DataFrame) validRes.t0;
                                     int peRow = workerDf.getNrow();
                                     int peCol = workerDf.getNcol();
-                                    if (peRow == 0 || peCol == 0)
+                                    if (peRow == 0 || peCol == 0) {
+                                        parseCore((validRes.t1));
                                         return false;
+                                    }
                                     String peRowVar = "V_ROW" + worker.id;
                                     String peColVar = "V_COL" + worker.id;
                                     BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
                                     BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
                                     cstList.add(peRowCst);
                                     cstList.add(peColCst);
-                                    List<Pair<Integer, List<String>>> folComp = new ArrayList<>();
-                                    for (int c = 1; c < worker.children.size(); c++) {
-                                        Node folChild = worker.children.get(c);
-                                        folComp.add(new Pair<>(folChild.id, Arrays.asList(folChild.function)));
-                                    }
-//                                    System.out.println("current node for PE: " + worker);
-                                    clauseToNodeMap_.put(peRowCst.toString(), folComp);
-                                    clauseToNodeMap_.put(peColCst.toString(), folComp);
-
-//                                    System.out.println("current PE constraint:" + peColCst);
+                                    List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
+//                                    System.out.println("current node for PE: " + worker + " " + folComp);
+                                    clauseToNodeMap_.put(peRowCst.toString(), currAssigns);
+                                    clauseToNodeMap_.put(peColCst.toString(), currAssigns);
                                 }
                             }
                             String targetCst = cstStr.replace("RO_SPEC", rowVar);
@@ -225,5 +221,16 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             }
             core_.add(c);
         }
+    }
+
+    // Given an AST, generate clause for its current assignments
+    private List<Pair<Integer, List<String>>> getCurrentAssignment(Node node) {
+        List<Pair<Integer, List<String>>> clauses = new ArrayList<>();
+        Pair<Integer, List<String>> worker = new Pair<>(node.id, Arrays.asList(node.function));
+        clauses.add(worker);
+        for(Node child : node.children) {
+            clauses.addAll(getCurrentAssignment(child));
+        }
+        return  clauses;
     }
 }

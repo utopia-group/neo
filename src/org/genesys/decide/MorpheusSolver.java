@@ -134,16 +134,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
-    public boolean learnCoreSet(List<List<Pair<Integer, List<String>>>> core) {
+    public boolean learnCoreSet(List<List<Pair<Integer, List<String>>>> core, boolean global) {
         boolean confl = false;
         for (List<Pair<Integer, List<String>>> s : core){
-            confl = confl & learnCore(s);
+            confl = confl & learnCore(s, global);
         }
 
         return confl;
     }
 
-        public boolean learnCore(List<Pair<Integer, List<String>>> core) {
+        public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
         boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
@@ -186,13 +186,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + learnt);
-            conflict = SATUtils.getInstance().learnCore(eqClauses);
+            if (global) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
+            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses);
         }
         return conflict;
 
     }
 
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
         if (!init_) {
             init_ = true;
             loadGrammar();
@@ -203,7 +204,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 return null;
             }
             else {
-                boolean confl = learnCore(core);
+                boolean confl = learnCore(core, global);
                 if (confl){
                     System.out.println("s UNSATISFIABLE - learning core");
                     return null;
@@ -216,7 +217,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
-    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global) {
         if (!init_) {
             init_ = true;
             loadGrammar();
@@ -227,7 +228,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 return null;
             }
             else {
-                boolean confl = learnCoreSet(core);
+                boolean confl = learnCoreSet(core, global);
                 if (confl){
                     System.out.println("s UNSATISFIABLE - learning core");
                     return null;
@@ -1332,8 +1333,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     public void cacheAST(String program, boolean block){
-        assert (!cacheAST_.containsKey(program));
-        cacheAST_.put(program, block);
+        //assert (!cacheAST_.containsKey(program));
+        if (!cacheAST_.containsKey(program))
+            cacheAST_.put(program, block);
+
     }
 
     public void printSketches() {
@@ -1469,8 +1472,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 }
                 if (!sketches_.containsKey(sketch)){
                     sketches_.put(sketch, true);
-                    //System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
-                    //decider_.nextProgram();
+                    System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                 }
             }
 
@@ -1575,21 +1577,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         step2lvl_ = level_;
 
                         Node ast = translate();
-                        if (cacheAST_.containsKey(ast.toString())) {
-                            boolean block = cacheAST_.get(ast.toString());
-                            if (block || !partial_) {
-                                boolean confl = blockModel();
-                                if (confl) {
-                                    return null;
-                                }
-                            }
-                            partial_ = true;
-                            //System.out.println("CACHED-STEP2=" + ast);
-                        } else {
-                            //cacheAST_.put(ast.toString(),true);
-                            ast_ = ast;
-                            return ast;
-                        }
+                        //if (!cacheAST_.containsKey(ast.toString())) {
+                        ast_ = ast;
+                        return ast;
+                        //}
 
                     }
                 }
@@ -1693,29 +1684,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         Node ast = translate();
                         step_ = 4; // Line is complete
 
-
-                        // Checking if a program is complete in the translate method
-//                    if (currentLine_ == highTrail_.size()) {
-//                        partial_ = false;
-//                    }
-
                         if (cacheAST_.containsKey(ast.toString())) {
-
-                            if (step_ == 4 && partial_) {
-                                // continue the search
-                                step_ = 3;
-                            } else if (!partial_) {
-                                boolean block = cacheAST_.get(ast.toString());
-                                if (block || !partial_) {
-                                    boolean confl = blockModel();
-                                    if (confl) {
-                                        return null;
-                                    }
-                                }
-                            }
-                            partial_ = true;
+                            assert (partial_);
+                            step_ = 3;
                         } else {
-
                             ast_ = ast;
                             return ast;
                         }

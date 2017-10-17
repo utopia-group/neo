@@ -10,9 +10,9 @@ public interface AbstractSolver<C, T> {
 
     T getModel(C core, boolean block);
 
-    T getCoreModel(List<Pair<Integer, List<String>>> core, boolean block);
+    T getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global);
 
-    T getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block);
+    T getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global);
 
     boolean isPartial();
 

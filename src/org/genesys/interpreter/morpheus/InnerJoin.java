@@ -63,13 +63,15 @@ public class InnerJoin implements Unop {
         DataFrame df = (DataFrame) arg0.t0;
         DataFrame df2 = (DataFrame) arg1.t0;
 
-        //FIXME
-        if (df == null || df2 == null)
+        //FIXME: current assignments.
+        if (df == null || df2 == null || (df.getNrow() == 0) || (df2.getNrow() == 0))
             return new org.genesys.models.Pair<>(null, mergeMap);
 
         List<String> commons = new ArrayList<>(df.getNames());
         commons.retainAll(df2.getNames());
-        if (commons.isEmpty()) return new org.genesys.models.Pair<>(null, mergeMap);
+        if (commons.isEmpty() || commons.size() == df.getNames().size())
+            return new org.genesys.models.Pair<>(null, mergeMap);
+        //FIXME: return current partial assignment.
         DataFrame res = JoinsKt.innerJoin(df, df2, commons, new Pair<>("", ""));
         return new org.genesys.models.Pair<>(res, mergeMap);
 
