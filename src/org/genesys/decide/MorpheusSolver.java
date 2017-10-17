@@ -1472,6 +1472,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 }
                 if (!sketches_.containsKey(sketch)){
                     sketches_.put(sketch, true);
+                    SATUtils.getInstance().cleanLearnts();
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                 }
             }
