@@ -76,12 +76,12 @@ public class BaselineSolver implements AbstractSolver<BoolExpr, Node> {
     public boolean isPartial() { return false; }
 
     @Override
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
         return null;
     }
 
     @Override
-    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global) {
         return null;
     }
 

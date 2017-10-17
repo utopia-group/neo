@@ -150,7 +150,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         }
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + learnt);
-                conflict = SATUtils.getInstance().learnCore(eqClauses);
+                conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
         }
         return conflict;
 
@@ -177,7 +177,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     @Override
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
 
         if (!init_) {
             init_ = true;
@@ -202,7 +202,7 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
     @Override
-    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global) {
         return null;
     }
 

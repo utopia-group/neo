@@ -134,16 +134,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
-    public boolean learnCoreSet(List<List<Pair<Integer, List<String>>>> core) {
+    public boolean learnCoreSet(List<List<Pair<Integer, List<String>>>> core, boolean global) {
         boolean confl = false;
         for (List<Pair<Integer, List<String>>> s : core){
-            confl = confl & learnCore(s);
+            confl = confl & learnCore(s, global);
         }
 
         return confl;
     }
 
-        public boolean learnCore(List<Pair<Integer, List<String>>> core) {
+        public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
         boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
@@ -186,13 +186,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         }
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + learnt);
-            conflict = SATUtils.getInstance().learnCore(eqClauses);
+            if (global) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
+            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses);
         }
         return conflict;
 
     }
 
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block) {
+    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
         if (!init_) {
             init_ = true;
             loadGrammar();
@@ -203,7 +204,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 return null;
             }
             else {
-                boolean confl = learnCore(core);
+                boolean confl = learnCore(core, global);
                 if (confl){
                     System.out.println("s UNSATISFIABLE - learning core");
                     return null;
@@ -216,7 +217,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return node;
     }
 
-    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block) {
+    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global) {
         if (!init_) {
             init_ = true;
             loadGrammar();
@@ -227,7 +228,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 return null;
             }
             else {
-                boolean confl = learnCoreSet(core);
+                boolean confl = learnCoreSet(core, global);
                 if (confl){
                     System.out.println("s UNSATISFIABLE - learning core");
                     return null;
@@ -1471,8 +1472,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 }
                 if (!sketches_.containsKey(sketch)){
                     sketches_.put(sketch, true);
-                    //System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
-                    //decider_.nextProgram();
+                    System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                 }
             }
 

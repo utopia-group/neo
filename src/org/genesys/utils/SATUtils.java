@@ -1,7 +1,10 @@
 package org.genesys.utils;
 
 import org.sat4j.core.VecInt;
+import org.sat4j.minisat.constraints.ClausalDataStructureWL;
+import org.sat4j.minisat.constraints.MixedDataStructureDanielHT;
 import org.sat4j.minisat.constraints.MixedDataStructureDanielWL;
+import org.sat4j.minisat.constraints.MixedDataStructureSingleWL;
 import org.sat4j.minisat.core.DataStructureFactory;
 import org.sat4j.minisat.core.Solver;
 import org.sat4j.minisat.core.Constr;
@@ -11,6 +14,7 @@ import org.sat4j.minisat.orders.VarOrderHeap;
 import org.sat4j.minisat.restarts.Glucose21Restarts;
 import org.sat4j.minisat.restarts.MiniSATRestarts;
 import org.sat4j.specs.ContradictionException;
+import org.sat4j.specs.IConstr;
 import org.sat4j.specs.Lbool;
 import org.sat4j.specs.TimeoutException;
 
@@ -32,11 +36,13 @@ public class SATUtils {
 
     private boolean init = false;
 
+    private List<IConstr> learnts_ = new ArrayList<>();
+
     public void createSolver() {
         MiniSATLearning<DataStructureFactory> learning = new MiniSATLearning<DataStructureFactory>();
         Solver<DataStructureFactory> solver = new Solver<DataStructureFactory>(
                 learning, new MixedDataStructureDanielWL(), new VarOrderHeap(), new MiniSATRestarts());
-        solver.setSimplifier(solver.EXPENSIVE_SIMPLIFICATION);
+        solver.setSimplifier(solver.SIMPLE_SIMPLIFICATION);
         solver.setOrder(new VarOrderHeap(new RSATPhaseSelectionStrategy()));
         solver.setRestartStrategy(new Glucose21Restarts());
         solver.setLearnedConstraintsDeletionStrategy(solver.glucose);
@@ -116,7 +122,7 @@ public class SATUtils {
         return conflict;
     }
 
-    public boolean learnCore(List<List<Integer>> core){
+    public boolean learnCoreGlobal(List<List<Integer>> core){
         boolean conflict = false;
 
         // create k auxiliary variables
@@ -143,6 +149,7 @@ public class SATUtils {
                 eqclause.push(l);
             }
             eqclause.push(-aux.get(pos));
+            assert (eqclause.size() > 1);
             conflict = conflict || addClause(eqclause);
             pos++;
         }
@@ -151,8 +158,56 @@ public class SATUtils {
         for (Integer l : aux){
             clause.push(-l);
         }
-        conflict = conflict || addClause(clause);
-        assert (!conflict);
+        //assert (clause.size() > 1);
+        if (clause.size() > 1) {
+            conflict = conflict || addClause(clause);
+            assert (!conflict);
+        }
+
+        return conflict;
+    }
+
+    public boolean learnCoreLocal(List<List<Integer>> core){
+        boolean conflict = false;
+
+        // create k auxiliary variables
+        List<Integer> aux = new ArrayList<>();
+        //for (int i = solver_.nVars()+1; i <= solver_.nVars()+core.size(); i++)
+        for (int i = nbVars+1; i <= nbVars+core.size(); i++)
+            aux.add(i);
+        nbVars = nbVars+core.size();
+        assert (aux.size() == core.size());
+
+        assert (nbVars < 1000000);
+
+        // FIXME: problem with increasing the number of variables in SAT4J
+//        solver_.newVar(solver_.nVars() + core.size());
+//        System.out.println("nbVars= " + solver_.nVars());
+
+        // equivalence between auxiliary variables and core variables
+        int pos = 0;
+        for (List<Integer> p : core){
+            VecInt eqclause = new VecInt();
+            for (Integer l : p){
+                //conflict = conflict || addClause(new VecInt(new int[]{-aux.get(pos),l}));
+                conflict = conflict || addLearnt(new VecInt(new int[]{aux.get(pos),-l}));
+                eqclause.push(l);
+            }
+            eqclause.push(-aux.get(pos));
+            assert (eqclause.size() > 1);
+            conflict = conflict || addLearnt(eqclause);
+            pos++;
+        }
+
+        VecInt clause = new VecInt();
+        for (Integer l : aux){
+            clause.push(-l);
+        }
+        //assert (clause.size() > 1);
+        if (clause.size() > 1) {
+            conflict = conflict || addLearnt(clause);
+            assert (!conflict);
+        }
 
         return conflict;
     }
@@ -204,6 +259,26 @@ public class SATUtils {
             conflict = true;
         }
         return conflict;
+    }
+
+    public boolean addLearnt(VecInt clause){
+        assert (solver_ != null);
+
+        boolean conflict = false;
+        try {
+            IConstr c = solver_.addClause(clause);
+            learnts_.add(c);
+        } catch (ContradictionException e) {
+            conflict = true;
+        }
+        return conflict;
+    }
+
+    public void cleanLearnts(){
+        for (IConstr c : learnts_){
+            solver_.removeConstr(c);
+        }
+        learnts_.clear();
     }
 
     public boolean addClauseOnTheFly(VecInt clause) {
