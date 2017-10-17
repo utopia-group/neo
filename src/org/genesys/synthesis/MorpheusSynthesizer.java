@@ -137,7 +137,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                         if (!solver_.isPartial() || conflicts.isEmpty())
                             ast = solver_.getModel(null, true);
                         else
-                            ast = solver_.getCoreModel(conflicts, true, true);
+                            ast = solver_.getCoreModel(conflicts, true, false);
                     }
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
