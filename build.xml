@@ -8,6 +8,7 @@
 		<pathelement location="lib/sat4j-genesys.jar"/>
 		<pathelement location="lib/krangl-0.5-SNAPSHOT.jar"/>
 	<pathelement location="lib/kotlin-runtime.jar"/>
+	<pathelement location="lib/commons-lang3-3.6.jar"/>
 	  </classpath>
     </javac>
 
@@ -96,6 +97,7 @@
 	<pathelement location="lib/kotlin-reflect.jar"/>
 	<pathelement location="lib/kotlin-runtime.jar"/>
 	<pathelement location="lib/commons-csv-1.3.jar"/>
+	<pathelement location="lib/commons-lang3-3.6.jar"/>
 
       </classpath>
       <arg value="${app}"/>
@@ -187,6 +189,7 @@
 	<pathelement location="lib/kotlin-reflect.jar"/>
 	<pathelement location="lib/kotlin-runtime.jar"/>
 	<pathelement location="lib/commons-csv-1.3.jar"/>
+	<pathelement location="lib/commons-lang3-3.6.jar"/>
       </classpath>
       <arg value="${app}"/>
       <arg value="${depth}"/>
