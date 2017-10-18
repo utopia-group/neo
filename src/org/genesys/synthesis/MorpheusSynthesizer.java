@@ -50,6 +50,11 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     private Gson gson = new Gson();
 
+    public static double smt1 = 0.0;
+    public static double smt2 = 0.0;
+    public static double typeinhabit = 0.0;
+
+
 
     public MorpheusSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, String specLoc, Decider decider) {
         solver_ = new MorpheusSolver(grammar, decider);
@@ -137,7 +142,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                         if (!solver_.isPartial() || conflicts.isEmpty())
                             ast = solver_.getModel(null, true);
                         else
-                            ast = solver_.getCoreModel(conflicts, true, false);
+                            ast = solver_.getCoreModel(conflicts, true, true);
                     }
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
@@ -190,6 +195,9 @@ public class MorpheusSynthesizer implements Synthesizer {
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
         System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / concrete);
 
+        System.out.println("SMT1:" + smt1);
+        System.out.println("SMT2:" + smt2);
+        System.out.println("Type:" + typeinhabit);
         return ast;
     }
 

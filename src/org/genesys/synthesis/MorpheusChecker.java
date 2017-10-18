@@ -65,6 +65,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
         Map<String, Object> clauseToNodeMap_ = new HashMap<>();
+        //Map a clause to its original spec
+        Map<String, String> clauseToSpecMap_ = new HashMap<>();
 
         queue.add(node);
         while (!queue.isEmpty()) {
@@ -122,7 +124,11 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                         for (String cstStr : comp.getConstraint()) {
 
                             if (worker.isConcrete()) {
+                                long start2 = LibUtils.tick();
                                 Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
+                                long end2 = LibUtils.tick();
+                                MorpheusSynthesizer.typeinhabit += LibUtils.computeTime(start2, end2);
+
                                 Object judge = validRes.t0;
                                 if (judge == null) {
                                     parseCore(validRes.t1);
@@ -166,6 +172,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                             BoolExpr expr = z3.convertStrToExpr(targetCst);
                             cstList.add(expr);
                             clauseToNodeMap_.put(expr.toString(), worker.id);
+                            clauseToSpecMap_.put(expr.toString(), cstStr);
                         }
                     }
                 }
@@ -177,7 +184,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             }
         }
 
-        boolean sat = z3.isSat(cstList, clauseToNodeMap_, components_.values());
+        boolean sat = z3.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
         if (!sat) System.out.println("Prune program:" + node);
         return sat;
     }

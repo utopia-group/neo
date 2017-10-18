@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.genesys.models.Component;
 import org.genesys.models.Pair;
+import org.genesys.synthesis.MorpheusSynthesizer;
 
 
 /**
@@ -173,7 +174,8 @@ public class Z3Utils {
         return e;
     }
 
-    public boolean isSat(List<BoolExpr> exprList, Map<String, Object> clauseToNodeMap, Collection<Component> components) {
+    public boolean isSat(List<BoolExpr> exprList, Map<String, Object> clauseToNodeMap, Map<String, String> clauseToSpecMap_, Collection<Component> components) {
+        long start2 = LibUtils.tick();
         solver_.push();
         for (BoolExpr expr : exprList) {
 //            solver_.add(expr);
@@ -181,12 +183,14 @@ public class Z3Utils {
         }
         boolean flag = (solver_.check() == Status.SATISFIABLE);
         if (!flag && unSatCore_) {
-            printUnsatCore(clauseToNodeMap, components);
+            printUnsatCore(clauseToNodeMap, clauseToSpecMap_, components);
         } else {
             conflicts_.clear();
         }
         solver_.pop();
         cstCnt_ = 1;
+        long end2 = LibUtils.tick();
+        MorpheusSynthesizer.smt1 += LibUtils.computeTime(start2, end2);
         return flag;
     }
 
@@ -202,10 +206,9 @@ public class Z3Utils {
         }
     }
 
-    public void printUnsatCore(Map<String, Object> clauseToNodeMap, Collection<Component> components) {
+    public void printUnsatCore(Map<String, Object> clauseToNodeMap, Map<String, String> clauseToSpecMap_, Collection<Component> components) {
+        long start2 = LibUtils.tick();
 //        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
-        String inExpr = "IN0_LEN_SPEC";
-        String outExpr = "OUT_LEN_SPEC";
         conflicts_.clear();
         for (BoolExpr e : solver_.getUnsatCore()) {
             String core = cstMap_.get(e).toString();
@@ -222,26 +225,9 @@ public class Z3Utils {
                     conflicts_.addAll(folComp);
                     continue;
                 }
-                // remove brackets.
-                String subCore = core.substring(1, core.length() - 1);
-                if (core.contains("MAX")) {
-                    inExpr = "IN0_MAX_SPEC";
-                    outExpr = "OUT_MAX_SPEC";
-                }
-                String[] items = subCore.split(" ");
-                // right now only handle easy cores.
-                if (items.length != 3) {
-                    Pair<Integer, List<String>> conflict = new Pair<>(nodeId, new ArrayList<>());
-//                    System.out.println("adding missing core:" + core);
-                    if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
-                    continue;
-                }
-                String core_str = core.replaceFirst(items[1], inExpr);
-                core_str = core_str.replace(items[2], outExpr);
-                String core_cst_str = "(declare-const " + inExpr + " Int)" + "(declare-const "
-                        + outExpr + " Int)" + "(assert " + core_str + ")";
-//                System.out.println("[unsat core]" + core + " replace:" + core_cst_str);
-                BoolExpr my_core = convertStrToExpr2(core_cst_str);
+                if (!clauseToSpecMap_.containsKey(core)) continue;
+                String core_str = clauseToSpecMap_.get(core);
+                BoolExpr my_core = convertStrToExpr2(core_str);
 
                 List<String> eq_vec = new ArrayList<>();
                 for (Component comp : components) {
@@ -264,7 +250,8 @@ public class Z3Utils {
                 if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
-
+        long end2 = LibUtils.tick();
+        MorpheusSynthesizer.smt2 += LibUtils.computeTime(start2, end2);
     }
 
     public List<Pair<Integer, List<String>>> getConflicts() {
