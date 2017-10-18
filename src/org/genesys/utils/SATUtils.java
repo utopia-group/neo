@@ -149,7 +149,6 @@ public class SATUtils {
                 eqclause.push(l);
             }
             eqclause.push(-aux.get(pos));
-            assert (eqclause.size() > 1);
             conflict = conflict || addClause(eqclause);
             pos++;
         }
@@ -158,11 +157,9 @@ public class SATUtils {
         for (Integer l : aux){
             clause.push(-l);
         }
-        //assert (clause.size() > 1);
-        if (clause.size() > 1) {
-            conflict = conflict || addClause(clause);
-            assert (!conflict);
-        }
+        conflict = conflict || addClause(clause);
+        assert (!conflict);
+
 
         return conflict;
     }
@@ -194,7 +191,6 @@ public class SATUtils {
                 eqclause.push(l);
             }
             eqclause.push(-aux.get(pos));
-            assert (eqclause.size() > 1);
             conflict = conflict || addLearnt(eqclause);
             pos++;
         }
@@ -203,11 +199,8 @@ public class SATUtils {
         for (Integer l : aux){
             clause.push(-l);
         }
-        //assert (clause.size() > 1);
-        if (clause.size() > 1) {
-            conflict = conflict || addLearnt(clause);
-            assert (!conflict);
-        }
+        conflict = conflict || addLearnt(clause);
+        assert (!conflict);
 
         return conflict;
     }
