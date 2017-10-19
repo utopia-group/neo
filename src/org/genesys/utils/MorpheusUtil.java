@@ -1,5 +1,8 @@
 package org.genesys.utils;
 
+import krangl.DataCol;
+import krangl.DataFrame;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -64,5 +67,33 @@ public class MorpheusUtil {
 
     public void reset() {
         counter_ = 0;
+    }
+
+    public Set<String> getHeader(DataFrame df) {
+        Set set = new HashSet();
+        for (DataCol col : df.getCols()) {
+            set.add(col.getName());
+        }
+        return set;
+    }
+
+    public Set<String> getContent(DataFrame df) {
+        Set set = new HashSet();
+        for (DataCol col : df.getCols()) {
+            set.add(col.getName());
+        }
+
+        for (List row : df.getRawRows()) {
+            for(Object o : row)
+                set.add(o.toString());
+        }
+        return set;
+    }
+
+    //compute src - tgt
+    public Set setDiff(Set src, Set tgt) {
+        Set diff = new HashSet(src);
+        diff.removeAll(tgt);
+        return diff;
     }
 }
