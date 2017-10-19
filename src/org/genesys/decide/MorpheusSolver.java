@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Created by ruben on 9/11/17.
  */
-public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
+public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>> {
 
     private Decider decider_;
 
@@ -60,7 +60,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     private int step_ = 1;
     private int step2lvl_ = 1;
 
-    //private int line_ = 0;
+    private int learntLine_ = 0;
     private int currentLine_ = 0;
 
     private final Map<Pair<Integer, Production>, Integer> varNodes_ = new HashMap<>();
@@ -86,7 +86,11 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
     private boolean partial_ = true;
 
-    private Node ast_ = null;
+    private Pair<Node,Node> ast_ = null;
+    private List<Pair<Integer,Integer>> blockLearn_ = new ArrayList<>();
+    private boolean blockLearnFlag_ = false;
+
+    private VecInt clauseLearn_ = new VecInt();
 
     public MorpheusSolver(Grammar g, Decider decider) {
         satUtils_ = SATUtils.getInstance();
@@ -110,7 +114,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
 
     @Override
-    public Node getModel(BoolExpr core, boolean block) {
+    public Pair<Node,Node> getModel(BoolExpr core, boolean block) {
         if (!init_) {
             init_ = true;
             loadGrammar();
@@ -130,7 +134,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             partial_ = true;
         }
 
-        Node node = search();
+        Pair<Node,Node> node = search();
         return node;
     }
 
@@ -148,7 +152,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
         HashMap<Integer,String> node2function = new HashMap<>();
         List<Node> bfs = new ArrayList<>();
-        Node root = ast_;
+        Node root = ast_.t0;
         bfs.add(root);
         while (!bfs.isEmpty()) {
             Node node = bfs.remove(bfs.size() - 1);
@@ -160,22 +164,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         List<List<Integer>> eqClauses = new ArrayList<>();
         String learnt = "";
         for (Pair<Integer,List<String>> p : core){
-            //System.out.println("p = " + p);
             List<Integer> eq = new ArrayList<>();
             learnt = learnt + "[(" + p.t0 + ") ";
-            //System.out.println("node= " + p.t0);
-            //assert (node2function.containsKey(p.t0));
-            //learnt = learnt + node2function.get(p.t0);
-            //Pair<Integer, String> id = new Pair<>(p.t0,node2function.get(p.t0));
-            //assert (nameNodes_.containsKey(id));
-            //eq.add(nameNodes_.get(id));
-            //System.out.println("function= " + node2function.get(p.t0));
-            //if (!node2function.get(p.t0).contains("input")) {
             for (String l : p.t1) {
                 Pair<Integer, String> id2 = new Pair<>(p.t0, l);
                 if (!nameNodes_.containsKey(id2))
                     continue;
-                //assert (coreNodes_.containsKey(id2));
                 eq.add(nameNodes_.get(id2));
                 learnt = learnt + l + " ";
             }
@@ -185,15 +179,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
-            System.out.println("Learning: " + learnt);
+            System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
             if (global) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
-            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses);
+            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
         }
         return conflict;
 
     }
 
-    public Node getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
+    public Pair<Node,Node> getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
         if (!init_) {
             init_ = true;
             loadGrammar();
@@ -213,17 +207,24 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             partial_ = true;
         }
 
-        Node node = search();
+        Pair<Node,Node> node = search();
         return node;
     }
 
-    public Node getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global) {
+    public Pair<Node,Node> getCoreModelSet(List<List<Pair<Integer, List<String>>>> core, boolean block, boolean global) {
         if (!init_) {
             init_ = true;
             loadGrammar();
             initDataStructures();
         } else {
             boolean conflict = blockModel();
+
+            if (blockLearnFlag_) {
+                // I need to learn a clause that blocks the previous ast up to currentLine
+                conflict &= satUtils_.addClause(clauseLearn_);
+                blockLearnFlag_ = false;
+            }
+
             if (conflict) {
                 return null;
             }
@@ -237,7 +238,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             partial_ = true;
         }
 
-        Node node = search();
+        Pair<Node,Node> node = search();
         return node;
     }
 
@@ -947,6 +948,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         int decisionComponent = -1;
 
         Node node = trail_.get(currentLine_).get(currentChild_).t0;
+        assert (node.equals(highTrail_.get(currentLine_).t0.children.get(currentChild_)));
         Map<String, Pair<Production, Integer>> decideMap = new HashMap<>();
         List<String> decideDomain = new ArrayList<>();
         for (Production p : node.domain) {
@@ -975,6 +977,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             node.decision = decisionNeo;
             node.component = decisionComponent;
             node.level = level_;
+
+            assert (node.function.equals(highTrail_.get(currentLine_).t0.children.get(currentChild_).function));
 
 //            System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
@@ -1170,8 +1174,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         return conflict;
     }
 
-    private Node translate() {
 
+    private int findLevel(int line){
+        int bt = 0;
+        for (int i = trailNeo_.size()-1; i >= 0; i--){
+            //if (trailNeo_.get(i).t1.t0 == line && trailNeo_.get(i).t1.t1 == 0) {
+            if (trailNeo_.get(i).t1.t0 == line) {
+                bt = trailNeo_.get(i).t0.level;
+                break;
+            }
+        }
+        return bt;
+    }
+
+    private Pair<Node, Node> translate(int line) {
+
+        Node current = null;
         Object startNode = grammar_.start();
         Node root = new Node();
         root.setSymbol(startNode);
@@ -1209,6 +1227,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                 ast_node.setConcrete(true);
             }
 
+            if (i == line){
+                current = new Node();
+                current.id = ast_node.id;
+                current.component = ast_node.component;
+                current.function = ast_node.function;
+                current.setSymbol(prodSymbols_.get(ast_node.function));
+                current.setConcrete(ast_node.isConcrete());
+            }
+
             children = 0;
             for (Node c: node.children){
                 if (!c.function.equals("")) {
@@ -1240,8 +1267,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
         root.addChild(ast.get(ast.size()-1));
 
         //printTree(root);
+        Pair<Node,Node> result = new Pair<Node,Node>(root,current);
 
-        return root;
+        return result;
     }
 
     private void printTree(Node root) {
@@ -1257,46 +1285,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
             for (int i = 0; i < node.children.size(); i++)
                 bfs.add(node.children.get(i));
         }
-    }
-
-
-    private boolean backtrackStep3(int lvl, boolean block) {
-
-        // There is a disparity between the level in Neo and the level in the SAT solvers
-        // Several decisions in Neo may be in the same internal level in the SAT solver
-        // When backtracking, we need to take into consideration the internals of the SAT solver
-        int backtrack_lvl = lvl;
-        while (currentSATLevel_.get(level_) == currentSATLevel_.get(backtrack_lvl) || backtrack_lvl > 0) {
-            backtrack_lvl--;
-        }
-
-        assert (trailNeo_.size() > 0 && trailSAT_.size() > 0);
-        int size = trailNeo_.size();
-
-        if (backtrack_lvl < highTrail_.size()) {
-            for (int i = backtrack_lvl; i < highTrail_.size(); i++)
-                trail_.get(i).clear();
-        }
-
-        satUtils_.getSolver().cancelUntil(currentSATLevel_.get(backtrack_lvl));
-
-        boolean conflict = false;
-        if (block) conflict = satUtils_.blockTrail(trailSAT_);
-
-        for (int i = size; i > backtrack_lvl; i--) {
-            // undo
-            trailNeo_.get(trailNeo_.size() - 1).t0.function = "";
-            trailNeo_.get(trailNeo_.size() - 1).t0.decision = null;
-            trailNeo_.get(trailNeo_.size() - 1).t0.level = -1;
-
-            trailNeo_.remove(trailNeo_.size() - 1);
-            trailSAT_.remove(trailSAT_.size() - 1);
-        }
-        level_ = backtrack_lvl;
-        currentSATLevel_.subList(backtrack_lvl+1,currentSATLevel_.size()).clear();
-        assert (currentSATLevel_.size() == level_ + 1);
-
-        return conflict;
     }
 
     private void printProgram(Node node){
@@ -1396,7 +1384,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
     }
 
 
-    public Node search() {
+    public Pair<Node,Node> search() {
 
 
 
@@ -1530,7 +1518,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
 
                     if (!children_assigned && step_ == 2 && !repeat_step2) {
                         // was not possible to assign children
-                        // should we go back to step1?
+                        // should we go bgo back to step1?
                             step_ = 1;
                             currentLine_ = 0;
                             currentChild_ = 0;
@@ -1577,8 +1565,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         currentLine_ = 0;
                         step2lvl_ = level_;
 
-                        Node ast = translate();
-                        if (!cacheAST_.containsKey(ast.toString())) {
+                        Pair<Node,Node> ast = translate(-1);
+                        if (!cacheAST_.containsKey(ast.t0.toString())) {
                             ast_ = ast;
                             return ast;
                         }
@@ -1627,8 +1615,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                         } else {
                             if (highTrail_.get(currentLine_).t0.children.get(currentChild_).function.equals("")) {
                                 Node decision = decideFirst();
-                                currentChild_++;
-
                                 if (decision == null) {
                                     // go back to step 2?
                                     step_ = 2;
@@ -1637,7 +1623,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                                     backtrackStep2(highTrail_.size(), true, true);
                                     step_ = backtrackStep(level_);
                                     break;
+                                } else {
+                                    assert (!highTrail_.get(currentLine_).t0.children.get(currentChild_).function.equals(""));
                                 }
+                                currentChild_++;
                             } else {
                                 currentChild_++;
                             }
@@ -1674,32 +1663,67 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Node> {
                             } else {
                                 currentLine_--;
                                 currentChild_ = 0;
+                                int lvl = findLevel(currentLine_);
+                                backtrackStep2(lvl, false, false);
                             }
                         }
                     } else {
+
+                        Pair<Node,Node> ast = translate(currentLine_);
+                        step_ = 4; // Line is complete
+
+                        if (cacheAST_.containsKey(ast.t0.toString())) {
+                            assert (partial_);
+                            step_ = 3;
+                        } else {
+                            if (currentLine_ < learntLine_) {
+                                satUtils_.getInstance().cleanLearnts(currentLine_);
+                                blockLearnFlag_ = true;
+                                clauseLearn_.clear();
+                                for (Pair<Integer, Integer> p : blockLearn_) {
+                                    if (p.t1 <= currentLine_)
+                                        clauseLearn_.push(-p.t0);
+                                }
+                            }
+
+                            learntLine_ = currentLine_;
+
+                            blockLearn_.clear();
+                            for (int i = 0; i < highTrail_.size(); i++){
+                                Node node = highTrail_.get(i).t0;
+                                if (!node.function.equals("")) {
+                                    int v = varNodes_.get(new Pair<Integer, Production>(node.id, node.decision));
+                                    blockLearn_.add(new Pair<Integer,Integer>(v,0));
+                                }
+
+                                for (Node n : node.children){
+                                    if (!n.function.equals("")){
+                                        if (n.function.startsWith("input") || n.function.startsWith("line")){
+                                            int v = varNodes_.get(new Pair<Integer, Production>(n.id, n.decision));
+                                            blockLearn_.add(new Pair<Integer,Integer>(v,0));
+                                        } else {
+                                            int v = varNodes_.get(new Pair<Integer, Production>(n.id, n.decision));
+                                            blockLearn_.add(new Pair<Integer,Integer>(v,i));
+                                        }
+                                    }
+                                }
+                            }
+
+                            ast_ = ast;
+                            return ast;
+                        }
 
                         // Go to the next line of code
                         currentLine_++;
                         currentChild_ = 0;
 
-                        Node ast = translate();
-                        step_ = 4; // Line is complete
-
-                        if (cacheAST_.containsKey(ast.toString())) {
-                            assert (partial_);
-                            step_ = 3;
-                        } else {
-                            ast_ = ast;
-                            return ast;
-                        }
                     }
                 }
             }
 
             }
 
-            ast_  = result;
-            return result;
+            return null;
         }
 
 

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class GeneratorSynthesizer implements Synthesizer {
 
-    private AbstractSolver<BoolExpr, Node> solver_;
+    private AbstractSolver<BoolExpr, Pair<Node,Node>> solver_;
 
     private boolean silent_ = true;
 
@@ -147,7 +147,7 @@ public class GeneratorSynthesizer implements Synthesizer {
     public Trio<List<List<Object>>,List<Object>,Node> synthesize() {
 
         /* retrieve an AST from the solver */
-        Node ast = solver_.getModel(null, false);
+        Node ast = solver_.getModel(null, false).t0;
         int total = 0;
         int prune_concrete = 0;
         int prune_partial = 0;
@@ -170,7 +170,7 @@ public class GeneratorSynthesizer implements Synthesizer {
                 if (!silent_) System.out.println("Partial Program: " + ast);
                 long start2 = LibUtils.tick();
                 solver_.cacheAST(ast.toString(), false);
-                ast = solver_.getModel(null, false);
+                ast = solver_.getModel(null, false).t0;
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
                 continue;
@@ -187,7 +187,7 @@ public class GeneratorSynthesizer implements Synthesizer {
                 } else {
                     long start3 = LibUtils.tick();
                     solver_.cacheAST(ast.toString(), true);
-                    ast = solver_.getModel(null, true);
+                    ast = solver_.getModel(null, true).t0;
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
                 }

@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class MorpheusSynthesizer implements Synthesizer {
 
-    private AbstractSolver<BoolExpr, Node> solver_;
+    private AbstractSolver<BoolExpr, Pair<Node,Node>> solver_;
 
     private boolean silent_ = true;
 
@@ -102,7 +102,7 @@ public class MorpheusSynthesizer implements Synthesizer {
     public Node synthesize() {
 
         /* retrieve an AST from the solver */
-        Node ast = solver_.getModel(null, false);
+        Node ast = solver_.getModel(null, false).t0;
         int total = 0;
         int prune_concrete = 0;
         int prune_partial = 0;
@@ -134,22 +134,22 @@ public class MorpheusSynthesizer implements Synthesizer {
                     long start2 = LibUtils.tick();
                     if (!conflictsType.isEmpty()) {
                         if (coreCache_.contains(conflictsType.toString())) {
-                            ast = solver_.getModel(null, true);
+                            ast = solver_.getModel(null, true).t0;
                         } else {
-                            ast = solver_.getCoreModelSet(conflictsType, true, false);
+                            ast = solver_.getCoreModelSet(conflictsType, true, false).t0;
                             coreCache_.add(conflictsType.toString());
                         }
                     } else {
                         if (!solver_.isPartial() || conflicts.isEmpty())
-                            ast = solver_.getModel(null, true);
+                            ast = solver_.getModel(null, true).t0;
                         else
-                            ast = solver_.getCoreModel(conflicts, true, true);
+                            ast = solver_.getCoreModel(conflicts, true, true).t0;
                     }
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 } else {
                     long start2 = LibUtils.tick();
-                    ast = solver_.getModel(null, true);
+                    ast = solver_.getModel(null, true).t0;
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 }
@@ -164,7 +164,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                 long start2 = LibUtils.tick();
                 solver_.cacheAST(ast.toString(), false);
                 //coreAst_.add(ast.toString());
-                ast = solver_.getModel(null, false);
+                ast = solver_.getModel(null, false).t0;
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
                 continue;
@@ -181,7 +181,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                     break;
                 } else {
                     long start3 = LibUtils.tick();
-                    ast = solver_.getModel(null, true);
+                    ast = solver_.getModel(null, true).t0;
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
                 }

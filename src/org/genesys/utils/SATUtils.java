@@ -21,6 +21,8 @@ import org.sat4j.specs.TimeoutException;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.genesys.models.Pair;
+
 /**
  * Created by utcs on 7/7/17.
  */
@@ -36,7 +38,7 @@ public class SATUtils {
 
     private boolean init = false;
 
-    private List<IConstr> learnts_ = new ArrayList<>();
+    private List<Pair<IConstr,Integer>> learnts_ = new ArrayList<>();
 
     public void createSolver() {
         MiniSATLearning<DataStructureFactory> learning = new MiniSATLearning<DataStructureFactory>();
@@ -164,7 +166,7 @@ public class SATUtils {
         return conflict;
     }
 
-    public boolean learnCoreLocal(List<List<Integer>> core){
+    public boolean learnCoreLocal(List<List<Integer>> core, int line){
         boolean conflict = false;
 
         // create k auxiliary variables
@@ -187,11 +189,11 @@ public class SATUtils {
             VecInt eqclause = new VecInt();
             for (Integer l : p){
                 //conflict = conflict || addClause(new VecInt(new int[]{-aux.get(pos),l}));
-                conflict = conflict || addLearnt(new VecInt(new int[]{aux.get(pos),-l}));
+                conflict = conflict || addLearnt(new VecInt(new int[]{aux.get(pos),-l}),line);
                 eqclause.push(l);
             }
             eqclause.push(-aux.get(pos));
-            conflict = conflict || addLearnt(eqclause);
+            conflict = conflict || addLearnt(eqclause,line);
             pos++;
         }
 
@@ -199,7 +201,7 @@ public class SATUtils {
         for (Integer l : aux){
             clause.push(-l);
         }
-        conflict = conflict || addLearnt(clause);
+        conflict = conflict || addLearnt(clause,line);
         assert (!conflict);
 
         return conflict;
@@ -254,13 +256,13 @@ public class SATUtils {
         return conflict;
     }
 
-    public boolean addLearnt(VecInt clause){
+    public boolean addLearnt(VecInt clause, int line){
         assert (solver_ != null);
 
         boolean conflict = false;
         try {
             IConstr c = solver_.addClause(clause);
-            learnts_.add(c);
+            learnts_.add(new Pair<IConstr,Integer>(c,line));
         } catch (ContradictionException e) {
             conflict = true;
         }
@@ -268,10 +270,22 @@ public class SATUtils {
     }
 
     public void cleanLearnts(){
-        for (IConstr c : learnts_){
-            solver_.removeConstr(c);
+        for (Pair<IConstr,Integer> c : learnts_){
+            solver_.removeConstr(c.t0);
         }
         learnts_.clear();
+    }
+
+    public void cleanLearnts(int line){
+        List<Pair<IConstr,Integer>> tmp = new ArrayList<>();
+        for (Pair<IConstr,Integer> c : learnts_){
+            if (c.t1 > line) {
+                solver_.removeConstr(c.t0);
+                tmp.add(c);
+            }
+        }
+        learnts_.removeAll(tmp);
+        //System.out.println("#learnts = " + learnts_.size());
     }
 
     public boolean addClauseOnTheFly(VecInt clause) {
