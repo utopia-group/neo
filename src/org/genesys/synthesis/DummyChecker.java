@@ -14,6 +14,11 @@ public class DummyChecker implements Checker<Problem, BoolExpr> {
     }
 
     @Override
+    public boolean check(Problem specification, Node node, Node curr) {
+        return true;
+    }
+
+    @Override
     public BoolExpr learnCore() {
         return null;
     }

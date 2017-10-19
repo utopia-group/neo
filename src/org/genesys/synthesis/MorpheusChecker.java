@@ -40,6 +40,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
     private Map<Pair<Integer, String>, List<BoolExpr>> cstCache_ = new HashMap<>();
 
+    private final String alignId_ = "alignOutput";
+
     private String[] spec1 = {"CO_SPEC", "RO_SPEC", "CI0_SPEC", "RI0_SPEC", "CI1_SPEC", "RI1_SPEC"};
     private String[] spec2 = {
             "CO_SPEC", "RO_SPEC", "OG_SPEC", "OH_SPEC", "OC_SPEC",
@@ -65,6 +67,11 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
      */
     @Override
     public boolean check(Problem specification, Node node) {
+        return true;
+    }
+
+    @Override
+    public boolean check(Problem specification, Node node, Node curr) {
         core_.clear();
         Example example = specification.getExamples().get(0);
         Object output = example.getOutput();
@@ -104,18 +111,18 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                 cstList.addAll(abs);
             } else {
                 if (!worker.children.isEmpty() && comp != null) {
-                    if (worker.isConcrete()) {
+                    if ((curr != null) && (worker.id == curr.id)) {
                         long start2 = LibUtils.tick();
+//                        System.out.println("type on node: " + worker);
                         Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
+                        Object judge = validRes.t0;
                         long end2 = LibUtils.tick();
                         MorpheusSynthesizer.typeinhabit += LibUtils.computeTime(start2, end2);
-
-                        Object judge = validRes.t0;
                         if (judge == null) {
                             parseCore(validRes.t1);
                             System.out.println("prune by type inhabitation: " + worker);
                             return false;
-                        } else if (!(judge instanceof Boolean)) {
+                        } else {
                             DataFrame workerDf = (DataFrame) validRes.t0;
                             if (isValid(workerDf)) {
                                 parseCore((validRes.t1));
@@ -230,7 +237,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
     private List<BoolExpr> abstractTable(Node worker, DataFrame df, List<DataFrame> inputs) {
         List<BoolExpr> cstList = new ArrayList<>();
-        Pair<Integer, String> key = new Pair<>(worker.id, worker.toString());
+        String strVal = worker.function;
+        if (!"root".equals(worker.function))
+            strVal = worker.toString();
+        Pair<Integer, String> key = new Pair<>(worker.id, strVal);
         if (cstCache_.containsKey(key)) {
             return cstCache_.get(key);
         }
@@ -318,6 +328,9 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     }
 
     private List<BoolExpr> alignOutput(Node worker) {
+        Pair<Integer, String> key = new Pair<>(worker.id, alignId_);
+        if (cstCache_.containsKey(key))
+            return cstCache_.get(key);
         List<BoolExpr> cstList = new ArrayList<>();
         String colVar = "V_COL" + worker.id;
         String rowVar = "V_ROW" + worker.id;
@@ -343,6 +356,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         cstList.add(eqGroupCst);
         cstList.add(eqHeadCst);
         cstList.add(eqContentCst);
+        cstCache_.put(key, cstList);
         return cstList;
     }
 }

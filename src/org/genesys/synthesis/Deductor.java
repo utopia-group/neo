@@ -13,6 +13,11 @@ public class Deductor<S, BoolExpr> implements Checker<S, BoolExpr> {
     }
 
     @Override
+    public boolean check(S specification, Node node, Node curr) {
+        return false;
+    }
+
+    @Override
     public BoolExpr learnCore() {
         return null;
     }

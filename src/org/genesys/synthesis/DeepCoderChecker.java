@@ -201,6 +201,11 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
     }
 
     @Override
+    public boolean check(Problem specification, Node node, Node curr) {
+        return true;
+    }
+
+    @Override
     public List<Pair<Integer, List<String>>> learnCore() {
         Z3Utils z3 = Z3Utils.getInstance();
         return z3.getConflicts();
