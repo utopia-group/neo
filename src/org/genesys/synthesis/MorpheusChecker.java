@@ -38,6 +38,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     private Z3Utils z3_ = Z3Utils.getInstance();
     private MorpheusUtil util_ = MorpheusUtil.getInstance();
 
+    private Map<Pair<Integer, String>, List<BoolExpr>> cstCache_ = new HashMap<>();
+
     private String[] spec1 = {"CO_SPEC", "RO_SPEC", "CI0_SPEC", "RI0_SPEC", "CI1_SPEC", "RI1_SPEC"};
     private String[] spec2 = {
             "CO_SPEC", "RO_SPEC", "OG_SPEC", "OH_SPEC", "OC_SPEC",
@@ -167,6 +169,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
     private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
 //        System.out.println("current workder: " + worker.id + " " + worker);
+        Pair<Integer, String> key = new Pair<>(worker.id, comp.getName());
+        if (cstCache_.containsKey(key))
+            return cstCache_.get(key);
+
         String[] dest = new String[15];
         String colVar = "V_COL" + worker.id;
         String rowVar = "V_ROW" + worker.id;
@@ -217,12 +223,17 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             clauseToNodeMap_.put(expr.toString(), worker.id);
             clauseToSpecMap_.put(expr.toString(), cstStr);
         }
-
+        //cache current cst.
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
     private List<BoolExpr> abstractTable(Node worker, DataFrame df, List<DataFrame> inputs) {
         List<BoolExpr> cstList = new ArrayList<>();
+        Pair<Integer, String> key = new Pair<>(worker.id, worker.toString());
+        if (cstCache_.containsKey(key)) {
+            return cstCache_.get(key);
+        }
         int row = df.getNrow();
         int col = df.getNcol();
 
@@ -297,6 +308,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             clauseToNodeMap_.put(headCst.toString(), currAssigns);
             clauseToNodeMap_.put(contentCst.toString(), currAssigns);
         }
+        //cache current cst.
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
