@@ -51,7 +51,6 @@ public class MorpheusSynthesizer implements Synthesizer {
     private Gson gson = new Gson();
 
     public static double smt1 = 0.0;
-    public static double smt2 = 0.0;
     public static double typeinhabit = 0.0;
 
 
@@ -95,6 +94,8 @@ public class MorpheusSynthesizer implements Synthesizer {
             }
             components_.put(comp.getId(), comp);
         }
+        //init equivalent class map
+        Z3Utils.getInstance().initEqMap(components_.values());
     }
 
     @Override
@@ -195,8 +196,7 @@ public class MorpheusSynthesizer implements Synthesizer {
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
         System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / concrete);
 
-        System.out.println("SMT1:" + smt1);
-        System.out.println("SMT2:" + smt2);
+        System.out.println("SMT:" + smt1);
         System.out.println("Type:" + typeinhabit);
         return ast;
     }
