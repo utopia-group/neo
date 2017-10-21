@@ -35,6 +35,8 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
 
     public static List<String> strList = new ArrayList<>();
 
+    public static List<List<Integer>> colListRawData = new ArrayList<>();
+
     public static List<String> negColList = new ArrayList<>();
 
     public MorpheusGrammar(Problem p) {
@@ -101,6 +103,7 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
         }
         cols.addAll(negSets);
         for (Set<Integer> ss : cols) {
+            colListRawData.add(new ArrayList<>(ss));
             for (int listSize = 1; listSize < 10; listSize++) {
                 List<String> l = new ArrayList<>();
                 if (colListMap.containsKey(listSize)) {

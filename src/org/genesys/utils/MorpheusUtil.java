@@ -3,10 +3,8 @@ package org.genesys.utils;
 import krangl.DataCol;
 import krangl.DataFrame;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 /**
  * Created by yufeng on 9/5/17.
@@ -84,7 +82,7 @@ public class MorpheusUtil {
         }
 
         for (List row : df.getRawRows()) {
-            for(Object o : row)
+            for (Object o : row)
                 set.add(o.toString());
         }
         return set;
@@ -96,4 +94,58 @@ public class MorpheusUtil {
         diff.removeAll(tgt);
         return diff;
     }
+
+    //Select a sublist from data
+    public List<Integer> sel(Set<Integer> selectors, List<Integer> data) {
+        assert selectors.size() > 0;
+        assert data.size() > 0;
+        Set<Integer> negSet = new HashSet<>();
+        for (int e : selectors) {
+            if (e == -99)
+                negSet.add(0);
+            else
+                negSet.add(-e);
+        }
+        List<Integer> sublist = new ArrayList<>();
+        boolean isNeg = selectors.iterator().next() < 0;
+        for (int i = 0; i < data.size(); i++) {
+            if (!isNeg) {
+                if (selectors.contains(i))
+                    sublist.add(i);
+            } else {
+                if (!negSet.contains(i))
+                    sublist.add(i);
+            }
+        }
+        return sublist;
+    }
+
+    // Given a list selector and collist, check whether all selected columns share the same type.
+    public boolean hasSameType(List<Integer> sel, List<DataCol> cols) {
+        int size = cols.size();
+        assert size > 0;
+        Set<String> colNames = new HashSet<>();
+        for (int idx : sel) {
+            assert idx < size : idx;
+            String name = cols.get(idx).getClass().getSimpleName();
+            if (!name.equals("StringCol")) name = "num";
+            colNames.add(name);
+        }
+        return colNames.size() == 1;
+    }
+
+    public static void main(String[] args) {
+        Set<Integer> sel = new HashSet<>(Arrays.asList(1, 3, 5));
+        Set<Integer> sel2 = new HashSet<>(Arrays.asList(-5, -99));
+        Set<Integer> sel3 = new HashSet<>(Arrays.asList(-1, -3));
+        Set<Integer> sel4 = new HashSet<>(Arrays.asList(0, 2));
+
+        List<Integer> data = Arrays.asList(0, 1, 2, 3, 4, 5);
+
+        System.out.println(MorpheusUtil.getInstance().sel(sel, data));
+        System.out.println(MorpheusUtil.getInstance().sel(sel2, data));
+        System.out.println(MorpheusUtil.getInstance().sel(sel3, data));
+        System.out.println(MorpheusUtil.getInstance().sel(sel4, data));
+    }
+
 }

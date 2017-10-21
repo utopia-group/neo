@@ -18,6 +18,8 @@ import java.util.*;
  */
 public class Gather implements Unop {
 
+    private MorpheusUtil util_ = MorpheusUtil.getInstance();
+
     public Object apply(Object obj) {
         assert obj instanceof List;
         List pair = (List) obj;
@@ -183,8 +185,44 @@ public class Gather implements Unop {
                 partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
             }
             DataFrame res;
-//            System.out.println("Gather================" + df.getCols());
+//            System.out.println("Gather================" + " cols:" + cols + " " + df.getCols());
 //            Extensions.print(df);
+            List<Integer> allList = new ArrayList<>();
+            for (int i = 0; i < df.getNcol(); i++) {
+                allList.add(i);
+            }
+            List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
+            boolean sameType = util_.hasSameType(sels, df.getCols());
+            if (!sameType) {
+
+                //Prune all cols that do not share the same type.
+                List<String> pruneList = new ArrayList<>();
+                for (List<Integer> rawColList : MorpheusGrammar.colListRawData) {
+                    //Do not learn repeated!!!
+                    if (!MorpheusGrammar.colListMap.get(nCol).contains(rawColList.toString())) {
+                        List<Integer> selectors = util_.sel(new HashSet<>(rawColList), allList);
+
+                        if (!util_.hasSameType(selectors, df.getCols())) {
+                            pruneList.add(rawColList.toString());
+                        }
+                    }
+                }
+                if (!pruneList.isEmpty()) {
+                    for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                        //current node.
+                        partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                        //arg0
+                        Node fstChild = ast.children.get(0);
+                        partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                        //arg1
+                        Node sndChild = ast.children.get(1);
+                        partialConflictMap.put(sndChild.id, pruneList);
+                    }
+                    return new Pair<>(null, conflictList);
+                }
+
+
+            }
             if (hasNeg) {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
 //                System.out.println("Running gather...." + argNegs) ;
