@@ -18,11 +18,15 @@ import java.util.*;
  */
 public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>> {
 
+    private int ITERATION_LIMIT = Integer.MAX_VALUE;
+
     private Decider decider_;
 
     private SATUtils satUtils_;
 
     private Grammar grammar_;
+
+    private int iterations_ = 0;
 
     private VecInt currentSketchClause_ = new VecInt();
 
@@ -1569,7 +1573,17 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         System.out.println("s NO SOLUTION");
                         break;
                     }
+                    System.out.println("Sketch #iterations = " + iterations_);
+                    iterations_ = 0;
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
+                } else {
+                    if (iterations_ > ITERATION_LIMIT){
+                        // go to next sketch
+                        backtrackStep1(0,false);
+                        step_ = 1;
+
+                        SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.ASSIGNMENT);
+                    }
                 }
             }
 
@@ -1676,6 +1690,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         Pair<Node,Node> ast = translate(-1);
                         if (!cacheAST_.containsKey(ast.t0.toString())) {
                             ast_ = ast;
+                            iterations_++;
                             return ast;
                         }
 
@@ -1818,6 +1833,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                             }
 
                             ast_ = ast;
+                            iterations_++;
                             return ast;
                         }
 
