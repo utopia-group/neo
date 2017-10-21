@@ -1,6 +1,7 @@
 package org.genesys.interpreter.morpheus;
 
 import krangl.DataFrame;
+import krangl.Extensions;
 import krangl.ReshapeKt;
 import krangl.StringCol;
 import org.genesys.interpreter.Unop;
@@ -94,9 +95,11 @@ public class Separate implements Unop {
         }
 
         if ((nCol <= colIdx) || !(df.getCols().get(colIdx) instanceof StringCol)) {
-            List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
+            List<String> blackList = new ArrayList<>();
+            if (MorpheusGrammar.colMap.get(nCol) != null)
+                blackList.addAll(MorpheusGrammar.colMap.get(nCol));
             blackList.addAll(noStrList);
-            if(!blackList.isEmpty()) {
+            if (!blackList.isEmpty()) {
                 for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                     //current node.
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));
@@ -114,6 +117,9 @@ public class Separate implements Unop {
         String orgCol = df.getNames().get(colIdx);
         colArgs.add(col1);
         colArgs.add(col2);
+
+        System.out.println("separate===================" + orgCol);
+        Extensions.print(df);
         DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
 
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {

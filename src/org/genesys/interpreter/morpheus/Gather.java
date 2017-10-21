@@ -197,13 +197,15 @@ public class Gather implements Unop {
 
                 //Prune all cols that do not share the same type.
                 List<String> pruneList = new ArrayList<>();
-                for (List<Integer> rawColList : MorpheusGrammar.colListRawData) {
-                    //Do not learn repeated!!!
-                    if (!MorpheusGrammar.colListMap.get(nCol).contains(rawColList.toString())) {
-                        List<Integer> selectors = util_.sel(new HashSet<>(rawColList), allList);
+                if (MorpheusGrammar.colListMap.get(nCol) != null) {
+                    for (List<Integer> rawColList : MorpheusGrammar.colListRawData) {
+                        //Do not learn repeated!!!
+                        if (!MorpheusGrammar.colListMap.get(nCol).contains(rawColList.toString())) {
+                            List<Integer> selectors = util_.sel(new HashSet<>(rawColList), allList);
 
-                        if (!util_.hasSameType(selectors, df.getCols())) {
-                            pruneList.add(rawColList.toString());
+                            if (!util_.hasSameType(selectors, df.getCols())) {
+                                pruneList.add(rawColList.toString());
+                            }
                         }
                     }
                 }
