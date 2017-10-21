@@ -23,7 +23,7 @@ public class BaseValidatorDriver2 implements ValidatorDriver2<Node, Object> {
         for (Node child : node.children) {
             Pair<Object, List<Map<Integer, List<String>>>> childObj = validate(child, input);
             arglist.add(childObj);
-            assert childObj.t0 != null;
+            if (childObj.t0 == null) return childObj;
         }
 
         assert arglist.size() == node.children.size();
