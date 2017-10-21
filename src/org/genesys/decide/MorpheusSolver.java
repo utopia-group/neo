@@ -10,6 +10,7 @@ import org.sat4j.core.VecInt;
 import org.sat4j.minisat.core.Constr;
 import org.sat4j.specs.Lbool;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -22,6 +23,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private SATUtils satUtils_;
 
     private Grammar grammar_;
+
+    private VecInt currentSketchClause_ = new VecInt();
 
     /* Size of the program */
     private int maxLen_ = 4;
@@ -49,6 +52,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private final HashMap<String,List<Integer>> higherGrouping_ = new HashMap<>();
 
     private List<Node> loc_ = new ArrayList<Node>();
+
+    private List<Integer> sketchNodes_ = new ArrayList<>();
 
     private HashMap<String, Boolean> cacheAST_ = new HashMap<>();
     private HashMap<String, Boolean> sketches_ = new HashMap<>();
@@ -147,7 +152,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         return confl;
     }
 
-        public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
+    public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
+
         boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
@@ -180,12 +186,70 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
         if (!eqClauses.isEmpty()) {
             System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
-            if (global) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
+            if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
+            else if (global) learnCoreSimple(core);
             else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
+
+//            if (global) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
+//            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
         }
+
         return conflict;
 
     }
+
+    private void GeneratePermutations(List<List<String>> Lists, List<List<String>> result, int depth, List<String> current) {
+        if(depth == Lists.size())
+        {
+            result.add(current);
+            return;
+        }
+
+        for(int i = 0; i < Lists.get(depth).size(); ++i)
+        {
+            List c = new ArrayList();
+            c.addAll(current);
+            c.add(Lists.get(depth).get(i));
+            GeneratePermutations(Lists, result, depth + 1, c);
+        }
+    }
+
+    public boolean learnCoreSimple(List<Pair<Integer, List<String>>> core) {
+
+        List<Integer> nodes = new ArrayList<>();
+        List<List<String>> s = new ArrayList<>();
+        for (Pair<Integer,List<String>> p : core) {
+            s.add(p.t1);
+            nodes.add(p.t0);
+        }
+
+        List<List<String>> result = new ArrayList<>();
+        List<String> current = new ArrayList<>();
+
+        List<Pair<VecInt, List<Pair<Integer,String>>>> clauses = new ArrayList<>();
+
+        GeneratePermutations(s,result,0, current);
+        for (List<String> r : result){
+            Pair<VecInt, List<Pair<Integer,String>>> clause = new Pair<>(new VecInt(),new ArrayList<>());
+            for (int i = 0;  i < r.size(); i++){
+                Pair<Integer, String> id = new Pair<>(nodes.get(i), r.get(i));
+                assert (nameNodes_.containsKey(id));
+                clause.t0.push(-nameNodes_.get(id));
+                clause.t1.add(id);
+            }
+            clauses.add(clause);
+        }
+
+        SATUtils.getInstance().updateEqLearnts(clauses);
+//
+//        System.out.println("result = " + result);
+//        System.out.println("clauses = " + clauses);
+//        System.out.println("sketch = " + sketchNodes_);
+//        assert(false);
+
+        return true;
+    }
+
 
     public Pair<Node,Node> getCoreModel(List<Pair<Integer, List<String>>> core, boolean block, boolean global) {
         if (!init_) {
@@ -221,7 +285,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
             if (blockLearnFlag_) {
                 // I need to learn a clause that blocks the previous ast up to currentLine
-                conflict &= satUtils_.addClause(clauseLearn_);
+                conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
                 blockLearnFlag_ = false;
             }
 
@@ -282,6 +346,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
             loc_.add(node);
             highTrail_.add(new Pair<Node, Integer>(node,highTrail_.size()+1));
+            sketchNodes_.add(highTrail_.get(i).t0.id);
         }
 
         // Create empty SAT solver
@@ -418,6 +483,19 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             VecInt clause = new VecInt();
             for (int i = 0; i < highTrail_.size(); i++){
                 Production p = prodName_.get("mutate");
+                Node node = highTrail_.get(i).t0;
+                int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
+                clause.push(var);
+            }
+            conflict = satUtils_.addAMK(clause, 1);
+            assert(!conflict);
+        }
+
+        if (prodName_.containsKey("inner_join")){
+            // At most one mutate
+            VecInt clause = new VecInt();
+            for (int i = 0; i < highTrail_.size(); i++){
+                Production p = prodName_.get("inner_join");
                 Node node = highTrail_.get(i).t0;
                 int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
                 clause.push(var);
@@ -1458,9 +1536,39 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     assert (highTrail_.get(i).t0.function != "");
                     sketch += highTrail_.get(i).t0.function + " ";
                 }
+
                 if (!sketches_.containsKey(sketch)){
+
+                    List<Integer> next_skt = new ArrayList<>();
+                    List<Pair<Integer,String>> skt = new ArrayList<>();
                     sketches_.put(sketch, true);
+
+                    for (int i = 0; i < highTrail_.size(); i++){
+                        assert (!highTrail_.get(i).t0.decision.equals(""));
+                        int v = varNodes_.get(new Pair<Integer, Production>(highTrail_.get(i).t0.id, highTrail_.get(i).t0.decision));
+                        next_skt.add(-v);
+                        Pair<Integer,String> pp = new Pair<Integer,String>(highTrail_.get(i).t0.id,highTrail_.get(i).t0.function);
+                        skt.add(pp);
+                    }
+
+                    backtrackStep1(0,false);
+                    step_ = 1;
+
                     SATUtils.getInstance().cleanLearnts();
+                    if (!currentSketchClause_.isEmpty()){
+                        SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.SKTASSIGNMENT);
+                        currentSketchClause_.clear();
+                    }
+                    for (Integer l : next_skt)
+                        currentSketchClause_.push(l);
+
+                    SATUtils.getInstance().cleanEqLearnts();
+                    boolean conflict = SATUtils.getInstance().addEqLearnts(skt, sketchNodes_);
+                    if (conflict) {
+                        unsat = true;
+                        System.out.println("s NO SOLUTION");
+                        break;
+                    }
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                 }
             }
