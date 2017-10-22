@@ -20,6 +20,9 @@ public class Gather implements Unop {
 
     private MorpheusUtil util_ = MorpheusUtil.getInstance();
 
+    // Covert "value" to its actual type
+    private boolean convert_ = true;
+
     public Object apply(Object obj) {
         assert obj instanceof List;
         List pair = (List) obj;
@@ -50,9 +53,9 @@ public class Gather implements Unop {
         DataFrame res;
         if (hasNeg) {
             Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
-            res = ReshapeKt.gather(df, key, value, argNegs, false);
+            res = ReshapeKt.gather(df, key, value, argNegs, convert_);
         } else {
-            res = ReshapeKt.gather(df, key, value, colArgs, false);
+            res = ReshapeKt.gather(df, key, value, colArgs, convert_);
         }
 //        System.out.println("----------------Gather------------------");
 //        Extensions.print(df);
@@ -100,9 +103,9 @@ public class Gather implements Unop {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
 //                System.out.println("Running gather...." + argNegs) ;
 
-                res = ReshapeKt.gather(df, key, value, argNegs, false);
+                res = ReshapeKt.gather(df, key, value, argNegs, convert_);
             } else {
-                res = ReshapeKt.gather(df, key, value, colArgs, false);
+                res = ReshapeKt.gather(df, key, value, colArgs, convert_);
             }
 //            System.out.println("Gather--------------" + cols);
 //            Extensions.print(df);
@@ -229,9 +232,9 @@ public class Gather implements Unop {
                 Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
 //                System.out.println("Running gather...." + argNegs) ;
 
-                res = ReshapeKt.gather(df, key, value, argNegs, false);
+                res = ReshapeKt.gather(df, key, value, argNegs, convert_);
             } else {
-                res = ReshapeKt.gather(df, key, value, colArgs, false);
+                res = ReshapeKt.gather(df, key, value, colArgs, convert_);
             }
 //            Extensions.print(res);
 //            System.out.println("-------------" + res.getCols());

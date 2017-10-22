@@ -130,8 +130,8 @@ public class Summarise implements Unop {
         String colName = df.getNames().get(colIdx);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
 
-        System.out.println("summarise============" + colName);
-        Extensions.print(df);
+//        System.out.println("summarise============" + colName);
+//        Extensions.print(df);
         DataFrame res = df.summarize(getFormula(colName, newColName, aggr));
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.
