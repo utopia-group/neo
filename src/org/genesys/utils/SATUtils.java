@@ -1,5 +1,6 @@
 package org.genesys.utils;
 
+import org.genesys.ml.Utils;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.constraints.MixedDataStructureDanielWL;
 import org.sat4j.minisat.core.DataStructureFactory;
@@ -113,6 +114,7 @@ public class SATUtils {
     }
 
     public Constr propagate(){
+
         if (!init) {
             try {
                 // hack to initialize SAT4J data structures
