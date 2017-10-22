@@ -84,8 +84,9 @@ public class MorpheusUtil {
         for (List row : df.getRawRows()) {
             for (Object o : row) {
                 String val = o.toString();
-                if (val.endsWith("0"))
+                if (val.endsWith("0")) {
                     val = removeZeros(val);
+                }
                 set.add(val);
             }
         }
@@ -139,6 +140,7 @@ public class MorpheusUtil {
     }
 
     public String removeZeros(String str) {
+        if(!str.contains(".")) return str;
         return str.replaceAll("[0]*$", "").replaceAll(".$", "");
 
     }
@@ -159,6 +161,7 @@ public class MorpheusUtil {
         String str = "9.00000";
         System.out.println(MorpheusUtil.getInstance().removeZeros(str));
         System.out.println(MorpheusUtil.getInstance().removeZeros("12.0"));
+        System.out.println(MorpheusUtil.getInstance().removeZeros("120"));
     }
 
 }
