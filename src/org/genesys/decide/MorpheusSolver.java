@@ -21,6 +21,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
     private int ITERATION_LIMIT = Integer.MAX_VALUE;
 
+    private boolean timeProfile_ = false;
+
     private Decider decider_;
 
     private SATUtils satUtils_;
@@ -181,7 +183,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     }
 
     public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
         boolean conflict = false;
 
         HashMap<Integer,String> node2function = new HashMap<>();
@@ -222,8 +224,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
         }
 
-        long e = LibUtils.tick();
-        learnTime_ += LibUtils.computeTime(s,e);
+        //long e = LibUtils.tick();
+        //learnTime_ += LibUtils.computeTime(s,e);
         return conflict;
 
     }
@@ -885,10 +887,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             }
         }
 
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
         Constr conf = satUtils_.propagate();
-        long e = LibUtils.tick();
-        propagateTime_ += LibUtils.computeTime(s,e);
+        //long e = LibUtils.tick();
+        //propagateTime_ += LibUtils.computeTime(s,e);
         assert (conf == null);
     }
 
@@ -1000,7 +1002,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     }
 
     private Node decideInputs() {
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
 
         Production decisionNeo = null;
         int decisionSAT = -1;
@@ -1030,8 +1032,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
 
         if (decisionNeo == null) {
-            long e = LibUtils.tick();
-            decideTime_ += LibUtils.computeTime(s,e);
+            //long e = LibUtils.tick();
+            //decideTime_ += LibUtils.computeTime(s,e);
             return null;
         } else {
             node.function = decisionNeo.function;
@@ -1057,15 +1059,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             }
             level_++;
 
-            long e = LibUtils.tick();
-            decideTime_ += LibUtils.computeTime(s,e);
+            //long e = LibUtils.tick();
+            //decideTime_ += LibUtils.computeTime(s,e);
             return node;
         }
     }
 
 
     public Node decideFirst(){
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
 
         Production decisionNeo = null;
         int decisionSAT = -1;
@@ -1094,8 +1096,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
 
         if (decisionNeo == null){
-            long e = LibUtils.tick();
-            decideTime_ += LibUtils.computeTime(s,e);
+            //long e = LibUtils.tick();
+            //decideTime_ += LibUtils.computeTime(s,e);
             return null;
         }
         else {
@@ -1124,15 +1126,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             }
             level_++;
 
-            long e = LibUtils.tick();
-            decideTime_ += LibUtils.computeTime(s,e);
+            //long e = LibUtils.tick();
+            //decideTime_ += LibUtils.computeTime(s,e);
             return node;
         }
     }
 
     public Node decideHigh(){
 
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
 
         assert (level_ < highTrail_.size());
         Production decisionNeo = null;
@@ -1173,8 +1175,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
 
         if (decisionNeo == null) {
-            long e = LibUtils.tick();
-            decideTime_ += LibUtils.computeTime(s,e);
+            //long e = LibUtils.tick();
+            //decideTime_ += LibUtils.computeTime(s,e);
            return null;
         } else {
             node.function = decisionNeo.function;
@@ -1199,8 +1201,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             for (int i = 0; i < decisionNeo.inputs.length; i++) {
                 trail_.get(level_-1).add(new Pair<Node, Integer>(node.children.get(i), level_));
             }
-            long e = LibUtils.tick();
-            decideTime_ += LibUtils.computeTime(s,e);
+            //long e = LibUtils.tick();
+            //decideTime_ += LibUtils.computeTime(s,e);
             return node;
         }
     }
@@ -1221,7 +1223,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
     private boolean backtrackStep1(int lvl, boolean block) {
 
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
 
         // There is a disparity between the level in Neo and the level in the SAT solvers
         // Several decisions in Neo may be in the same internal level in the SAT solver
@@ -1259,15 +1261,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         currentSATLevel_.subList(backtrack_lvl+1,currentSATLevel_.size()).clear();
         assert (currentSATLevel_.size() == level_ + 1);
 
-        long e = LibUtils.tick();
-        backtrackTime_ += LibUtils.computeTime(s,e);
+        //long e = LibUtils.tick();
+        //backtrackTime_ += LibUtils.computeTime(s,e);
 
         return conflict;
     }
 
     private boolean backtrackStep2(int lvl, boolean block, boolean sat) {
 
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
 
         // There is a disparity between the level in Neo and the level in the SAT solvers
         // Several decisions in Neo may be in the same internal level in the SAT solver
@@ -1311,8 +1313,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         currentSATLevel_.subList(backtrack_lvl+1,currentSATLevel_.size()).clear();
         assert (currentSATLevel_.size() == level_ + 1);
 
-        long e = LibUtils.tick();
-        backtrackTime_ += LibUtils.computeTime(s,e);
+        //long e = LibUtils.tick();
+        //backtrackTime_ += LibUtils.computeTime(s,e);
 
         return conflict;
     }
@@ -1332,7 +1334,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
     private Pair<Node, Node> translate(int line) {
 
-        long s = LibUtils.tick();
+        //long s = LibUtils.tick();
 
         Node current = null;
         Object startNode = grammar_.start();
@@ -1413,8 +1415,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         //printTree(root);
         Pair<Node,Node> result = new Pair<Node,Node>(root,current);
-        long e = LibUtils.tick();
-        translateTime_ += LibUtils.computeTime(s,e);
+        //long e = LibUtils.tick();
+        //translateTime_ += LibUtils.computeTime(s,e);
 
         return result;
     }
@@ -1482,10 +1484,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
                 if (unsat) break;
 
-                long s = LibUtils.tick();
+                //long s = LibUtils.tick();
                 Constr conflict = satUtils_.propagate();
-                long e = LibUtils.tick();
-                propagateTime_ += LibUtils.computeTime(s,e);
+                //long e = LibUtils.tick();
+                //propagateTime_ += LibUtils.computeTime(s,e);
                 if (conflict != null) {
                     int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                     int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
@@ -1547,16 +1549,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         while (!unsat) {
 
             if (step_ == 1) {
-                long s1 = LibUtils.tick();
+                //long s1 = LibUtils.tick();
                 // STEP 1. Decide all higher-order components
                 while (level_ < highTrail_.size()) {
 
                     if (unsat) break;
 
-                    long s = LibUtils.tick();
+                    //long s = LibUtils.tick();
                     Constr conflict = satUtils_.propagate();
-                    long e = LibUtils.tick();
-                    propagateTime_ += LibUtils.computeTime(s,e);
+                    //long e = LibUtils.tick();
+                    //propagateTime_ += LibUtils.computeTime(s,e);
                     if (conflict != null) {
                         int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                         int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
@@ -1657,13 +1659,13 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     }
                 }
 
-                long e1 = LibUtils.tick();
-                step1Time_ += LibUtils.computeTime(s1,e1);
+                //long e1 = LibUtils.tick();
+                //step1Time_ += LibUtils.computeTime(s1,e1);
             }
 
             if (step_ == 2) {
 
-                long s2 = LibUtils.tick();
+                //long s2 = LibUtils.tick();
 
                 // STEP 2. Decide on all inputs/lines
                 currentLine_ = 0;
@@ -1675,10 +1677,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     while (currentChild_ < trail_.get(currentLine_).size()) {
 //                        System.out.println("currentChild = " + currentChild_ + " currentLine=" + currentLine_);
 
-                        long s = LibUtils.tick();
+                        //long s = LibUtils.tick();
                         Constr conflict = satUtils_.propagate();
-                        long e = LibUtils.tick();
-                        propagateTime_ += LibUtils.computeTime(s,e);
+                        //long e = LibUtils.tick();
+                        //propagateTime_ += LibUtils.computeTime(s,e);
                         if (conflict != null) {
                             int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                             int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
@@ -1740,10 +1742,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 if (step_ != 1 && !repeat_step2 && step_ == 2) {
 
                     // Check that we are in a consistent state
-                    long s = LibUtils.tick();
+                    //long s = LibUtils.tick();
                     Constr conflict = satUtils_.propagate();
-                    long e = LibUtils.tick();
-                    propagateTime_ += LibUtils.computeTime(s,e);
+//                    long e = LibUtils.tick();
+//                    propagateTime_ += LibUtils.computeTime(s,e);
 
                     if (conflict != null) {
                         int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
@@ -1786,22 +1788,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     }
                 }
 
-                long e2 = LibUtils.tick();
-                step2Time_ += LibUtils.computeTime(s2,e2);
+//                long e2 = LibUtils.tick();
+//                step2Time_ += LibUtils.computeTime(s2,e2);
             }
 
 
             if (step_ == 3) {
 
-                long s3 = LibUtils.tick();
+                //long s3 = LibUtils.tick();
 
                 // Fill line-by-line and only ask the deduction system after we have a full line
                     //assert (currentLine_ < trail_.size());
                     while (currentChild_ < trail_.get(currentLine_).size()) {
-                        long s = LibUtils.tick();
+                        //long s = LibUtils.tick();
                         Constr conflict = satUtils_.propagate();
-                        long e = LibUtils.tick();
-                        propagateTime_ += LibUtils.computeTime(s,e);
+                        //long e = LibUtils.tick();
+                        //propagateTime_ += LibUtils.computeTime(s,e);
                         if (conflict != null) {
                             int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                             int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
@@ -1861,10 +1863,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     }
 
                     // Check that we are in a consistent state
-                    long s = LibUtils.tick();
+                    //long s = LibUtils.tick();
                     Constr conflict = satUtils_.propagate();
-                    long e = LibUtils.tick();
-                    propagateTime_ += LibUtils.computeTime(s,e);
+                    //long e = LibUtils.tick();
+                    //propagateTime_ += LibUtils.computeTime(s,e);
                     if (conflict != null) {
                         int backjumpLevel = satUtils_.analyzeSATConflict(conflict);
                         int neoLevel = convertLevelFromSATtoNeo(backjumpLevel);
@@ -1960,8 +1962,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     }
                 }
 
-                long e3 = LibUtils.tick();
-                step3Time_ += LibUtils.computeTime(s3,e3);
+                //long e3 = LibUtils.tick();
+                //step3Time_ += LibUtils.computeTime(s3,e3);
             }
 
             }
