@@ -81,7 +81,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-        System.out.println("Verifying.... " + node);
+//        System.out.println("Verifying.... " + node);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         List<BoolExpr> cstList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                         MorpheusSynthesizer.typeinhabit += LibUtils.computeTime(start2, end2);
                         if (judge == null) {
                             parseCore(validRes.t1);
-                            System.out.println("prune by type inhabitation: " + worker);
+//                            System.out.println("prune by type inhabitation: " + worker);
                             return false;
                         } else {
                             DataFrame workerDf = (DataFrame) validRes.t0;

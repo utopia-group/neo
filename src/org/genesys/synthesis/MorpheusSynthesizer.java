@@ -99,7 +99,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     @Override
     public Node synthesize() {
-
+        long startSynth = LibUtils.tick();
         /* retrieve an AST from the solver */
         Pair<Node, Node> astPair = solver_.getModel(null, false);
         Node ast = astPair.t0;
@@ -203,17 +203,21 @@ public class MorpheusSynthesizer implements Synthesizer {
                 }
             }
         }
+        long endSynth = LibUtils.tick();
+
         System.out.println("Concrete programs=: " + concrete);
         System.out.println("Partial programs=: " + partial);
         System.out.println("Search time=:" + (totalSearch));
         System.out.println("Deduction time=:" + (totalDeduction));
         System.out.println("Test time=:" + (totalTest));
+        System.out.println("Synthesis time: " + LibUtils.computeTime(startSynth, endSynth));
         System.out.println("Total=:" + total);
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
         System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / concrete);
 
         System.out.println("SMT:" + smt1);
         System.out.println("Type:" + typeinhabit);
+
         return ast;
     }
 
