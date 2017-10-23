@@ -81,7 +81,7 @@ public class GroupBy implements Unop {
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
-        if (nCol <= cols.size()) {
+        if (nCol < cols.size()) {
             for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                 //current node.
                 partialConflictMap.put(ast.id, Arrays.asList(ast.function));

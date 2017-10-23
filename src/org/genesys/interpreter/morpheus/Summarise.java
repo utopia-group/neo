@@ -109,7 +109,7 @@ public class Summarise implements Unop {
             }
         }
 
-        if ((nCol <= colIdx) || (df.getCols().get(colIdx) instanceof StringCol)) {
+        if ((nCol <= colIdx) || ((df.getCols().get(colIdx) instanceof StringCol) && !aggr.equals("count"))) {
             List<String> blackList = new ArrayList<>();
             if (MorpheusGrammar.colListMap.get(nCol) != null)
                 blackList.addAll(MorpheusGrammar.colMap.get(nCol));
