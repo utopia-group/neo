@@ -145,7 +145,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
             boolean conflict = false;
             if (blockLearnFlag_) {
-                System.out.println("blocking = " + learntAst_);
                 // I need to learn a clause that blocks the previous ast up to currentLine
                 conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
                 blockLearnFlag_ = false;
@@ -291,7 +290,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             boolean conflict = blockModel();
 
             if (blockLearnFlag_) {
-                System.out.println("blocking = " + learntAst_);
                 // I need to learn a clause that blocks the previous ast up to currentLine
                 conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
                 blockLearnFlag_ = false;
@@ -323,7 +321,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             boolean conflict = blockModel();
 
             if (blockLearnFlag_) {
-                System.out.println("blocking = " + learntAst_);
                 // I need to learn a clause that blocks the previous ast up to currentLine
                 conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
                 blockLearnFlag_ = false;
@@ -1903,7 +1900,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                             step_ = 3;
                         } else {
                             if (currentLine_ < learntLine_) {
-                                System.out.println("going to clean previous learnts = " + ast.t0);
                                 satUtils_.getInstance().cleanLearnts(currentLine_);
                                 blockLearnFlag_ = true;
                                 clauseLearn_.clear();
