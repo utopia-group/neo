@@ -324,7 +324,11 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     }
 
     private boolean isValid(DataFrame df) {
-        return (df.getNcol() == 0 || df.getNcol() == 0);
+        if(df instanceof GroupedDataFrame) {
+            GroupedDataFrame gdf = (GroupedDataFrame) df;
+            return gdf.getGroups$krangl_main().size() == 0;
+        }
+        return (df.getNcol() == 0 || df.getNrow() == 0);
     }
 
     private List<BoolExpr> alignOutput(Node worker) {
