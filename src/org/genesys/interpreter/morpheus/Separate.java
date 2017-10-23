@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class Separate implements Unop {
 
-    private final String sep_ = "\\.|_|\\|";
+    private final String sep_ = "\\.|-|_|\\|";
 
     private final boolean remove_ = true;
 
