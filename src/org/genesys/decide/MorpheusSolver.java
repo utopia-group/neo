@@ -146,20 +146,30 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         } else {
 
             boolean conflict = false;
-            if (blockLearnFlag_) {
-                // I need to learn a clause that blocks the previous ast up to currentLine
-                conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
-                blockLearnFlag_ = false;
-                if (conflict)
-                    return null;
-            }
 
             if (block || !partial_) {
                 conflict &= blockModel();
+                if (blockLearnFlag_) {
+                    // I need to learn a clause that blocks the previous ast up to currentLine
+                    conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
+                    blockLearnFlag_ = false;
+                    if (conflict)
+                        return null;
+                }
                 if (conflict) {
                     return null;
                 }
             } else {
+                if (blockLearnFlag_) {
+                    backtrackStep1(0,false);
+                    // I need to learn a clause that blocks the previous ast up to currentLine
+                    conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
+                    blockLearnFlag_ = false;
+                    if (conflict)
+                        return null;
+                    step_ = 1;
+                }
+
                 if (step_ == 4 && partial_){
                     // continue the search
                     step_ = 3;

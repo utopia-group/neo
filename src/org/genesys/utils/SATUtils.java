@@ -289,19 +289,22 @@ public class SATUtils {
         boolean conflict = false;
         try {
             IConstr c = solver_.addClause(clause);
-            if (ct.equals(ClauseType.ASSIGNMENT)){
-                assignments_.add(c);
-            }
-
-            if (ct.equals(ClauseType.EQCLASS)){
-                eqlearnts_.add(c);
-            }
-
-            if (ct.equals(ClauseType.SKTASSIGNMENT)){
-                for (IConstr ctr : assignments_){
-                    solver_.removeConstr(ctr);
+            // c can be null if it is already satisfied, e.g. we learned an unit clause (rare but possible)
+            if (c != null) {
+                if (ct.equals(ClauseType.ASSIGNMENT)) {
+                    assignments_.add(c);
                 }
-                assignments_.clear();
+
+                if (ct.equals(ClauseType.EQCLASS)) {
+                    eqlearnts_.add(c);
+                }
+
+                if (ct.equals(ClauseType.SKTASSIGNMENT)) {
+                    for (IConstr ctr : assignments_) {
+                        solver_.removeConstr(ctr);
+                    }
+                    assignments_.clear();
+                }
             }
         } catch (ContradictionException e) {
             conflict = true;
