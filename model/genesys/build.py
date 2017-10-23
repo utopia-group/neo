@@ -6,7 +6,7 @@ def main():
         raise Exception('Input and output lengths must be equal!')
 
     # Step 1: Read dataset
-    dataset = read_deep_coder_train_dataset(deep_coder_dataset_filename, deep_coder_funcs_filename, num_vals, input_length)
+    dataset = read_deep_coder_train_dataset(deep_coder_dataset_filename, deep_coder_funcs_filename, deep_coder_fo_filename, num_vals, input_length)
 
     # Step 2: Write dataset
     write_deep_coder_train_dataset(deep_coder_processed_dataset_filename, dataset)

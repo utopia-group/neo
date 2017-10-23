@@ -7,13 +7,19 @@ from gen_io import *
 
 # filename: str (path of the dataset to read)
 # funcs_filename: str (path of the set of DSL operators)
+# fo_filename: str (path of the set of first-order operators)
 # num_vals: int (the number of possible values in the input-output examples)
 # max_len: int (the maximum length of an input-output example)
 # return: [([int], [int], [int], [int])] (an array of (input value, output value, dsl operator ngram, label) tuples)
-def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
+def read_deep_coder_train_dataset(filename, funcs_filename, fo_filename, num_vals, max_len):
     # Step 1: Read functions
+
     f = open(DATA_PATH + '/' + funcs_filename)
     funcs = {line[:-1]: i for (i, line) in enumerate(f)}
+    f.close()
+
+    f = open(DATA_PATH + '/' + fo_filename)
+    fos = {line[:-1]: i for (i, line) in enumerate(f)}
     f.close()
 
     # Step 2: Read programs
@@ -93,7 +99,9 @@ def read_deep_coder_train_dataset(filename, funcs_filename, num_vals, max_len):
                 label = np.zeros([len(funcs)], dtype=np.int64).tolist()
                 label[funcs[func]] = 1
                 dataset.append(tuple([x for x in input_value_0] + [x for x in input_value_1] + [x for x in output_value] + [ngram, label]))
-                ngram = [ngram[1], funcs[func]]
+
+                if not func in fos:
+                    ngram = [ngram[1], funcs[func]]
 
         total_read += 1
         

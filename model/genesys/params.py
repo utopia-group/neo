@@ -23,6 +23,7 @@ load_prev = False
 deep_coder_dataset_filename = 'deep_coder.txt'
 deep_coder_processed_dataset_filename = 'deep_coder_processed.txt'
 deep_coder_funcs_filename = 'deep_coder_funcs.txt'
+deep_coder_fo_filename = 'deep_coder_fo.txt'
 train_frac = 0.9
 
 # Test dataset parameters
