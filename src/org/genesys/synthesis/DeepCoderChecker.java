@@ -194,10 +194,15 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 //        for (BoolExpr b : cstList){
 //            System.out.println(b);
 //        }
-        boolean sat = z3.isSat(cstList, clauseToNodeMap_, components_.values());
+        boolean sat = z3.isSat(cstList, clauseToNodeMap_, new HashMap<>(), components_.values());
         if (!sat) System.out.println("Prune program:" + node);
 
         return sat;
+    }
+
+    @Override
+    public boolean check(Problem specification, Node node, Node curr) {
+        return true;
     }
 
     @Override

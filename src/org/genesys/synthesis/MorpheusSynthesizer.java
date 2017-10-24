@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class MorpheusSynthesizer implements Synthesizer {
 
-    private AbstractSolver<BoolExpr, Node> solver_;
+    private AbstractSolver<BoolExpr, Pair<Node, Node>> solver_;
 
     private boolean silent_ = true;
 
@@ -49,6 +49,9 @@ public class MorpheusSynthesizer implements Synthesizer {
     private HashMap<Integer, Component> components_ = new HashMap<>();
 
     private Gson gson = new Gson();
+
+    public static double smt1 = 0.0;
+    public static double typeinhabit = 0.0;
 
 
     public MorpheusSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, String specLoc, Decider decider) {
@@ -90,13 +93,17 @@ public class MorpheusSynthesizer implements Synthesizer {
             }
             components_.put(comp.getId(), comp);
         }
+        //init equivalent class map
+        Z3Utils.getInstance().initEqMap(components_.values());
     }
 
     @Override
     public Node synthesize() {
-
+        long startSynth = LibUtils.tick();
         /* retrieve an AST from the solver */
-        Node ast = solver_.getModel(null, false);
+        Pair<Node, Node> astPair = solver_.getModel(null, false);
+        Node ast = astPair.t0;
+        Node curr = astPair.t1;
         int total = 0;
         int prune_concrete = 0;
         int prune_partial = 0;
@@ -115,7 +122,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
             //if (!coreAst_.contains(ast.toString())){
-            isSatisfiable = checker_.check(problem_, ast);
+            isSatisfiable = checker_.check(problem_, ast, curr);
             //}
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
@@ -128,22 +135,33 @@ public class MorpheusSynthesizer implements Synthesizer {
                     long start2 = LibUtils.tick();
                     if (!conflictsType.isEmpty()) {
                         if (coreCache_.contains(conflictsType.toString())) {
-                            ast = solver_.getModel(null, true);
+                            astPair = solver_.getModel(null, true);
+                            ast = astPair.t0;
+                            curr = astPair.t1;
                         } else {
-                            ast = solver_.getCoreModelSet(conflictsType, true, false);
+                            astPair = solver_.getCoreModelSet(conflictsType, true, false);
+                            ast = astPair.t0;
+                            curr = astPair.t1;
                             coreCache_.add(conflictsType.toString());
                         }
                     } else {
-                        if (!solver_.isPartial() || conflicts.isEmpty())
-                            ast = solver_.getModel(null, true);
-                        else
-                            ast = solver_.getCoreModel(conflicts, true, false);
+                        if (!solver_.isPartial() || conflicts.isEmpty()) {
+                            astPair = solver_.getModel(null, true);
+                            ast = astPair.t0;
+                            curr = astPair.t1;
+                        } else {
+                            astPair = solver_.getCoreModel(conflicts, true, true);
+                            ast = astPair.t0;
+                            curr = astPair.t1;
+                        }
                     }
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 } else {
                     long start2 = LibUtils.tick();
-                    ast = solver_.getModel(null, true);
+                    astPair = solver_.getModel(null, true);
+                    ast = astPair.t0;
+                    curr = astPair.t1;
                     long end2 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start2, end2);
                 }
@@ -158,7 +176,9 @@ public class MorpheusSynthesizer implements Synthesizer {
                 long start2 = LibUtils.tick();
                 solver_.cacheAST(ast.toString(), false);
                 //coreAst_.add(ast.toString());
-                ast = solver_.getModel(null, false);
+                astPair = solver_.getModel(null, false);
+                ast = astPair.t0;
+                curr = astPair.t1;
                 long end2 = LibUtils.tick();
                 totalSearch += LibUtils.computeTime(start2, end2);
                 continue;
@@ -175,20 +195,28 @@ public class MorpheusSynthesizer implements Synthesizer {
                     break;
                 } else {
                     long start3 = LibUtils.tick();
-                    ast = solver_.getModel(null, true);
+                    astPair = solver_.getModel(null, true);
+                    ast = astPair.t0;
+                    curr = astPair.t1;
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
                 }
             }
         }
+        long endSynth = LibUtils.tick();
+
         System.out.println("Concrete programs=: " + concrete);
         System.out.println("Partial programs=: " + partial);
         System.out.println("Search time=:" + (totalSearch));
         System.out.println("Deduction time=:" + (totalDeduction));
         System.out.println("Test time=:" + (totalTest));
+        System.out.println("Synthesis time: " + LibUtils.computeTime(startSynth, endSynth));
         System.out.println("Total=:" + total);
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
         System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / concrete);
+
+        System.out.println("SMT:" + smt1);
+        System.out.println("Type:" + typeinhabit);
 
         return ast;
     }

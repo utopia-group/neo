@@ -9,5 +9,7 @@ import org.genesys.models.Node;
 public interface Checker<S, C> {
     boolean check(S specification, Node node);
 
+    boolean check(S specification, Node node, Node curr);
+
     C learnCore();
 }

@@ -124,10 +124,11 @@ public class Mutate implements Unop {
                     blackList.add(String.valueOf(i));
                 }
             }
-            blackList.addAll(MorpheusGrammar.colMap.get(nCol));
+            if (MorpheusGrammar.colMap.get(nCol) != null)
+                blackList.addAll(MorpheusGrammar.colMap.get(nCol));
             List<Map<Integer, List<String>>> total = new ArrayList<>();
 
-            if(!blackList.isEmpty()) {
+            if (!blackList.isEmpty()) {
                 List<Map<Integer, List<String>>> conflict1 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflict1) {
                     //current node.
@@ -151,7 +152,7 @@ public class Mutate implements Unop {
                 total.addAll(conflict2);
             }
 
-            if(!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+            if (MorpheusGrammar.colMap.get(nCol) != null && !MorpheusGrammar.colMap.get(nCol).isEmpty()) {
                 List<Map<Integer, List<String>>> bakList2 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : bakList2) {
                     //current node.

@@ -99,7 +99,7 @@ public class Spread implements Unop {
             List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
             List<Map<Integer, List<String>>> total = new ArrayList<>();
 
-            if (!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+            if (MorpheusGrammar.colMap.get(nCol) != null && !MorpheusGrammar.colMap.get(nCol).isEmpty()) {
                 for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
                     //current node.
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));

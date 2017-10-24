@@ -81,7 +81,8 @@ public class GroupBy implements Unop {
         if (conflictList.isEmpty())
             conflictList.add(new HashMap<>());
 
-        if (nCol <= cols.size()) {
+        List<String> hasCol = MorpheusGrammar.colListMap.get(nCol);
+        if (nCol < cols.size() && hasCol != null) {
             for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                 //current node.
                 partialConflictMap.put(ast.id, Arrays.asList(ast.function));
@@ -98,13 +99,15 @@ public class GroupBy implements Unop {
                 //don't support negation for now.
                 if (nCol <= index || index < 0) {
                     List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
-                    for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
-                        //current node.
-                        partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                        //arg0
-                        partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                        //arg1
-                        partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+                    if (hasCol != null) {
+                        for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
+                            //current node.
+                            partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                            //arg0
+                            partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                            //arg1
+                            partialConflictMap.put(sndChild.id, MorpheusGrammar.colListMap.get(nCol));
+                        }
                     }
 
                     List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);

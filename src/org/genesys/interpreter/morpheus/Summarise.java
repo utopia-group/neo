@@ -109,8 +109,10 @@ public class Summarise implements Unop {
             }
         }
 
-        if ((nCol <= colIdx) || (df.getCols().get(colIdx) instanceof StringCol)) {
-            List<String> blackList = new ArrayList<>(MorpheusGrammar.colMap.get(nCol));
+        if ((nCol <= colIdx) || ((df.getCols().get(colIdx) instanceof StringCol) && !aggr.equals("count"))) {
+            List<String> blackList = new ArrayList<>();
+            if (MorpheusGrammar.colListMap.get(nCol) != null)
+                blackList.addAll(MorpheusGrammar.colMap.get(nCol));
             blackList.addAll(strList);
             if (!blackList.isEmpty()) {
                 for (Map<Integer, List<String>> partialConflictMap : conflictList) {
@@ -128,6 +130,8 @@ public class Summarise implements Unop {
         String colName = df.getNames().get(colIdx);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
 
+//        System.out.println("summarise============" + colName);
+//        Extensions.print(df);
         DataFrame res = df.summarize(getFormula(colName, newColName, aggr));
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.

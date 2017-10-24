@@ -3,12 +3,13 @@ package org.genesys.synthesis;
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
 import krangl.DataFrame;
-import org.genesys.interpreter.MorpheusValidator;
+import krangl.GroupedDataFrame;
+import org.apache.commons.lang3.StringUtils;
 import org.genesys.interpreter.MorpheusValidator2;
 import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.*;
-import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.MorpheusUtil;
 import org.genesys.utils.Z3Utils;
 
 import java.io.File;
@@ -28,9 +29,25 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
     private MorpheusValidator2 validator_;
 
-    private int counter_ = 0;
-
     private List<List<Pair<Integer, List<String>>>> core_ = new ArrayList<>();
+
+    private Map<String, Object> clauseToNodeMap_ = new HashMap<>();
+    //Map a clause to its original spec
+    private Map<String, String> clauseToSpecMap_ = new HashMap<>();
+
+    private Z3Utils z3_ = Z3Utils.getInstance();
+    private MorpheusUtil util_ = MorpheusUtil.getInstance();
+
+    private Map<Pair<Integer, String>, List<BoolExpr>> cstCache_ = new HashMap<>();
+
+    private final String alignId_ = "alignOutput";
+
+    private String[] spec1 = {"CO_SPEC", "RO_SPEC", "CI0_SPEC", "RI0_SPEC", "CI1_SPEC", "RI1_SPEC"};
+    private String[] spec2 = {
+            "CO_SPEC", "RO_SPEC", "OG_SPEC", "OH_SPEC", "OC_SPEC",
+            "CI0_SPEC", "RI0_SPEC", "IG0_SPEC", "IH0_SPEC", "IC0_SPEC",
+            "CI1_SPEC", "RI1_SPEC", "IG1_SPEC", "IH1_SPEC", "IC1_SPEC"
+    };
 
     public MorpheusChecker(String specLoc, MorpheusGrammar g) throws FileNotFoundException {
         File[] files = new File(specLoc).listFiles();
@@ -50,124 +67,73 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
      */
     @Override
     public boolean check(Problem specification, Node node) {
+        return true;
+    }
+
+    @Override
+    public boolean check(Problem specification, Node node, Node curr) {
         core_.clear();
         Example example = specification.getExamples().get(0);
         Object output = example.getOutput();
         assert output instanceof DataFrame;
         DataFrame outDf = (DataFrame) output;
-        List inputs = example.getInput();
+        List<DataFrame> inputs = example.getInput();
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-        System.out.println("Verifying.... " + node);
+//        System.out.println("Verifying.... " + node);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
-        Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
-        Map<String, Object> clauseToNodeMap_ = new HashMap<>();
 
         queue.add(node);
         while (!queue.isEmpty()) {
             Node worker = queue.remove();
             //Generate constraint between worker and its children.
             String func = worker.function;
-            String colVar = "V_COL" + worker.id;
-            String rowVar = "V_ROW" + worker.id;
 
             //Get component spec.
             Component comp = components_.get(func);
 //            System.out.println("working on : " + func + " id:" + worker.id + " isconcrete:" + worker.isConcrete());
             if ("root".equals(func)) {
-                //attach output
-                int outCol = outDf.getNcol();
-                int outRow = outDf.getNrow();
-
-                BoolExpr outColCst = z3.genEqCst(colVar, outCol);
-                assert worker.children.size() == 1;
-                Node lastChild = worker.children.get(0);
-                String childVar = "V_COL" + lastChild.id;
-                BoolExpr eqColCst = z3.genEqCst(colVar, childVar);
-
-                cstList.add(outColCst);
-                cstList.add(eqColCst);
-
-                BoolExpr outRowCst = z3.genEqCst(rowVar, outRow);
-                assert worker.children.size() == 1;
-                String childVarRow = "V_ROW" + lastChild.id;
-                BoolExpr eqRowCst = z3.genEqCst(rowVar, childVarRow);
-
-                cstList.add(outRowCst);
-                cstList.add(eqRowCst);
+                List<BoolExpr> abs = abstractTable(worker, outDf, inputs);
+                List<BoolExpr> align = alignOutput(worker);
+                cstList.addAll(abs);
+                cstList.addAll(align);
             } else if (func.contains("input")) {
                 //attach inputs
                 List<String> nums = LibUtils.extractNums(func);
                 assert !nums.isEmpty();
                 int index = Integer.valueOf(nums.get(0));
-                DataFrame inDf = (DataFrame) inputs.get(index);
+                DataFrame inDf = inputs.get(index);
 
-                int inCol = inDf.getNcol();
-                int inRow = inDf.getNrow();
-
-                BoolExpr inColCst = z3.genEqCst(colVar, inCol);
-                cstList.add(inColCst);
-
-                BoolExpr inRowCst = z3.genEqCst(rowVar, inRow);
-                cstList.add(inRowCst);
-//                // adding input constraint to the core.
-                clauseToNodeMap_.put(inColCst.toString(), worker.id);
-                clauseToNodeMap_.put(inRowCst.toString(), worker.id);
+                List<BoolExpr> abs = abstractTable(worker, inDf, inputs);
+                cstList.addAll(abs);
             } else {
-                if (!worker.children.isEmpty()) {
-                    if (comp != null) {
-                        for (String cstStr : comp.getConstraint()) {
-
-                            if (worker.isConcrete()) {
-                                Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
-                                Object judge = validRes.t0;
-                                if (judge == null) {
-                                    parseCore(validRes.t1);
-                                    System.out.println("prune by type inhabitation: " + worker);
-                                    return false;
-                                } else if (!(judge instanceof Boolean)) {
-                                    DataFrame workerDf = (DataFrame) validRes.t0;
-                                    int peRow = workerDf.getNrow();
-                                    int peCol = workerDf.getNcol();
-                                    if (peRow == 0 || peCol == 0) {
-                                        parseCore((validRes.t1));
-                                        return false;
-                                    }
-                                    String peRowVar = "V_ROW" + worker.id;
-                                    String peColVar = "V_COL" + worker.id;
-                                    BoolExpr peRowCst = z3.genEqCst(peRowVar, peRow);
-                                    BoolExpr peColCst = z3.genEqCst(peColVar, peCol);
-                                    cstList.add(peRowCst);
-                                    cstList.add(peColCst);
-                                    List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
-//                                    System.out.println("current node for PE: " + worker + " " + folComp);
-                                    clauseToNodeMap_.put(peRowCst.toString(), currAssigns);
-                                    clauseToNodeMap_.put(peColCst.toString(), currAssigns);
-                                }
+                if (!worker.children.isEmpty() && comp != null) {
+                    if ((curr != null) && (worker.id == curr.id)) {
+                        long start2 = LibUtils.tick();
+//                        System.out.println("type on node: " + worker);
+                        Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
+                        Object judge = validRes.t0;
+                        long end2 = LibUtils.tick();
+                        MorpheusSynthesizer.typeinhabit += LibUtils.computeTime(start2, end2);
+                        if (judge == null) {
+                            parseCore(validRes.t1);
+//                            System.out.println("prune by type inhabitation: " + worker);
+                            return false;
+                        } else {
+                            DataFrame workerDf = (DataFrame) validRes.t0;
+                            if (isValid(workerDf)) {
+                                parseCore((validRes.t1));
+                                return false;
                             }
-                            String targetCst = cstStr.replace("RO_SPEC", rowVar);
-                            targetCst = targetCst.replace("CO_SPEC", colVar);
-
-                            for (int i = 0; i < worker.children.size(); i++) {
-                                Node child = worker.children.get(i);
-                                String colChildVar = "V_COL" + child.id;
-
-                                String targetId = "CI" + i + "_SPEC";
-                                targetCst = targetCst.replace(targetId, colChildVar);
-
-                                String rowChildVar = "V_ROW" + child.id;
-                                String targetId2 = "RI" + i + "_SPEC";
-                                targetCst = targetCst.replace(targetId2, rowChildVar);
-                            }
-
-                            BoolExpr expr = z3.convertStrToExpr(targetCst);
-                            cstList.add(expr);
-                            clauseToNodeMap_.put(expr.toString(), worker.id);
+                            List<BoolExpr> abs = abstractTable(worker, workerDf, inputs);
+                            cstList.addAll(abs);
                         }
                     }
+                    List<BoolExpr> nodeCst = genNodeSpec(worker, comp);
+                    cstList.addAll(nodeCst);
                 }
             }
 
@@ -177,7 +143,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             }
         }
 
-        boolean sat = z3.isSat(cstList, clauseToNodeMap_, components_.values());
+        boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
         if (!sat) System.out.println("Prune program:" + node);
         return sat;
     }
@@ -202,9 +168,199 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         List<Pair<Integer, List<String>>> clauses = new ArrayList<>();
         Pair<Integer, List<String>> worker = new Pair<>(node.id, Arrays.asList(node.function));
         clauses.add(worker);
-        for(Node child : node.children) {
+        for (Node child : node.children) {
             clauses.addAll(getCurrentAssignment(child));
         }
-        return  clauses;
+        return clauses;
+    }
+
+    private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
+//        System.out.println("current workder: " + worker.id + " " + worker);
+        Pair<Integer, String> key = new Pair<>(worker.id, comp.getName());
+        if (cstCache_.containsKey(key))
+            return cstCache_.get(key);
+
+        String[] dest = new String[15];
+        String colVar = "V_COL" + worker.id;
+        String rowVar = "V_ROW" + worker.id;
+        String groupVar = "V_GROUP" + worker.id;
+        String headVar = "V_HEAD" + worker.id;
+        String contentVar = "V_CONTENT" + worker.id;
+        dest[0] = colVar;
+        dest[1] = rowVar;
+        dest[2] = groupVar;
+        dest[3] = headVar;
+        dest[4] = contentVar;
+        Node child0 = worker.children.get(0);
+        String colChild0Var = "V_COL" + child0.id;
+        String rowChild0Var = "V_ROW" + child0.id;
+        String groupChild0Var = "V_GROUP" + child0.id;
+        String headChild0Var = "V_HEAD" + child0.id;
+        String contentChild0Var = "V_CONTENT" + child0.id;
+        dest[5] = colChild0Var;
+        dest[6] = rowChild0Var;
+        dest[7] = groupChild0Var;
+        dest[8] = headChild0Var;
+        dest[9] = contentChild0Var;
+
+        String colChild1Var = "#";
+        String rowChild1Var = "#";
+        String groupChild1Var = "#";
+        String headChild1Var = "#";
+        String contentChild1Var = "#";
+        if (worker.children.size() > 1) {
+            Node child1 = worker.children.get(1);
+            colChild1Var = "V_COL" + child1.id;
+            rowChild1Var = "V_ROW" + child1.id;
+            groupChild1Var = "V_GROUP" + child1.id;
+            headChild1Var = "V_HEAD" + child1.id;
+            contentChild1Var = "V_CONTENT" + child1.id;
+        }
+        dest[10] = colChild1Var;
+        dest[11] = rowChild1Var;
+        dest[12] = groupChild1Var;
+        dest[13] = headChild1Var;
+        dest[14] = contentChild1Var;
+        List<BoolExpr> cstList = new ArrayList<>();
+
+        for (String cstStr : comp.getConstraint()) {
+            String targetCst = StringUtils.replaceEach(cstStr, spec2, dest);
+            BoolExpr expr = Z3Utils.getInstance().convertStrToExpr(targetCst);
+            cstList.add(expr);
+            clauseToNodeMap_.put(expr.toString(), worker.id);
+            clauseToSpecMap_.put(expr.toString(), cstStr);
+        }
+        //cache current cst.
+        cstCache_.put(key, cstList);
+        return cstList;
+    }
+
+    private List<BoolExpr> abstractTable(Node worker, DataFrame df, List<DataFrame> inputs) {
+        List<BoolExpr> cstList = new ArrayList<>();
+        String strVal = worker.function;
+        if (!"root".equals(worker.function))
+            strVal = worker.toString();
+        Pair<Integer, String> key = new Pair<>(worker.id, strVal);
+        if (cstCache_.containsKey(key)) {
+            return cstCache_.get(key);
+        }
+        int row = df.getNrow();
+        int col = df.getNcol();
+
+        int groupNum = 1;
+        int headNum;
+        int contentNum;
+
+        if (worker.function.contains("input")) {
+            headNum = 0;
+            contentNum = 0;
+        } else {
+            if (df instanceof GroupedDataFrame) {
+                groupNum = ((GroupedDataFrame) df).getGroups$krangl_main().size();
+            }
+
+//            System.out.println("Buggy=============" + worker.function);
+            Set head = util_.getHeader(df);
+            Set content = util_.getContent(df);
+//            System.out.println("content:" + content);
+            Set headDiff = new HashSet(head);
+            Set contentDiff = new HashSet(content);
+
+            for (DataFrame input : inputs) {
+                Set headIn = util_.getHeader(input);
+                Set contentIn = util_.getContent(input);
+//                System.out.println("input content:" + contentIn);
+                contentDiff.removeAll(contentIn);
+                headDiff.removeAll(headIn);
+                headDiff.removeAll(contentIn);
+            }
+            headNum = headDiff.size();
+            contentNum = contentDiff.size();
+//            System.out.println("diffContent:" + contentDiff);
+//            System.out.println("worker:" + worker);
+//            System.out.println(headNum);
+//            System.out.println(groupNum);
+//            System.out.println(contentNum);
+        }
+
+        String rowVar = "V_ROW" + worker.id;
+        String colVar = "V_COL" + worker.id;
+        String groupVar = "V_GROUP" + worker.id;
+        String headVar = "V_HEAD" + worker.id;
+        String contentVar = "V_CONTENT" + worker.id;
+        BoolExpr rowCst = z3_.genEqCst(rowVar, row);
+        BoolExpr colCst = z3_.genEqCst(colVar, col);
+
+        BoolExpr groupCst = z3_.genEqCst(groupVar, groupNum);
+        BoolExpr headCst = z3_.genEqCst(headVar, headNum);
+        BoolExpr contentCst = z3_.genEqCst(contentVar, contentNum);
+
+        cstList.add(rowCst);
+        cstList.add(colCst);
+        //We dont know the group number of the final table.
+        if (!"root".equals(worker.function))
+            cstList.add(groupCst);
+
+        cstList.add(headCst);
+        cstList.add(contentCst);
+
+        if ("root".equals(worker.function) || worker.function.contains("input")) {
+            clauseToNodeMap_.put(rowCst.toString(), worker.id);
+            clauseToNodeMap_.put(colCst.toString(), worker.id);
+            clauseToNodeMap_.put(groupCst.toString(), worker.id);
+            clauseToNodeMap_.put(headCst.toString(), worker.id);
+            clauseToNodeMap_.put(contentCst.toString(), worker.id);
+        } else {
+            List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
+            clauseToNodeMap_.put(rowCst.toString(), currAssigns);
+            clauseToNodeMap_.put(colCst.toString(), currAssigns);
+            clauseToNodeMap_.put(groupCst.toString(), currAssigns);
+            clauseToNodeMap_.put(headCst.toString(), currAssigns);
+            clauseToNodeMap_.put(contentCst.toString(), currAssigns);
+        }
+        //cache current cst.
+        cstCache_.put(key, cstList);
+        return cstList;
+    }
+
+    private boolean isValid(DataFrame df) {
+        if(df instanceof GroupedDataFrame) {
+            GroupedDataFrame gdf = (GroupedDataFrame) df;
+            return gdf.getGroups$krangl_main().size() == 0;
+        }
+        return (df.getNcol() == 0 || df.getNrow() == 0);
+    }
+
+    private List<BoolExpr> alignOutput(Node worker) {
+        Pair<Integer, String> key = new Pair<>(worker.id, alignId_);
+        if (cstCache_.containsKey(key))
+            return cstCache_.get(key);
+        List<BoolExpr> cstList = new ArrayList<>();
+        String colVar = "V_COL" + worker.id;
+        String rowVar = "V_ROW" + worker.id;
+        String groupVar = "V_GROUP" + worker.id;
+        String headVar = "V_HEAD" + worker.id;
+        String contentVar = "V_CONTENT" + worker.id;
+        assert worker.children.size() == 1;
+        Node lastChild = worker.children.get(0);
+        String childColVar = "V_COL" + lastChild.id;
+        BoolExpr eqColCst = z3_.genEqCst(colVar, childColVar);
+        String childRowVar = "V_ROW" + lastChild.id;
+        BoolExpr eqRowCst = z3_.genEqCst(rowVar, childRowVar);
+
+        String childGroupVar = "V_GROUP" + lastChild.id;
+        BoolExpr eqGroupCst = z3_.genEqCst(groupVar, childGroupVar);
+        String childHeadVar = "V_HEAD" + lastChild.id;
+        BoolExpr eqHeadCst = z3_.genEqCst(headVar, childHeadVar);
+        String childContentVar = "V_CONTENT" + lastChild.id;
+        BoolExpr eqContentCst = z3_.genEqCst(contentVar, childContentVar);
+
+        cstList.add(eqRowCst);
+        cstList.add(eqColCst);
+        cstList.add(eqGroupCst);
+        cstList.add(eqHeadCst);
+        cstList.add(eqContentCst);
+        cstCache_.put(key, cstList);
+        return cstList;
     }
 }

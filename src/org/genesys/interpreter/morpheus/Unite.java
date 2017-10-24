@@ -107,7 +107,7 @@ public class Unite implements Unop {
             List<Map<Integer, List<String>>> bakList2 = LibUtils.deepClone(conflictList);
             List<Map<Integer, List<String>>> total = new ArrayList<>();
 
-            if(!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+            if (MorpheusGrammar.colMap.get(nCol) != null && !MorpheusGrammar.colMap.get(nCol).isEmpty()) {
                 for (Map<Integer, List<String>> partialConflictMap : bakList2) {
                     //current node.
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));

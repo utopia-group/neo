@@ -132,7 +132,7 @@ public class Filter implements Unop {
         if (df.getNcol() <= lhs || ((df.getCols().get(lhs) instanceof StringCol) && !(rhs instanceof String))
                 || (opStr.equals("l(a,b).(> a b)") && (rhs instanceof String)) || ((rhs instanceof String) && opStr.equals("l(a,b).(< a b)"))) {
             List<Map<Integer, List<String>>> all = new ArrayList<>();
-            if(!MorpheusGrammar.colMap.get(nCol).isEmpty()) {
+            if (MorpheusGrammar.colMap.get(nCol) != null && !MorpheusGrammar.colMap.get(nCol).isEmpty()) {
                 // no out of bound access
                 List<Map<Integer, List<String>>> conflicts1 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflicts1) {
@@ -145,7 +145,7 @@ public class Filter implements Unop {
             }
 
             // > < can't work for string
-            if(!MorpheusGrammar.strList.isEmpty()) {
+            if (!MorpheusGrammar.strList.isEmpty()) {
                 List<Map<Integer, List<String>>> conflicts2 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflicts2) {
                     //current node.
@@ -168,7 +168,7 @@ public class Filter implements Unop {
                 }
             }
 
-            if(!noStrList.isEmpty() && !MorpheusGrammar.strList.isEmpty()) {
+            if (!noStrList.isEmpty() && !MorpheusGrammar.strList.isEmpty()) {
                 List<Map<Integer, List<String>>> conflicts3 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflicts3) {
                     //current node.
@@ -180,7 +180,7 @@ public class Filter implements Unop {
                 all.addAll(conflicts3);
             }
 
-            if(!strList.isEmpty() && !MorpheusGrammar.numList.isEmpty()) {
+            if (!strList.isEmpty() && !MorpheusGrammar.numList.isEmpty()) {
                 List<Map<Integer, List<String>>> conflicts4 = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : conflicts4) {
                     //current node.
