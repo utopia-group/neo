@@ -4,6 +4,7 @@ import kotlin.jvm.functions.Function1;
 import krangl.DataFrame;
 import krangl.Extensions;
 import krangl.ReshapeKt;
+import krangl.StringCol;
 import org.genesys.interpreter.Unop;
 import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.Node;
@@ -49,7 +50,13 @@ public class Gather implements Unop {
         assert !colArgs.isEmpty();
         String key = MorpheusUtil.getInstance().getMorpheusString();
         String value = MorpheusUtil.getInstance().getMorpheusString();
-
+        List<Integer> allList = new ArrayList<>();
+        for (int i = 0; i < df.getNcol(); i++) {
+            allList.add(i);
+        }
+        List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
+        boolean sameType = util_.hasSameType(sels, df.getCols());
+        if(!sameType || (df.getCols().get(0) instanceof StringCol)) convert_ = false;
         DataFrame res;
         if (hasNeg) {
             Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
@@ -194,8 +201,9 @@ public class Gather implements Unop {
             for (int i = 0; i < df.getNcol(); i++) {
                 allList.add(i);
             }
-//            List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
-//            boolean sameType = util_.hasSameType(sels, df.getCols());
+            List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
+            boolean sameType = util_.hasSameType(sels, df.getCols());
+            if(!sameType || (df.getCols().get(0) instanceof StringCol)) convert_ = false;
 //            if (!sameType) {
 //
 //                //Prune all cols that do not share the same type.
