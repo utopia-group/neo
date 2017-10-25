@@ -50,13 +50,13 @@ public class Gather implements Unop {
         assert !colArgs.isEmpty();
         String key = MorpheusUtil.getInstance().getMorpheusString();
         String value = MorpheusUtil.getInstance().getMorpheusString();
-        List<Integer> allList = new ArrayList<>();
-        for (int i = 0; i < df.getNcol(); i++) {
-            allList.add(i);
-        }
-        List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
-        boolean sameType = util_.hasSameType(sels, df.getCols());
-        if(!sameType || (df.getCols().get(0) instanceof StringCol)) convert_ = false;
+//        List<Integer> allList = new ArrayList<>();
+//        for (int i = 0; i < df.getNcol(); i++) {
+//            allList.add(i);
+//        }
+//        List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
+//        boolean sameType = util_.hasSameType(sels, df.getCols());
+//        if(!sameType || (df.getCols().get(0) instanceof StringCol)) convert_ = false;
         DataFrame res;
         if (hasNeg) {
             Function1[] argNegs = colNegs.toArray(new Function1[colNegs.size()]);
@@ -197,13 +197,13 @@ public class Gather implements Unop {
             DataFrame res;
 //            System.out.println("Gather================" + " cols:" + cols + " " + df.getCols());
 //            Extensions.print(df);
-            List<Integer> allList = new ArrayList<>();
-            for (int i = 0; i < df.getNcol(); i++) {
-                allList.add(i);
-            }
-            List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
-            boolean sameType = util_.hasSameType(sels, df.getCols());
-            if(!sameType || (df.getCols().get(0) instanceof StringCol)) convert_ = false;
+//            List<Integer> allList = new ArrayList<>();
+//            for (int i = 0; i < df.getNcol(); i++) {
+//                allList.add(i);
+//            }
+//            List<Integer> sels = util_.sel(new HashSet<>(cols), allList);
+//            boolean sameType = util_.hasSameType(sels, df.getCols());
+//            if(!sameType || (df.getCols().get(0) instanceof StringCol)) convert_ = false;
 //            if (!sameType) {
 //
 //                //Prune all cols that do not share the same type.

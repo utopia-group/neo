@@ -118,8 +118,8 @@ public class Separate implements Unop {
         colArgs.add(col1);
         colArgs.add(col2);
 
-        System.out.println("separate===================" + orgCol);
-        Extensions.print(df);
+//        System.out.println("separate===================" + orgCol);
+//        Extensions.print(df);
         DataFrame res = ReshapeKt.separate(df, orgCol, colArgs, sep_, remove_, convert_);
 
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
