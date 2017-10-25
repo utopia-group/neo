@@ -81,11 +81,12 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-//        System.out.println("Verifying.... " + node);
+//        System.out.println("Verifying.... " + node + " curr:" + curr);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         List<BoolExpr> cstList = new ArrayList<>();
 
+        int currId = 0;
         queue.add(node);
         while (!queue.isEmpty()) {
             Node worker = queue.remove();
@@ -113,6 +114,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                 if (!worker.children.isEmpty() && comp != null) {
                     if ((curr != null) && (worker.id == curr.id)) {
                         long start2 = LibUtils.tick();
+                        if (worker.children.size() > 1)
+                            currId = worker.children.get(1).id;
 //                        System.out.println("type on node: " + worker);
                         Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
                         Object judge = validRes.t0;
@@ -144,7 +147,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         }
 
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
-        if (!sat) System.out.println("Prune program:" + node);
+        if (!sat) {
+            System.out.println("Prune program:" + node);
+            //FIXME: will make it general later.
+            if (curr != null && "group_by".equals(curr.function)) {
+                z3_.removeConflict(currId);
+            }
+        }
         return sat;
     }
 
@@ -324,7 +333,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     }
 
     private boolean isValid(DataFrame df) {
-        if(df instanceof GroupedDataFrame) {
+        if (df instanceof GroupedDataFrame) {
             GroupedDataFrame gdf = (GroupedDataFrame) df;
             return gdf.getGroups$krangl_main().size() == 0;
         }

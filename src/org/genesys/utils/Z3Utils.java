@@ -240,6 +240,17 @@ public class Z3Utils {
         return conflicts_;
     }
 
+    public void removeConflict(int id) {
+        Pair<Integer, List<String>>  remove_ = null;
+        for(Pair<Integer, List<String>> p : conflicts_) {
+            if(id == p.t0) {
+                remove_ = p;
+                break;
+            }
+        }
+        conflicts_.remove(remove_);
+    }
+
     public Solver getSolverCore() {
         return solver_core;
     }
