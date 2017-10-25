@@ -147,13 +147,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         }
 
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
-        if (!sat) {
-            System.out.println("Prune program:" + node);
-            //FIXME: will make it general later.
-            if (curr != null && "group_by".equals(curr.function)) {
-                z3_.removeConflict(currId);
-            }
-        }
+//        if (!sat) {
+//            System.out.println("Prune program:" + node);
+//            //FIXME: will make it general later.
+//            if (curr != null && "group_by".equals(curr.function)) {
+//                z3_.removeConflict(currId);
+//            }
+//        }
         return sat;
     }
 

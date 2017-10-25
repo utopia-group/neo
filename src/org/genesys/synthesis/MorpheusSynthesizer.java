@@ -118,7 +118,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) partial++;
             else concrete++;
 
-//            System.out.println("Checking Program: " + ast);
+            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
             //if (!coreAst_.contains(ast.toString())){

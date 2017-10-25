@@ -143,19 +143,20 @@ public class SATUtils {
     }
 
 
-    public boolean blockTrail(List<Integer> trail) {
+    public boolean blockTrail(VecInt trail) {
         assert (solver_ != null);
         assert (!trail.isEmpty());
 
 //        System.out.println("block trail= " + trail);
 //        System.out.println("lvl = " + solver_.decisionLevel());
 
-        VecInt clause = new VecInt();
-        for (int i = 0; i < trail.size(); i++) {
-            clause.push(-trail.get(i));
-        }
+//        VecInt clause = new VecInt();
+//        for (int i = 0; i < trail.size(); i++) {
+//            clause.push(-trail.get(i));
+//        }
+
         boolean conflict = false;
-        conflict = addClause(clause, ClauseType.ASSIGNMENT);
+        conflict = addClause(trail, ClauseType.ASSIGNMENT);
 //        if (solver_.decisionLevel() == 0) conflict = addClause(clause);
 //        else conflict = addClauseOnTheFly(clause);
 
@@ -330,8 +331,11 @@ public class SATUtils {
 
         boolean conflict = false;
         try {
+
             IConstr c = solver_.addClause(clause);
-            learnts_.add(new Pair<IConstr,Integer>(c,line));
+            // can the clause be satisfied?
+            if (c != null)
+                learnts_.add(new Pair<IConstr,Integer>(c,line));
         } catch (ContradictionException e) {
             conflict = true;
         }
@@ -353,8 +357,8 @@ public class SATUtils {
         List<Pair<IConstr,Integer>> tmp = new ArrayList<>();
         for (Pair<IConstr,Integer> c : learnts_){
             if (c.t1 > line) {
-                solver_.removeConstr(c.t0);
                 tmp.add(c);
+                solver_.removeConstr(c.t0);
             }
         }
         learnts_.removeAll(tmp);

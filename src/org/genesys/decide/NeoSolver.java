@@ -384,7 +384,13 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
         satUtils_.getSolver().cancelUntil(currentSATLevel_.get(backtrack_lvl));
 
         boolean conflict = false;
-        if (block) conflict = satUtils_.blockTrail(trailSAT_);
+
+        VecInt clause = new VecInt();
+        for (int i = 0; i < trailSAT_.size(); i++) {
+            clause.push(-trailSAT_.get(i));
+        }
+
+        if (block) conflict = satUtils_.blockTrail(clause);
 
         for (int i = size; i > backtrack_lvl; i--) {
             // undo
