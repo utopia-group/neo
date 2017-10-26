@@ -7,6 +7,7 @@ import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.utils.LibUtils;
 import org.genesys.utils.SATUtils;
+import org.genesys.utils.Z3Utils;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.core.Constr;
 import org.sat4j.specs.Lbool;
@@ -1770,6 +1771,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     System.out.println("Sketch #iterations = " + iterations_);
                     iterations_ = 0;
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
+                    Z3Utils.getInstance().cleanCache();
                 } else {
                     if (iterations_ > ITERATION_LIMIT){
                         // go to next sketch

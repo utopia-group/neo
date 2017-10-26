@@ -132,6 +132,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                 return false;
                             }
                             List<BoolExpr> abs = abstractTable(worker, workerDf, inputs);
+                            if (abs.isEmpty()) {
+                                z3_.clearConflict();
+                                return false;
+                            }
                             cstList.addAll(abs);
                         }
                     }
@@ -147,13 +151,9 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         }
 
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
-//        if (!sat) {
-//            System.out.println("Prune program:" + node);
-//            //FIXME: will make it general later.
-//            if (curr != null && "group_by".equals(curr.function)) {
-//                z3_.removeConflict(currId);
-//            }
-//        }
+        if (!sat) {
+            System.out.println("Prune program:" + node);
+        }
         return sat;
     }
 
@@ -326,6 +326,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             clauseToNodeMap_.put(groupCst.toString(), currAssigns);
             clauseToNodeMap_.put(headCst.toString(), currAssigns);
             clauseToNodeMap_.put(contentCst.toString(), currAssigns);
+            Set<String> peCore = new HashSet<>();
+            peCore.add(rowCst.toString());
+            peCore.add(colCst.toString());
+            peCore.add(groupCst.toString());
+            peCore.add(headCst.toString());
+            peCore.add(contentCst.toString());
+            if (MorpheusSynthesizer.learning_ && z3_.hasCache(peCore)) return new ArrayList<>();
         }
         //cache current cst.
         cstCache_.put(key, cstList);

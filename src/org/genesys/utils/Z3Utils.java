@@ -210,7 +210,8 @@ public class Z3Utils {
 
     public void printUnsatCore(Map<String, Object> clauseToNodeMap, Map<String, String> clauseToSpecMap_, Collection<Component> components) {
 //        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
-        conflicts_.clear();
+        clearConflict();
+        Set<String> peCores = new HashSet<>();
         for (BoolExpr e : solver_.getUnsatCore()) {
             String core = cstMap_.get(e).toString();
 //            System.out.println(e + " " + cstMap_.get(e) + " *****" + clauseToNodeMap.containsKey(core));
@@ -223,6 +224,8 @@ public class Z3Utils {
                     nodeId = (Integer) nodeObj;
                 else {
                     List<Pair<Integer, List<String>>> folComp = (List<Pair<Integer, List<String>>>) nodeObj;
+//                    System.out.println("PE core=======" + cstMap_.get(e));
+                    peCores.add(cstMap_.get(e).toString());
                     conflicts_.addAll(folComp);
                     continue;
                 }
@@ -234,21 +237,28 @@ public class Z3Utils {
                 if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
+        coreCache_.add(peCores);
+    }
+
+    public void clearConflict() {
+        conflicts_.clear();
+    }
+
+    private Set<Set<String>> coreCache_ = new HashSet<>();
+
+    public void cleanCache() {
+        coreCache_.clear();
+    }
+
+    public boolean hasCache(Set<String> peSet) {
+        for (Set<String> s : coreCache_) {
+            if (peSet.containsAll(s)) return true;
+        }
+        return false;
     }
 
     public List<Pair<Integer, List<String>>> getConflicts() {
         return conflicts_;
-    }
-
-    public void removeConflict(int id) {
-        Pair<Integer, List<String>>  remove_ = null;
-        for(Pair<Integer, List<String>> p : conflicts_) {
-            if(id == p.t0) {
-                remove_ = p;
-                break;
-            }
-        }
-        conflicts_.remove(remove_);
     }
 
     public Solver getSolverCore() {

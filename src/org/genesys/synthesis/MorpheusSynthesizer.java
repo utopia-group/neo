@@ -32,7 +32,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     private boolean silent_ = true;
 
-    private boolean learning_ = true;
+    public static boolean learning_ = true;
 
     private Checker checker_;
 
