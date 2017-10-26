@@ -251,6 +251,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             strVal = worker.toString();
         Pair<Integer, String> key = new Pair<>(worker.id, strVal);
         if (cstCache_.containsKey(key)) {
+            if (!"root".equals(worker.function) && !worker.function.contains("input")) {
+                //Need to also update current assignment.
+                List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
+                for (BoolExpr o : cstCache_.get(key)) {
+                    clauseToNodeMap_.put(o.toString(), currAssigns);
+                }
+            }
             return cstCache_.get(key);
         }
         int row = df.getNrow();
