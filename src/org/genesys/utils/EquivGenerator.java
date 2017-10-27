@@ -18,7 +18,7 @@ public class EquivGenerator {
         Z3Utils z3 = Z3Utils.getInstance();
         Solver solver_core = z3.getSolverCore();
         HashMap<String, Component> components_ = new HashMap<>();
-        String specLoc = "./specs/Morpheus";
+        String specLoc = "./specs/DeepCoder";
         File[] files = new File(specLoc).listFiles();
         Set<String> constraints = new HashSet<>();
         for (File file : files) {
