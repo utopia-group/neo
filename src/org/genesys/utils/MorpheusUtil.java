@@ -2,6 +2,8 @@ package org.genesys.utils;
 
 import krangl.DataCol;
 import krangl.DataFrame;
+import krangl.IntCol;
+import krangl.StringCol;
 
 import javax.xml.crypto.Data;
 import java.util.*;
@@ -140,9 +142,30 @@ public class MorpheusUtil {
     }
 
     public String removeZeros(String str) {
-        if(!str.contains(".")) return str;
+        if (!str.contains(".")) return str;
         return str.replaceAll("[0]*$", "").replaceAll(".$", "");
 
+    }
+
+    //Return a list of numeric columns that contains 0.
+    public List<String> zeroColumn(DataFrame df) {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < df.getCols().size(); i++) {
+            DataCol col = df.getCols().get(i);
+            if (col instanceof IntCol) {
+                IntCol icol = (IntCol) col;
+                for (Integer o : icol.getValues()) {
+                    if (o == 0) {
+                        list.add(String.valueOf(i));
+                        break;
+                    }
+
+                }
+            }
+
+
+        }
+        return list;
     }
 
     public static void main(String[] args) {
