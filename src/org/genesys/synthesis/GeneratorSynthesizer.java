@@ -56,7 +56,7 @@ public class GeneratorSynthesizer implements Synthesizer {
     public GeneratorSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc,
                                 String filename, Decider decider, Generator generator) {
         filename_ = filename;
-        solver_ = new MorpheusSolver(grammar, depth, decider);
+        solver_ = new MorpheusSolver(grammar, depth, decider, false);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
@@ -111,12 +111,15 @@ public class GeneratorSynthesizer implements Synthesizer {
             }
 
         } else if (out instanceof List){
-            if (((List)out).isEmpty())
+            if (((List)out).isEmpty() || ((List)out).size() == 10)
                 valid = false;
-            for (Object o : (List)out){
-                if ((Integer)o > 255 || (Integer)o < -256){
-                    valid = false;
-                    break;
+
+            if (valid) {
+                for (Object o : (List) out) {
+                    if ((Integer) o > 255 || (Integer) o < -256) {
+                        valid = false;
+                        break;
+                    }
                 }
             }
         }
@@ -198,9 +201,9 @@ public class GeneratorSynthesizer implements Synthesizer {
         return res;
     }
 
-    public void writeToJSON(String filename){
+    public void writeToJSON(String filename, Node program){
 
-        SampleObject sample = new SampleObject(filename,inputs_,outputs_);
+        SampleObject sample = new SampleObject(filename,inputs_,outputs_, program);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(sample);
 //        System.out.println(json);
@@ -287,7 +290,7 @@ public class GeneratorSynthesizer implements Synthesizer {
                 outputs_ = outputs;
 //                System.out.println("inputs = " + inputs);
 //                System.out.println("outputs = " + outputs);
-                writeToJSON(filename_);
+                writeToJSON(filename_, program);
             }
         }
         long end = LibUtils.tick();

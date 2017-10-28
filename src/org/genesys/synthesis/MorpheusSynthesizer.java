@@ -76,7 +76,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     public MorpheusSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider) {
         learning_ = learning;
-        solver_ = new MorpheusSolver(grammar, depth, decider);
+        solver_ = new MorpheusSolver(grammar, depth, decider, learning);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;

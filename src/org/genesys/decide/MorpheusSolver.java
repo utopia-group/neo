@@ -135,6 +135,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
     private VecInt clauseLearn_ = new VecInt();
 
+    private boolean learning_ = false;
+
     public MorpheusSolver(Grammar g, Decider decider) {
         satUtils_ = SATUtils.getInstance();
         grammar_ = g;
@@ -142,7 +144,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         Object start = grammar_.start();
     }
 
-    public MorpheusSolver(Grammar g, int depth, Decider decider) {
+    public MorpheusSolver(Grammar g, int depth, Decider decider, boolean learning) {
         satUtils_ = SATUtils.getInstance();
         maxLen_ = depth;
         grammar_ = g;
@@ -153,6 +155,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             backtrack_.add(new ArrayList<>());
             lineProductions_.add(new ArrayList<>());
         }
+        learning_ = learning;
     }
 
 
@@ -169,6 +172,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             if (block || !partial_) {
                 if (step_ == 4) conflict &= blockModelNeo();
                 else conflict &= blockModel();
+                
                 if (blockLearnFlag_) {
                     // I need to learn a clause that blocks the previous ast up to currentLine
                     conflict &= satUtils_.addClause(clauseLearn_, SATUtils.ClauseType.ASSIGNMENT);
@@ -1737,36 +1741,38 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 if (!sketches_.containsKey(sketch)){
 
                     assignmentsCache_.clear();
-
-                    List<Integer> next_skt = new ArrayList<>();
-                    currentSketch_.clear();
                     sketches_.put(sketch, true);
 
-                    for (int i = 0; i < highTrail_.size(); i++){
-                        assert (!highTrail_.get(i).t0.decision.equals(""));
-                        int v = varNodes_.get(new Pair<Integer, Production>(highTrail_.get(i).t0.id, highTrail_.get(i).t0.decision));
-                        next_skt.add(-v);
-                        Pair<Integer,String> pp = new Pair<Integer,String>(highTrail_.get(i).t0.id,highTrail_.get(i).t0.function);
-                        currentSketch_.add(pp);
-                    }
+                    if (learning_) {
+                        List<Integer> next_skt = new ArrayList<>();
+                        currentSketch_.clear();
+                        for (int i = 0; i < highTrail_.size(); i++) {
+                            assert (!highTrail_.get(i).t0.decision.equals(""));
+                            int v = varNodes_.get(new Pair<Integer, Production>(highTrail_.get(i).t0.id, highTrail_.get(i).t0.decision));
+                            next_skt.add(-v);
+                            Pair<Integer, String> pp = new Pair<Integer, String>(highTrail_.get(i).t0.id, highTrail_.get(i).t0.function);
+                            currentSketch_.add(pp);
+                        }
 
-                    backtrackStep1(0,false);
-                    step_ = 1;
+                        backtrackStep1(0, false);
+                        step_ = 1;
 
-                    SATUtils.getInstance().cleanLearnts();
-                    if (!currentSketchClause_.isEmpty()){
-                        SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.SKTASSIGNMENT);
-                        currentSketchClause_.clear();
-                    }
-                    for (Integer l : next_skt)
-                        currentSketchClause_.push(l);
+                        SATUtils.getInstance().cleanLearnts();
+                        if (!currentSketchClause_.isEmpty()) {
+                            System.out.println("blocking = " + currentSketchClause_);
+                            SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.SKTASSIGNMENT);
+                            currentSketchClause_.clear();
+                        }
+                        for (Integer l : next_skt)
+                            currentSketchClause_.push(l);
 
-                    SATUtils.getInstance().cleanEqLearnts();
-                    boolean conflict = SATUtils.getInstance().addEqLearnts(currentSketch_, sketchNodes_);
-                    if (conflict) {
-                        unsat = true;
-                        System.out.println("s NO SOLUTION");
-                        break;
+                        SATUtils.getInstance().cleanEqLearnts();
+                        boolean conflict = SATUtils.getInstance().addEqLearnts(currentSketch_, sketchNodes_);
+                        if (conflict) {
+                            unsat = true;
+                            System.out.println("s NO SOLUTION");
+                            break;
+                        }
                     }
                     System.out.println("Sketch #iterations = " + iterations_);
                     iterations_ = 0;
@@ -1914,8 +1920,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                            System.out.println("backtrackTimeSAT_ time=:" + (backtrackTimeSAT_));
 //                            System.out.println("backtrackTimeTrail_ time=:" + (backtrackTimeTrail_));
 //
-//                            System.out.println("ast = " + ast);
-
                             cpTrailSAT_.clear();
                             trailSAT_.copyTo(cpTrailSAT_);
                             return ast;
@@ -2042,35 +2046,37 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                             assert (partial_);
                             step_ = 3;
                         } else {
-                            if (currentLine_ < learntLine_) {
-                                satUtils_.getInstance().cleanLearnts(currentLine_);
-                                blockLearnFlag_ = true;
-                                clauseLearn_.clear();
-                                for (Pair<Integer, Integer> p : blockLearn_) {
-                                    if (p.t1 <= currentLine_)
-                                        clauseLearn_.push(-p.t0);
-                                }
-                                learntAst_ = blockAst_;
-                            }
-
-                            learntLine_ = currentLine_;
-
-                            blockLearn_.clear();
-                            for (int i = 0; i < highTrail_.size(); i++){
-                                Node node = highTrail_.get(i).t0;
-                                if (!node.function.equals("")) {
-                                    int v = varNodes_.get(new Pair<Integer, Production>(node.id, node.decision));
-                                    blockLearn_.add(new Pair<Integer,Integer>(v,0));
+                            if (learning_) {
+                                if (currentLine_ < learntLine_) {
+                                    satUtils_.getInstance().cleanLearnts(currentLine_);
+                                    blockLearnFlag_ = true;
+                                    clauseLearn_.clear();
+                                    for (Pair<Integer, Integer> p : blockLearn_) {
+                                        if (p.t1 <= currentLine_)
+                                            clauseLearn_.push(-p.t0);
+                                    }
+                                    learntAst_ = blockAst_;
                                 }
 
-                                for (Node n : node.children){
-                                    if (!n.function.equals("")){
-                                        if (n.function.startsWith("input") || n.function.startsWith("line")){
-                                            int v = varNodes_.get(new Pair<Integer, Production>(n.id, n.decision));
-                                            blockLearn_.add(new Pair<Integer,Integer>(v,0));
-                                        } else {
-                                            int v = varNodes_.get(new Pair<Integer, Production>(n.id, n.decision));
-                                            blockLearn_.add(new Pair<Integer,Integer>(v,i));
+                                learntLine_ = currentLine_;
+
+                                blockLearn_.clear();
+                                for (int i = 0; i < highTrail_.size(); i++) {
+                                    Node node = highTrail_.get(i).t0;
+                                    if (!node.function.equals("")) {
+                                        int v = varNodes_.get(new Pair<Integer, Production>(node.id, node.decision));
+                                        blockLearn_.add(new Pair<Integer, Integer>(v, 0));
+                                    }
+
+                                    for (Node n : node.children) {
+                                        if (!n.function.equals("")) {
+                                            if (n.function.startsWith("input") || n.function.startsWith("line")) {
+                                                int v = varNodes_.get(new Pair<Integer, Production>(n.id, n.decision));
+                                                blockLearn_.add(new Pair<Integer, Integer>(v, 0));
+                                            } else {
+                                                int v = varNodes_.get(new Pair<Integer, Production>(n.id, n.decision));
+                                                blockLearn_.add(new Pair<Integer, Integer>(v, i));
+                                            }
                                         }
                                     }
                                 }
@@ -2096,8 +2102,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                            System.out.println("backtrackTimeBlock_ time=:" + (backtrackTimeBlock_));
 //                            System.out.println("backtrackTimeSAT_ time=:" + (backtrackTimeSAT_));
 //                            System.out.println("backtrackTimeTrail_ time=:" + (backtrackTimeTrail_));
-
-//                            System.out.println("ast = " + ast);
 
                             cpTrailSAT_.clear();
                             trailSAT_.copyTo(cpTrailSAT_);
