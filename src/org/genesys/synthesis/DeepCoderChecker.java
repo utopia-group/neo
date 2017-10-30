@@ -2,8 +2,12 @@ package org.genesys.synthesis;
 
 import com.google.gson.Gson;
 import com.microsoft.z3.BoolExpr;
+import krangl.DataFrame;
+import krangl.GroupedDataFrame;
+import org.apache.commons.lang3.StringUtils;
 import org.genesys.models.*;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.MorpheusUtil;
 import org.genesys.utils.Z3Utils;
 
 import java.io.File;
@@ -20,6 +24,20 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
     private Gson gson = new Gson();
 
+    private Z3Utils z3_ = Z3Utils.getInstance();
+
+    private MorpheusUtil util_ = MorpheusUtil.getInstance();
+
+    //Properties: LEN, MAX, MIN, FIRST, LAST
+    private String[] spec = {
+            "OUT_LEN_SPEC", "OUT_MAX_SPEC", "OUT_MIN_SPEC", "OUT_FIRST_SPEC", "OUT_LAST_SPEC",
+            "IN0_LEN_SPEC", "IN0_MAX_SPEC", "IN0_MIN_SPEC", "IN0_FIRST_SPEC", "IN0_LAST_SPEC",
+            "IN1_LEN_SPEC", "IN1_MAX_SPEC", "IN1_MIN_SPEC", "IN1_FIRST_SPEC", "IN1_LAST_SPEC"
+    };
+
+    private Map<String, Object> clauseToNodeMap_ = new HashMap<>();
+    //Map a clause to its original spec
+    private Map<String, String> clauseToSpecMap_ = new HashMap<>();
 
     public DeepCoderChecker(String specLoc) throws FileNotFoundException {
         File[] files = new File(specLoc).listFiles();
@@ -38,6 +56,11 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
      */
     @Override
     public boolean check(Problem specification, Node node) {
+        return true;
+    }
+
+    @Override
+    public boolean check(Problem specification, Node node, Node curr) {
 
         Example example = specification.getExamples().get(0);
         Object output = example.getOutput();
@@ -45,7 +68,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
-        Z3Utils z3 = Z3Utils.getInstance();
         List<BoolExpr> cstList = new ArrayList<>();
         Map<String, Object> clauseToNodeMap_ = new HashMap<>();
 
@@ -54,155 +76,162 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             Node worker = queue.remove();
             //Generate constraint between worker and its children.
             String func = worker.function;
-            String workerVar = "V_LEN" + worker.id;
-            String workerVar2 = "V_MAX" + worker.id;
             //Get component spec.
             Component comp = components_.get(func);
-
-            // only uses the max constraints if all children of zipwith and map are present
-            // FIXME: fix this hack in the future
-            boolean hackMax = ((!func.equals("ZIPWITH") && !func.equals("MAP")) ||
-                    (func.equals("ZIPWITH") && worker.children.size() == 3) ||
-                    (func.equals("MAP") && worker.children.size() == 2));
-
+//            System.out.println("working on : " + func + " id:" + worker.id + " isconcrete:" + worker.isConcrete());
             if ("root".equals(func)) {
-                //attach output
-                int outSize = 1;
-                int outMax;
-                if (output instanceof List) {
-                    //len
-                    outSize = ((List) output).size();
-
-                    //max
-                    assert output instanceof List : output;
-                    List<Double> list = LibUtils.cast(output);
-                    Optional<Double> max = list.stream().reduce(Double::max);
-                    outMax = max.get().intValue();
-                } else {
-                    outMax = ((Double) output).intValue();
-                }
-
-                BoolExpr outCst = z3.genEqCst(workerVar, outSize);
-                assert worker.children.size() == 1;
-                Node lastChild = worker.children.get(0);
-                String childVar = "V_LEN" + lastChild.id;
-                BoolExpr eqCst = z3.genEqCst(workerVar, childVar);
-
-                cstList.add(outCst);
-                cstList.add(eqCst);
-
-
-                if (hackMax){
-                    BoolExpr outMaxCst = z3.genEqCst(workerVar2, outMax);
-                    assert worker.children.size() == 1;
-                    String childVar2 = "V_MAX" + lastChild.id;
-                    BoolExpr eqCst2 = z3.genEqCst(workerVar2, childVar2);
-
-                    cstList.add(outMaxCst);
-                    cstList.add(eqCst2);
-                }
-
+                List<BoolExpr> abs = abstractDeepCode(worker, output);
+                List<BoolExpr> align = alignOutput(worker);
+                cstList.addAll(abs);
+                cstList.addAll(align);
             } else if (func.contains("input")) {
                 //attach inputs
                 List<String> nums = LibUtils.extractNums(func);
                 assert !nums.isEmpty();
                 int index = Integer.valueOf(nums.get(0));
-                Object inputObj = inputs.get(index);
-                int inSize = 1;
-                int inMax;
-                if (inputObj instanceof List) {
-                    inSize = ((List) inputObj).size();
+                Object inDf = inputs.get(index);
 
-                    assert inputObj instanceof List : inputObj;
-                    List<Double> list = LibUtils.cast(inputObj);
-                    Optional<Double> max = list.stream().reduce(Double::max);
-                    inMax = max.get().intValue();
-                } else {
-                    inMax = ((Double) inputObj).intValue();
-                }
-                BoolExpr inCst = z3.genEqCst(workerVar, inSize);
-                cstList.add(inCst);
+                List<BoolExpr> abs = abstractDeepCode(worker, inDf);
 
-                BoolExpr inMaxCst = z3.genEqCst(workerVar2, inMax);
-                cstList.add(inMaxCst);
-                // adding input constraint to the core.
-                clauseToNodeMap_.put(inCst.toString(), worker.id);
-                clauseToNodeMap_.put(inMaxCst.toString(), worker.id);
-
+                cstList.addAll(abs);
             } else {
-                if (!worker.children.isEmpty()) {
-                    if (comp != null) {
-                        for (String cstStr : comp.getConstraint()) {
-                            String targetCst = cstStr.replace("OUT_LEN_SPEC", workerVar);
-                            if (hackMax) {
-                                targetCst = targetCst.replace("OUT_MAX_SPEC", workerVar2);
-                            }
-
-                            for (int i = 0; i < worker.children.size(); i++) {
-                                Node child = worker.children.get(i);
-                                String childVar = "V_LEN" + child.id;
-
-                                String targetId = "IN" + i + "_LEN_SPEC";
-                                targetCst = targetCst.replace(targetId, childVar);
-
-                                if (hackMax) {
-                                    String childVar2 = "V_MAX" + child.id;
-                                    String targetId2 = "IN" + i + "_MAX_SPEC";
-                                    targetCst = targetCst.replace(targetId2, childVar2);
-                                }
-                            }
-
-                            Node fstChild = worker.children.get(0);
-                            Component fstComp = components_.get(fstChild.function);
-                            if (fstComp != null && comp.isHigh()) {
-                                List<String> childSpecs = fstComp.getConstraint();
-                                for (String childCst : childSpecs) {
-                                    if (hackMax) {
-                                        String fstChildVar = "V_MAX" + fstChild.id;
-                                        childCst = childCst.replace("OUT_MAX_SPEC", fstChildVar);
-                                        String postfix = "_" + worker.id;
-                                        childCst = childCst.replaceAll("IN[0-9]_MAX_SPEC", "$0" + postfix);
-                                        BoolExpr exprChild = z3.convertStrToExpr(childCst);
-                                        cstList.add(exprChild);
-                                        clauseToNodeMap_.put(exprChild.toString(), fstChild.id);
-                                    }
-                                }
-                            }
-
-                            if (hackMax) {
-                                if (targetCst.contains("IN0_ARG")) {
-                                    targetCst = targetCst.replace("0_ARG", "");
-                                    targetCst = targetCst.replace("CHILD", String.valueOf(worker.id));
-                                }
-                            }
-
-                                BoolExpr expr = z3.convertStrToExpr(targetCst);
-                                cstList.add(expr);
-                                clauseToNodeMap_.put(expr.toString(), worker.id);
-                        }
-                    }
+                if (!worker.children.isEmpty() && comp != null) {
+                    List<BoolExpr> nodeCst = genNodeSpec(worker, comp);
+                    cstList.addAll(nodeCst);
                 }
             }
 
             for (int i = 0; i < worker.children.size(); i++) {
                 Node child = worker.children.get(i);
-                //FIXME: this code is ugly!!!
-                if ((comp != null) && comp.isHigh() && (i == 0) && !child.toString().contains("input")) continue;
                 queue.add(child);
             }
         }
-//        for (BoolExpr b : cstList){
-//            System.out.println(b);
-//        }
-        boolean sat = z3.isSat(cstList, clauseToNodeMap_, new HashMap<>(), components_.values());
-        if (!sat) System.out.println("Prune program:" + node);
 
+        boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
+        if (!sat) {
+            System.out.println("Prune program:" + node);
+        }
         return sat;
     }
 
-    @Override
-    public boolean check(Problem specification, Node node, Node curr) {
-        return true;
+
+    private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
+//        System.out.println("current workder: " + worker.id + " " + worker);
+        String[] dest = new String[15];
+        String lenVar = "V_LEN" + worker.id;
+        String maxVar = "V_MAX" + worker.id;
+        String minVar = "V_MIN" + worker.id;
+        String firstVar = "V_FIRST" + worker.id;
+        String lastVar = "V_LAST" + worker.id;
+        dest[0] = lenVar;
+        dest[1] = maxVar;
+        dest[2] = minVar;
+        dest[3] = firstVar;
+        dest[4] = lastVar;
+        Node child0 = worker.children.get(0);
+        String lenChild0Var = "V_LEN" + child0.id;
+        String maxChild0Var = "V_MAX" + child0.id;
+        String minChild0Var = "V_MIN" + child0.id;
+        String firstChild0Var = "V_FIRST" + child0.id;
+        String lastChild0Var = "V_LAST" + child0.id;
+        dest[5] = lenChild0Var;
+        dest[6] = maxChild0Var;
+        dest[7] = minChild0Var;
+        dest[8] = firstChild0Var;
+        dest[9] = lastChild0Var;
+
+        String lenChild1Var = "#";
+        String maxChild1Var = "#";
+        String minChild1Var = "#";
+        String firstChild1Var = "#";
+        String lastChild1Var = "#";
+        if (worker.children.size() > 1) {
+            Node child1 = worker.children.get(1);
+            lenChild1Var = "V_LEN" + child1.id;
+            maxChild1Var = "V_MAX" + child1.id;
+            minChild1Var = "V_MIN" + child1.id;
+            firstChild1Var = "V_FIRST" + child1.id;
+            lastChild1Var = "V_LAST" + child1.id;
+        }
+        dest[10] = lenChild1Var;
+        dest[11] = maxChild1Var;
+        dest[12] = minChild1Var;
+        dest[13] = firstChild1Var;
+        dest[14] = lastChild1Var;
+        List<BoolExpr> cstList = new ArrayList<>();
+
+        for (String cstStr : comp.getConstraint()) {
+            String targetCst = StringUtils.replaceEach(cstStr, spec, dest);
+            BoolExpr expr = z3_.convertStrToExpr(targetCst);
+            cstList.add(expr);
+            clauseToNodeMap_.put(expr.toString(), worker.id);
+            clauseToSpecMap_.put(expr.toString(), cstStr);
+        }
+        return cstList;
+    }
+
+    private List<BoolExpr> abstractDeepCode(Node worker, Object obj) {
+        List<BoolExpr> cstList = new ArrayList<>();
+        int len = util_.getLen(obj);
+        int max = util_.getMax(obj);
+        int min = util_.getMin(obj);
+        int first = util_.getFirst(obj);
+        int last = util_.getLast(obj);
+
+        String lenVar = "V_LEN" + worker.id;
+        String maxVar = "V_MAX" + worker.id;
+        String minVar = "V_MIN" + worker.id;
+        String firstVar = "V_FIRST" + worker.id;
+        String lastVar = "V_LAST" + worker.id;
+
+        BoolExpr lenCst = z3_.genEqCst(lenVar, len);
+        BoolExpr maxCst = z3_.genEqCst(maxVar, max);
+        BoolExpr minCst = z3_.genEqCst(minVar, min);
+        BoolExpr firstCst = z3_.genEqCst(firstVar, first);
+        BoolExpr lastCst = z3_.genEqCst(lastVar, last);
+
+        cstList.add(lenCst);
+        cstList.add(maxCst);
+        cstList.add(minCst);
+        cstList.add(firstCst);
+        cstList.add(lastCst);
+
+        clauseToNodeMap_.put(lenCst.toString(), worker.id);
+        clauseToNodeMap_.put(maxCst.toString(), worker.id);
+        clauseToNodeMap_.put(minCst.toString(), worker.id);
+        clauseToNodeMap_.put(firstCst.toString(), worker.id);
+        clauseToNodeMap_.put(lastCst.toString(), worker.id);
+        return cstList;
+    }
+
+    private List<BoolExpr> alignOutput(Node worker) {
+        List<BoolExpr> cstList = new ArrayList<>();
+        String lenVar = "V_LEN" + worker.id;
+        String maxVar = "V_MAX" + worker.id;
+        String minVar = "V_MIN" + worker.id;
+        String firstVar = "V_FIRST" + worker.id;
+        String lastVar = "V_LAST" + worker.id;
+
+        assert worker.children.size() == 1;
+        Node lastChild = worker.children.get(0);
+        String lenChild0Var = "V_LEN" + lastChild.id;
+        String maxChild0Var = "V_MAX" + lastChild.id;
+        String minChild0Var = "V_MIN" + lastChild.id;
+        String firstChild0Var = "V_FIRST" + lastChild.id;
+        String lastChild0Var = "V_LAST" + lastChild.id;
+
+        BoolExpr eqLenCst = z3_.genEqCst(lenVar, lenChild0Var);
+        BoolExpr eqMaxCst = z3_.genEqCst(maxVar, maxChild0Var);
+        BoolExpr eqMinCst = z3_.genEqCst(minVar, minChild0Var);
+        BoolExpr eqFirstCst = z3_.genEqCst(firstVar, firstChild0Var);
+        BoolExpr eqLastCst = z3_.genEqCst(lastVar, lastChild0Var);
+
+        cstList.add(eqLenCst);
+        cstList.add(eqMaxCst);
+        cstList.add(eqMinCst);
+        cstList.add(eqFirstCst);
+        cstList.add(eqLastCst);
+        return cstList;
     }
 
     @Override

@@ -52,23 +52,23 @@ public class DeepCoderInterpreter extends BaseInterpreter {
 
 
         executors.put("MAP", (objects, input) ->
-                new Maybe<>(new MapLList((Unop) objects.get(0)).apply(objects.get(1)))
+                new Maybe<>(new MapLList((Unop) objects.get(1)).apply(objects.get(0)))
         );
         executors.put("FILTER", (objects, input) ->
-                new Maybe<>(new FilterLList((Unop) objects.get(0)).apply(objects.get(1)))
+                new Maybe<>(new FilterLList((Unop) objects.get(1)).apply(objects.get(0)))
         );
         executors.put("COUNT", (objects, input) ->
-                new Maybe<>(new CountList((Unop) objects.get(0)).apply(objects.get(1))));
+                new Maybe<>(new CountList((Unop) objects.get(1)).apply(objects.get(0))));
         executors.put("ZIPWITH", (objects, input) -> {
             assert objects.size() == 3 : objects;
             List args = new ArrayList();
+            args.add(objects.get(0));
             args.add(objects.get(1));
-            args.add(objects.get(2));
-            return new Maybe<>(new ZipWith((Binop) objects.get(0)).apply(args));
+            return new Maybe<>(new ZipWith((Binop) objects.get(2)).apply(args));
         });
         executors.put("SCANL1", (objects, input) -> {
             assert objects.size() == 2 : objects;
-            return new Maybe<>(new Scanl((Binop) objects.get(0)).apply(objects.get(1)));
+            return new Maybe<>(new Scanl((Binop) objects.get(1)).apply(objects.get(0)));
         });
         executors.put("TAKE", (objects, input) -> {
             assert objects.size() == 2 : objects;

@@ -1,6 +1,7 @@
 package org.genesys.clients;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.genesys.decide.Decider;
 import org.genesys.decide.FileDecider;
 import org.genesys.decide.FirstDecider;
@@ -13,6 +14,8 @@ import org.genesys.models.Problem;
 import org.genesys.synthesis.Checker;
 import org.genesys.synthesis.DeepCoderChecker;
 import org.genesys.synthesis.MorpheusSynthesizer;
+import org.genesys.utils.DeepCodeDeserializer;
+import org.genesys.utils.ProblemDeserializer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -27,7 +30,9 @@ public class DeepCoderMainMorpheus {
         String specLoc = "./specs/DeepCoder";
         String json = "./problem/DeepCoder/prog5.json";
         if (args.length != 0) json = args[0];
-        Gson gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Problem.class, new DeepCodeDeserializer());
+        Gson gson = gsonBuilder.create();
         Problem dcProblem = gson.fromJson(new FileReader(json), Problem.class);
         System.out.println("Run DeepCoder main..." + dcProblem);
 

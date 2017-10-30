@@ -108,8 +108,8 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
 //        productions.add(new Production<>(new IntType(), "1"));
 
         productions.add(new Production<>(true, id++, new IntType(), "MAXIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new IntType(), "COUNT", new FunctionType(new IntType(), new BoolType()),
-                new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new IntType(), "COUNT", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
+                ));
         productions.add(new Production<>(true, id++, new IntType(), "MINIMUM", new ListType(new IntType())));
         productions.add(new Production<>(true, id++,new IntType(), "SUM", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new IntType(), "HEAD", new ListType(new IntType())));
@@ -117,16 +117,16 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         //productions.add(new Production<>(true,id++,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         // ListType -- only considering lists of IntType
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP", new FunctionType(new IntType(), new IntType()),
-                new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new FunctionType(new IntType(), new BoolType()),
-                new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
-                new ListType(new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP", new ListType(new IntType()), new FunctionType(new IntType(), new IntType())
+                ));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
+                ));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH",
+                new ListType(new IntType()), new ListType(new IntType()), new FunctionType(new PairType(new IntType(), new IntType()), new IntType())));
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "SORT", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1", new FunctionType(new PairType(new IntType(),
-                new IntType()), new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1", new ListType(new IntType()), new FunctionType(new PairType(new IntType(),
+                new IntType()), new IntType())));
 
 
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
@@ -177,18 +177,18 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             productions.add(new Production<>(new IntType(), "SUM", new ListType(new IntType())));
             productions.add(new Production<>(new IntType(), "HEAD", new ListType(new IntType())));
             productions.add(new Production<>(new IntType(), "LAST", new ListType(new IntType())));
-            productions.add(new Production<>(new IntType(), "COUNT", new FunctionType(new IntType(), new BoolType()),
-                    new ListType(new IntType())));
+            productions.add(new Production<>(new IntType(), "COUNT", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
+                    ));
             productions.add(new Production<>(new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         } else if (symbol instanceof ListType) {
             // ListType -- only considering lists of IntType
-            productions.add(new Production<>(new ListType(new IntType()), "FILTER", new FunctionType(new IntType(), new BoolType()),
-                    new ListType(new IntType())));
-            productions.add(new Production<>(new ListType(new IntType()), "MAP", new FunctionType(new IntType(), new IntType()),
-                    new ListType(new IntType())));
-            productions.add(new Production<>(new ListType(new IntType()), "ZIPWITH", new FunctionType(new PairType(new IntType(), new IntType()), new IntType()),
-                    new ListType(new IntType()), new ListType(new IntType())));
+            productions.add(new Production<>(new ListType(new IntType()), "FILTER", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
+                    ));
+            productions.add(new Production<>(new ListType(new IntType()), "MAP", new ListType(new IntType()), new FunctionType(new IntType(), new IntType())
+                    ));
+            productions.add(new Production<>(new ListType(new IntType()), "ZIPWITH",
+                    new ListType(new IntType()), new ListType(new IntType()), new FunctionType(new PairType(new IntType(), new IntType()), new IntType())));
             productions.add(new Production<>(new ListType(new IntType()), "SORT", new ListType(new IntType())));
             productions.add(new Production<>(new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
             productions.add(new Production<>(new ListType(new IntType()), "SCANL1", new FunctionType(new PairType(new IntType(),
