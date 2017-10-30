@@ -104,8 +104,13 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
     public List<Production<AbstractType>> getProductions() {
         List<Production<AbstractType>> productions = new ArrayList<>();
         // IntType
-//        productions.add(new Production<>(new IntType(), "0"));
-//        productions.add(new Production<>(new IntType(), "1"));
+        productions.add(new Production<>(new IntType(),"-3"));
+        productions.add(new Production<>(new IntType(),"-2"));
+        productions.add(new Production<>(new IntType(),"-1"));
+        productions.add(new Production<>(new IntType(),"0"));
+        productions.add(new Production<>(new IntType(),"1"));
+        productions.add(new Production<>(new IntType(),"2"));
+        productions.add(new Production<>(new IntType(),"3"));
 
         productions.add(new Production<>(true, id++, new IntType(), "MAXIMUM", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new IntType(), "COUNT", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
@@ -114,53 +119,41 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(true, id++,new IntType(), "SUM", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new IntType(), "HEAD", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new IntType(), "LAST", new ListType(new IntType())));
-        //productions.add(new Production<>(true,id++,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         // ListType -- only considering lists of IntType
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP", new ListType(new IntType()), new FunctionType(new IntType(), new IntType())
-                ));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
-                ));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH",
-                new ListType(new IntType()), new ListType(new IntType()), new FunctionType(new PairType(new IntType(), new IntType()), new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-MUL", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-DIV", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-PLUS", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-POW", new ListType(new IntType()), new IntType()));
+
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new ListType(new IntType()), new BinopBoolType(),new IntType()));
+
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-PLUS", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MINUS", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MUL", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MIN", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MAX", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
+
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "SORT", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1", new ListType(new IntType()), new FunctionType(new PairType(new IntType(),
-                new IntType()), new IntType())));
 
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-PLUS", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MINUS", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MUL", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MIN", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MAX", new ListType(new IntType()), new IntType()));
 
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "DROP", new ListType(new IntType()), new IntType()));
 
-
         //FunctionType
-        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "+"));
-        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "-"));
-        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "*"));
-
-        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "MIN"));
-        productions.add(new Production<>(id++,new FunctionType(new PairType(new IntType(), new IntType()), new IntType()), "MAX"));
-
-
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "MUL3"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "MUL4"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "DIV3"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "DIV4"));
-
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "INC"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "DEC"));
-
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "SHL"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "SHR"));
-
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "SQR"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new IntType()), "doNEG"));
-
-
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isPOS"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isNEG"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isODD"));
-        productions.add(new Production<>(id++,new FunctionType(new IntType(), new BoolType()), "isEVEN"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(> a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(< a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(== a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(!= a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(%!= a b)"));
+        productions.add(new Production<>(new BinopBoolType(), "l(a,b).(%= a b)"));
 
         return productions;
     }
