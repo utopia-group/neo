@@ -104,17 +104,26 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
     public List<Production<AbstractType>> getProductions() {
         List<Production<AbstractType>> productions = new ArrayList<>();
         // IntType
-        productions.add(new Production<>(new IntType(),"-3"));
-        productions.add(new Production<>(new IntType(),"-2"));
-        productions.add(new Production<>(new IntType(),"-1"));
-        productions.add(new Production<>(new IntType(),"0"));
-        productions.add(new Production<>(new IntType(),"1"));
-        productions.add(new Production<>(new IntType(),"2"));
-        productions.add(new Production<>(new IntType(),"3"));
+        productions.add(new Production<>(new ConstType(),"-3"));
+        productions.add(new Production<>(new ConstType(),"-2"));
+        productions.add(new Production<>(new ConstType(),"-1"));
+        productions.add(new Production<>(new ConstType(),"0"));
+        productions.add(new Production<>(new ConstType(),"1"));
+        productions.add(new Production<>(new ConstType(),"2"));
+        productions.add(new Production<>(new ConstType(),"3"));
+
+        productions.add(new Production<>(new ConstNotZeroType(),"-3"));
+        productions.add(new Production<>(new ConstNotZeroType(),"-2"));
+        productions.add(new Production<>(new ConstNotZeroType(),"-1"));
+        productions.add(new Production<>(new ConstNotZeroType(),"1"));
+        productions.add(new Production<>(new ConstNotZeroType(),"2"));
+        productions.add(new Production<>(new ConstNotZeroType(),"3"));
+
+        productions.add(new Production<>(new ConstPosType(),"2"));
+        productions.add(new Production<>(new ConstPosType(),"3"));
 
         productions.add(new Production<>(true, id++, new IntType(), "MAXIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new IntType(), "COUNT", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
-                ));
+        productions.add(new Production<>(true,id++,new IntType(), "COUNT", new ListType(new IntType()), new BinopBoolType(),new ConstType()));
         productions.add(new Production<>(true, id++, new IntType(), "MINIMUM", new ListType(new IntType())));
         productions.add(new Production<>(true, id++,new IntType(), "SUM", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new IntType(), "HEAD", new ListType(new IntType())));
@@ -122,27 +131,27 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(true,id++,new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         // ListType -- only considering lists of IntType
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-MUL", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-DIV", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-PLUS", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-POW", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-MUL", new ListType(new IntType()), new ConstType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-DIV", new ListType(new IntType()), new ConstNotZeroType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-PLUS", new ListType(new IntType()), new ConstType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "MAP-POW", new ListType(new IntType()), new ConstPosType()));
 
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new ListType(new IntType()), new BinopBoolType(),new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "FILTER", new ListType(new IntType()), new BinopBoolType(),new ConstType()));
 
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-PLUS", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MINUS", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MUL", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MIN", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MAX", new ListType(new IntType()), new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-PLUS", new ListType(new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MINUS", new ListType(new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MUL", new ListType(new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MIN", new ListType(new IntType()), new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "ZIPWITH-MAX", new ListType(new IntType()), new ListType(new IntType())));
 
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "SORT", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "REVERSE", new ListType(new IntType())));
 
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-PLUS", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MINUS", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MUL", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MIN", new ListType(new IntType()), new IntType()));
-        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MAX", new ListType(new IntType()), new IntType()));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-PLUS", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MINUS", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MUL", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MIN", new ListType(new IntType())));
+        productions.add(new Production<>(true,id++,new ListType(new IntType()), "SCANL1-MAX", new ListType(new IntType())));
 
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "TAKE", new ListType(new IntType()), new IntType()));
         productions.add(new Production<>(true,id++,new ListType(new IntType()), "DROP", new ListType(new IntType()), new IntType()));
@@ -170,8 +179,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
             productions.add(new Production<>(new IntType(), "SUM", new ListType(new IntType())));
             productions.add(new Production<>(new IntType(), "HEAD", new ListType(new IntType())));
             productions.add(new Production<>(new IntType(), "LAST", new ListType(new IntType())));
-            productions.add(new Production<>(new IntType(), "COUNT", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())
-                    ));
+            productions.add(new Production<>(new IntType(), "COUNT", new ListType(new IntType()), new FunctionType(new IntType(), new BoolType())));
             productions.add(new Production<>(new IntType(), "ACCESS", new ListType(new IntType()), new IntType()));
 
         } else if (symbol instanceof ListType) {
