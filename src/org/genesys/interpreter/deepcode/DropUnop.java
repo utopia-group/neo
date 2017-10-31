@@ -24,9 +24,10 @@ public class DropUnop implements Unop {
         int n = (Integer) pair.get(1);
         List res = new ArrayList();
         int len = xs.size();
-        if (len > n) {
+        if (len <= n || n < 0)
+            return 256;
+        else
             res = xs.subList(n, len);
-        } else return 256;
         return res;
     }
 
