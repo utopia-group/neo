@@ -234,6 +234,8 @@ public class GeneratorSynthesizer implements Synthesizer {
             int itn = 0;
             List<List<Object>> inputs = new ArrayList<>();
             List<Object> outputs = new ArrayList<>();
+            int min = -128;
+            int max = 128;
 
             while (inputs.size() != 5) {
                try {
@@ -244,17 +246,17 @@ public class GeneratorSynthesizer implements Synthesizer {
                    switch(opt){
                        case A2A:
                        case A2I:
-                           in.add(generateList(20, -256, 255));
+                           in.add(generateList(20, min, max));
                            break;
                        case AI2A:
                        case AI2I:
-                           in.add(generateList(20, -256, 255));
-                           in.add(generateInteger(-256,255));
+                           in.add(generateList(20, min, max));
+                           in.add(generateInteger(min,max));
                            break;
                        case AA2A:
                        case AA2I:
-                           in.add(generateList(20, -256, 255));
-                           in.add(generateList(20, -256, 255));
+                           in.add(generateList(20, min, max));
+                           in.add(generateList(20, min, max));
                            break;
                        default:
                            assert(false);
@@ -276,7 +278,7 @@ public class GeneratorSynthesizer implements Synthesizer {
                     //break;
                 }
                 itn++;
-                if (itn == 10){
+                if (itn == 100){
                    passed = false;
                    break;
                 }
