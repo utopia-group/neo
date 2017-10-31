@@ -1,8 +1,0 @@
-{
-  "id":28,
-  "name":"SHL",
-  "constraint":
-  [
-    "(declare-const IN0_MAX_SPEC Int)(declare-const OUT_MAX_SPEC Int)(assert true)"
-  ]
-}

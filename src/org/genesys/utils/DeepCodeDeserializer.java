@@ -25,13 +25,21 @@ public class DeepCodeDeserializer implements JsonDeserializer<Problem> {
         for (JsonElement expJson : probExamples.getAsJsonArray()) {
             Example example = new Example();
             JsonElement out = expJson.getAsJsonObject().get("output");
-            List outList = parseJson(out);
-            example.setOutput(outList);
+            if (out.isJsonPrimitive())
+                example.setOutput(out.getAsInt());
+            else {
+                List outList = parseJson(out);
+                example.setOutput(outList);
+            }
 
             List inputList = new ArrayList<>();
             for (JsonElement inputJson : expJson.getAsJsonObject().get("input").getAsJsonArray()) {
-                List inputElem = parseJson(inputJson);
-                inputList.add(inputElem);
+                if (inputJson.isJsonPrimitive())
+                    inputList.add(inputJson.getAsInt());
+                else {
+                    List inputElem = parseJson(inputJson);
+                    inputList.add(inputElem);
+                }
             }
             example.setInput(inputList);
             examples.add(example);

@@ -1759,7 +1759,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
                         SATUtils.getInstance().cleanLearnts();
                         if (!currentSketchClause_.isEmpty()) {
-                            System.out.println("blocking = " + currentSketchClause_);
                             SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.SKTASSIGNMENT);
                             currentSketchClause_.clear();
                         }

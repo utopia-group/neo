@@ -27,7 +27,7 @@ public class TakeUnop implements Unop {
         if (input2 < 0) {
             return 256;
         } else if (input2 >= input1.size()) {
-            return input1;
+            return 256;
         } else {
             return input1.subList(0, input2);
         }

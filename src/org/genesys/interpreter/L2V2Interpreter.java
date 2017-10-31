@@ -46,8 +46,8 @@ public class L2V2Interpreter extends BaseInterpreter {
 //        executors.put("filter", (objects, input) ->
 //                new Maybe<>(new FilterLList((Unop) objects.get(0)).apply(objects.get(1)))
 //        );
-        executors.put("count", (objects, input) ->
-                new Maybe<>(new CountList((Unop) objects.get(0)).apply(objects.get(1))));
+//        executors.put("count", (objects, input) ->
+//                new Maybe<>(new CountList((Unop) objects.get(0)).apply(objects.get(1))));
         executors.put("zipWith", (objects, input) -> {
             assert objects.size() == 3 : objects;
             List args = new ArrayList();

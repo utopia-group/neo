@@ -26,7 +26,7 @@ public class DropUnop implements Unop {
         int len = xs.size();
         if (len > n) {
             res = xs.subList(n, len);
-        }
+        } else return 256;
         return res;
     }
 
