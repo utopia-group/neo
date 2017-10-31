@@ -5,7 +5,10 @@ import com.microsoft.z3.BoolExpr;
 import krangl.DataFrame;
 import krangl.GroupedDataFrame;
 import org.apache.commons.lang3.StringUtils;
+import org.genesys.interpreter.DeepCoderInterpreter;
+import org.genesys.interpreter.Interpreter;
 import org.genesys.models.*;
+import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
 import org.genesys.utils.MorpheusUtil;
 import org.genesys.utils.Z3Utils;
@@ -27,6 +30,8 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
     private Z3Utils z3_ = Z3Utils.getInstance();
 
     private MorpheusUtil util_ = MorpheusUtil.getInstance();
+
+    private Interpreter interpreter_ = new DeepCoderInterpreter();
 
     //Properties: LEN, MAX, MIN, FIRST, LAST
     private String[] spec = {
@@ -96,6 +101,15 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                 cstList.addAll(abs);
             } else {
                 if (!worker.children.isEmpty() && comp != null) {
+
+                    if ((curr != null) && (worker.id == curr.id)) {
+                        System.out.println("current working node:" + worker);
+                        Maybe<Object> tgt = interpreter_.execute(worker, inputs);
+                        if(!tgt.has()) return false;
+                        List<BoolExpr> abs = abstractDeepCode(worker, tgt.get());
+                        cstList.addAll(abs);
+                    }
+
                     List<BoolExpr> nodeCst = genNodeSpec(worker, comp);
                     cstList.addAll(nodeCst);
                 }

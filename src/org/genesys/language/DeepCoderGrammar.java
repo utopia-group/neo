@@ -123,7 +123,7 @@ public class DeepCoderGrammar implements Grammar<AbstractType> {
         productions.add(new Production<>(new ConstPosType(),"3"));
 
         productions.add(new Production<>(true, id++, new IntType(), "MAXIMUM", new ListType(new IntType())));
-        productions.add(new Production<>(true,id++,new IntType(), "COUNT", new ListType(new IntType()), new BinopBoolType(),new ConstType()));
+        productions.add(new Production<>(true,id++,new IntType(), "COUNT", new ListType(new IntType()), new BinopBoolType(),new ConstNotZeroType()));
         productions.add(new Production<>(true, id++, new IntType(), "MINIMUM", new ListType(new IntType())));
         productions.add(new Production<>(true, id++,new IntType(), "SUM", new ListType(new IntType())));
         productions.add(new Production<>(true,id++,new IntType(), "HEAD", new ListType(new IntType())));
