@@ -104,8 +104,15 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
                     if ((curr != null) && (worker.id == curr.id)) {
                         Maybe<Object> tgt = interpreter_.execute(worker, inputs);
-                        if(!tgt.has()) return false;
+                        if (!tgt.has()) return false;
+                        Object obj = tgt.get();
+                        if (obj instanceof List) {
+                            List objList = (List) obj;
+                            if (objList.isEmpty()) return false;
+                        }
                         List<BoolExpr> abs = abstractDeepCode(worker, tgt.get());
+//                        System.out.println("working on PE:" + worker + " res:" + tgt.get());
+
                         cstList.addAll(abs);
                     }
 
@@ -123,7 +130,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
         if (!sat) {
             System.out.println("Prune program:" + node);
-        }
+        } 
         return sat;
     }
 
