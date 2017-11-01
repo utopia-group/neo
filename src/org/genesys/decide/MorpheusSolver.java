@@ -623,170 +623,89 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             assert(!conflict);
         }
 
-        /*
-        if (prodName_.containsKey("mutate") && prodName_.containsKey("l(a,b).(/ a b)")){
-
-            // If mutate occurs then the predicate had to occur before
-            for (int i = highTrail_.size()-1; i > 0; i--){
-                Node node = highTrail_.get(i).t0;
-                Production f = prodName_.get("mutate");
-                int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
-                VecInt c1 = new VecInt(new int[]{-v});
-                for (int j = 0 ; j < i; j++){
-                    Production p1 = prodName_.get("l(a,b).(/ a b)");
-                    Node cur = highTrail_.get(j).t0;
-                    int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
-                    c1.push(v1);
-                }
-                satUtils_.addClause(c1);
-            }
-
-            // If a mutate predicate occurs then mutate must occur in the future
-            for (int i = 0; i < highTrail_.size()-1; i++){
-                Production p1 = prodName_.get("l(a,b).(/ a b)");
-                Node cur = highTrail_.get(i).t0;
-                int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
-
-                VecInt c1 = new VecInt(new int[]{-v1});
-
-                for (int j = i+1 ; j < highTrail_.size(); j++){
-
-                    Node node = highTrail_.get(j).t0;
-                    Production f = prodName_.get("mutate");
-                    int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
-                    c1.push(v);
-
-                }
-                satUtils_.addClause(c1);
-            }
-
-            // Mutate cannot be the first component
-            Node root = highTrail_.get(0).t0;
-            Production gg = prodName_.get("mutate");
-            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
-                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
-                VecInt lits = new VecInt(new int[]{-var});
-                satUtils_.addClause(lits);
-            }
-
-            // At most one mutate
-            VecInt clause = new VecInt();
-            for (int i = 0; i < highTrail_.size(); i++){
-                Production p = prodName_.get("mutate");
-                Node node = highTrail_.get(i).t0;
-                int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
-                clause.push(var);
-            }
-            satUtils_.addAMK(clause, 1);
-
-            // Mutate predicates can only be used in the first line
-            for (int i = 1; i < highTrail_.size()-1; i++){
-                Production p1 = prodName_.get("l(a,b).(/ a b)");
-                Node node = highTrail_.get(i).t0;
-                int v1 = varNodes_.get(new Pair<Integer,Production>(node.id, p1));
-                VecInt c1 = new VecInt(new int[]{-v1});
-                satUtils_.addClause(c1);
-            }
-
-        }
-
-        if (prodName_.containsKey("l(a,b).(> a b)") &&
-                prodName_.containsKey("l(a,b).(< a b)") &&
-                prodName_.containsKey("l(a,b).(== a b)") &&
-                prodName_.containsKey("filter")){
-
-            // If filter occurs then one of the other predicate had to occur before
-            for (int i = highTrail_.size()-1; i > 0; i--){
-                Node node = highTrail_.get(i).t0;
-                Production f = prodName_.get("filter");
-                int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
-                VecInt c1 = new VecInt(new int[]{-v});
-                for (int j = 0 ; j < i; j++){
-                    Production p1 = prodName_.get("l(a,b).(> a b)");
-                    Production p2 = prodName_.get("l(a,b).(< a b)");
-                    Production p3 = prodName_.get("l(a,b).(== a b)");
-                    Node cur = highTrail_.get(j).t0;
-                    int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
-                    int v2 = varNodes_.get(new Pair<Integer,Production>(cur.id, p2));
-                    int v3 = varNodes_.get(new Pair<Integer,Production>(cur.id, p3));
-
-                    c1.push(v1);
-                    c1.push(v2);
-                    c1.push(v3);
-                }
-                satUtils_.addClause(c1);
-            }
-
-            // If a filter predicate occurs then filter must occur in the future
-            for (int i = 0; i < highTrail_.size()-1; i++){
-                Production p1 = prodName_.get("l(a,b).(> a b)");
-                Production p2 = prodName_.get("l(a,b).(< a b)");
-                Production p3 = prodName_.get("l(a,b).(== a b)");
-                Node cur = highTrail_.get(i).t0;
-                int v1 = varNodes_.get(new Pair<Integer,Production>(cur.id, p1));
-                int v2 = varNodes_.get(new Pair<Integer,Production>(cur.id, p2));
-                int v3 = varNodes_.get(new Pair<Integer,Production>(cur.id, p3));
-
-                VecInt c1 = new VecInt(new int[]{-v1});
-                VecInt c2 = new VecInt(new int[]{-v2});
-                VecInt c3 = new VecInt(new int[]{-v3});
-
-                for (int j = i+1 ; j < highTrail_.size(); j++){
-
-                    Node node = highTrail_.get(j).t0;
-                    Production f = prodName_.get("filter");
-                    int v = varNodes_.get(new Pair<Integer,Production>(node.id, f));
-                    c1.push(v);
-                    c2.push(v);
-                    c3.push(v);
-
-                }
-                satUtils_.addClause(c1);
-                satUtils_.addClause(c2);
-                satUtils_.addClause(c3);
-            }
-
-            // Filter cannot be the first component
-            Node root = highTrail_.get(0).t0;
-            Production gg = prodName_.get("filter");
-            if (varNodes_.containsKey(new Pair<Integer, Production>(root.id, gg))) {
-                int var = varNodes_.get(new Pair<Integer, Production>(root.id, gg));
-                VecInt lits = new VecInt(new int[]{-var});
-                satUtils_.addClause(lits);
-            }
-
-            // At most one filter
-            VecInt clause = new VecInt();
-            for (int i = 0; i < highTrail_.size(); i++){
-                Production p = prodName_.get("filter");
-                Node node = highTrail_.get(i).t0;
-                int var = varNodes_.get(new Pair<Integer,Production>(node.id, p));
-                clause.push(var);
-            }
-            satUtils_.addAMK(clause, 1);
-
-            // Filter predicates can only be used in the first line
-            for (int i = 1; i < highTrail_.size()-1; i++){
-                Production p1 = prodName_.get("l(a,b).(> a b)");
-                Production p2 = prodName_.get("l(a,b).(< a b)");
-                Production p3 = prodName_.get("l(a,b).(== a b)");
-                Node node = highTrail_.get(i).t0;
-                int v1 = varNodes_.get(new Pair<Integer,Production>(node.id, p1));
-                int v2 = varNodes_.get(new Pair<Integer,Production>(node.id, p2));
-                int v3 = varNodes_.get(new Pair<Integer,Production>(node.id, p3));
-                VecInt c1 = new VecInt(new int[]{-v1});
-                VecInt c2 = new VecInt(new int[]{-v2});
-                VecInt c3 = new VecInt(new int[]{-v3});
-                satUtils_.addClause(c1);
-                satUtils_.addClause(c2);
-                satUtils_.addClause(c3);
-            }
-
-
-        }
-        */
-
         /* Domain specific constraints for DeepCoder */
+
+        String[] amo = {"ACCESS", "MAXIMUM", "COUNT", "MINIMUM", "SUM", "HEAD", "LAST", "FILTER", "SORT", "REVERSE", "TAKE", "DROP"};
+        String[] map = {"MAP-MUL","MAP-DIV","MAP-PLUS","MAP-POW"};
+        String[] zipwith = {"ZIPWITH-PLUS","ZIPWITH-MINUS","ZIPWITH-MUL","ZIPWITH-MIN","ZIPWITH-MAX"};
+        String[] scanl1 = {"SCANL1-PLUS","SCANL1-MINUS","SCANL1-MUL","SCANL1-MIN","SCANL1-MAX"};
+
+        for (String s : amo){
+            if (prodName_.containsKey(s)) {
+                VecInt clause = new VecInt();
+                for (int i = 0; i < highTrail_.size(); i++) {
+                    Production p = prodName_.get(s);
+                    Node node = highTrail_.get(i).t0;
+                    Pair<Integer,Production> pp = new Pair<Integer, Production>(node.id, p);
+                    if (varNodes_.containsKey(pp)) {
+                        int var = varNodes_.get(pp);
+                        clause.push(var);
+                    }
+                }
+                if (clause.size() > 1) {
+                    conflict = satUtils_.addAMK(clause, 1);
+                    assert (!conflict);
+                }
+            }
+        }
+
+        VecInt map_clause = new VecInt();
+        for (String s : map){
+            if (prodName_.containsKey(s)) {
+                for (int i = 0; i < highTrail_.size(); i++) {
+                    Production p = prodName_.get(s);
+                    Node node = highTrail_.get(i).t0;
+                    Pair<Integer,Production> pp = new Pair<Integer, Production>(node.id, p);
+                    if (varNodes_.containsKey(pp)) {
+                        int var = varNodes_.get(pp);
+                        map_clause.push(var);
+                    }
+                }
+            }
+        }
+        if (map_clause.size() > 2){
+            conflict = satUtils_.addAMK(map_clause, 2);
+            assert (!conflict);
+        }
+
+        VecInt zipwith_clause = new VecInt();
+        for (String s : map){
+            if (prodName_.containsKey(s)) {
+                for (int i = 0; i < highTrail_.size(); i++) {
+                    Production p = prodName_.get(s);
+                    Node node = highTrail_.get(i).t0;
+                    Pair<Integer,Production> pp = new Pair<Integer, Production>(node.id, p);
+                    if (varNodes_.containsKey(pp)) {
+                        int var = varNodes_.get(pp);
+                        zipwith_clause.push(var);
+                    }
+                }
+            }
+        }
+        if (zipwith_clause.size() > 2){
+            conflict = satUtils_.addAMK(zipwith_clause, 2);
+            assert (!conflict);
+        }
+
+        VecInt scanl1_clause = new VecInt();
+        for (String s : map){
+            if (prodName_.containsKey(s)) {
+                for (int i = 0; i < highTrail_.size(); i++) {
+                    Production p = prodName_.get(s);
+                    Node node = highTrail_.get(i).t0;
+                    Pair<Integer,Production> pp = new Pair<Integer, Production>(node.id, p);
+                    if (varNodes_.containsKey(pp)) {
+                        int var = varNodes_.get(pp);
+                        scanl1_clause.push(var);
+                    }
+                }
+            }
+        }
+        if (scanl1_clause.size() > 2){
+            conflict = satUtils_.addAMK(scanl1_clause, 2);
+            assert (!conflict);
+        }
+
 //        if (prodName_.containsKey("ACCESS")){
 //            // ACCESS cannot be the first line
 //            Node root = highTrail_.get(0).t0;

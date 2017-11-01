@@ -42,10 +42,18 @@ public class FilterLList implements Unop {
                     targetList.add(elem);
                 } else if (op.toString().equals("l(a,b).(!= a b)") && (Integer)elem != rhs) {
                     targetList.add(elem);
-                } else if (op.toString().equals("l(a,b).(%= a b)") && (Integer)elem % rhs == 0) {
-                    targetList.add(elem);
-                } else if (op.toString().equals("l(a,b).(%!= a b)") && (Integer)elem % rhs != 0) {
-                    targetList.add(elem);
+                } else if (op.toString().equals("l(a,b).(%= a b)")){
+                    if (rhs == 0)
+                        return new ArrayList<>();
+                    else if((Integer)elem % rhs == 0){
+                        targetList.add(elem);
+                    }
+                } else if (op.toString().equals("l(a,b).(%!= a b)")){
+                    if (rhs == 0)
+                        return new ArrayList<>();
+                    else if((Integer)elem % rhs != 0){
+                        targetList.add(elem);
+                    }
                 }
             }
             return targetList;

@@ -111,16 +111,21 @@ public class GeneratorSynthesizer implements Synthesizer {
             }
 
         } else if (out instanceof List){
-            if (((List)out).isEmpty() || ((List)out).size() == 10)
+            if (((List)out).isEmpty() || ((List)out).size() == 20)
                 valid = false;
 
             if (valid) {
+                Set<Integer> contents = new HashSet<>();
                 for (Object o : (List) out) {
                     if ((Integer) o > 255 || (Integer) o < -256) {
                         valid = false;
                         break;
+                    } else {
+                        contents.add((Integer)o);
                     }
                 }
+                if (contents.size() <= 1)
+                    valid = false;
             }
         }
 
@@ -204,7 +209,7 @@ public class GeneratorSynthesizer implements Synthesizer {
     public void writeToJSON(String filename, Node program){
 
         SampleObject sample = new SampleObject(filename,inputs_,outputs_, program);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         String json = gson.toJson(sample);
 //        System.out.println(json);
 

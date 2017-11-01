@@ -83,7 +83,7 @@ public class Generator {
         if (n >= 25){
             // output is an array
             Random r2 = new Random();
-            int  n2 = rand.nextInt(3) + 1;
+            int  n2 = r2.nextInt(3) + 1;
             if (n2 == 1){
                 option_ = Options.A2A;
             } else if (n2 == 2){
@@ -95,7 +95,7 @@ public class Generator {
         } else {
             // output is an int
             Random r2 = new Random();
-            int  n2 = rand.nextInt(3) + 1;
+            int  n2 = r2.nextInt(3) + 1;
             if (n2 == 1){
                 option_ = Options.A2I;
             } else if (n2 == 2){
