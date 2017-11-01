@@ -74,7 +74,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         List<BoolExpr> cstList = new ArrayList<>();
-        Map<String, Object> clauseToNodeMap_ = new HashMap<>();
 
         queue.add(node);
         while (!queue.isEmpty()) {
@@ -185,6 +184,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             if(targetCst.contains("#")) continue;
             BoolExpr expr = z3_.convertStrToExpr(targetCst);
             cstList.add(expr);
+            System.out.println(expr.toString() + "------->" + worker);
             clauseToNodeMap_.put(expr.toString(), worker.id);
             clauseToSpecMap_.put(expr.toString(), cstStr);
         }
@@ -257,7 +257,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
     @Override
     public List<Pair<Integer, List<String>>> learnCore() {
-        Z3Utils z3 = Z3Utils.getInstance();
-        return z3.getConflicts();
+        return new ArrayList<>();
     }
 }
