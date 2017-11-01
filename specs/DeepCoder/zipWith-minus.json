@@ -2,6 +2,7 @@
   "id":202,
   "name":"ZIPWITH-MINUS",
   "high":true,
+  "type":"list",
   "constraint":
   [
   "(declare-const IN0_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= IN0_LEN_SPEC OUT_LEN_SPEC))",

@@ -1,7 +1,6 @@
 package org.genesys.utils;
 
 import com.microsoft.z3.BoolExpr;
-import javafx.beans.binding.ObjectExpression;
 import org.genesys.type.AbstractList;
 import org.genesys.type.Cons;
 import org.genesys.type.EmptyList;

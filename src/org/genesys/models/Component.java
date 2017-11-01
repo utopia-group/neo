@@ -26,6 +26,10 @@ public class Component {
         return name;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public List<String> getConstraint() {
         return constraint;
     }
@@ -33,6 +37,9 @@ public class Component {
     private Integer id;
 
     private String name;
+
+    /* Return type of the component. */
+    private String type;
 
     /* Is this a function? */
     private boolean high;

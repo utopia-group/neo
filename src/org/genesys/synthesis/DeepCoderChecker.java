@@ -136,6 +136,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
     private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
 //        System.out.println("current workder: " + worker.id + " " + worker);
+        z3_.updateTypeMap(worker.id, comp.getType());
         String[] dest = new String[15];
         String lenVar = "V_LEN" + worker.id;
         String maxVar = "V_MAX" + worker.id;
@@ -184,7 +185,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             if(targetCst.contains("#")) continue;
             BoolExpr expr = z3_.convertStrToExpr(targetCst);
             cstList.add(expr);
-            System.out.println(expr.toString() + "------->" + worker);
             clauseToNodeMap_.put(expr.toString(), worker.id);
             clauseToSpecMap_.put(expr.toString(), cstStr);
         }

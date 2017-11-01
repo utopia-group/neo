@@ -1,6 +1,7 @@
 {
   "id":1,
   "name":"HEAD",
+  "type":"int",
   "constraint":
   [
     "(declare-const OUT_LEN_SPEC Int)(assert (= OUT_LEN_SPEC 1))",

@@ -1,6 +1,7 @@
 {
   "id":3,
   "name":"ACCESS",
+  "type":"int",
   "constraint":
   [
     "(declare-const IN0_LEN_SPEC Int)(assert (> IN0_LEN_SPEC 1))",

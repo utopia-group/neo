@@ -1,6 +1,7 @@
 {
   "id":13,
   "name":"COUNT",
+  "type":"int",
   "constraint":
   [
     "(declare-const IN0_LEN_SPEC Int)(assert (> IN0_LEN_SPEC 1))",

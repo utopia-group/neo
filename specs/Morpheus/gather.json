@@ -2,6 +2,7 @@
   "id": 2,
   "name": "gather",
   "high": true,
+  "type":"table",
   "arguments": [
     "Table",
     "String",

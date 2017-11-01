@@ -2,6 +2,7 @@
   "id": 5,
   "name": "unite",
   "high": true,
+  "type":"table",
   "arguments": [
     "Table",
     "ColName",

@@ -186,6 +186,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
 //        System.out.println("current workder: " + worker.id + " " + worker);
         Pair<Integer, String> key = new Pair<>(worker.id, comp.getName());
+        z3_.updateTypeMap(worker.id, comp.getType());
         if (cstCache_.containsKey(key))
             return cstCache_.get(key);
 
