@@ -182,6 +182,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
         for (String cstStr : comp.getConstraint()) {
             String targetCst = StringUtils.replaceEach(cstStr, spec, dest);
+            if(targetCst.contains("#")) continue;
             BoolExpr expr = z3_.convertStrToExpr(targetCst);
             cstList.add(expr);
             clauseToNodeMap_.put(expr.toString(), worker.id);
