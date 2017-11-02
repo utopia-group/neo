@@ -194,7 +194,6 @@ public class GeneratorSynthesizer implements Synthesizer {
                     break;
                 } else {
                     long start3 = LibUtils.tick();
-                    solver_.cacheAST(ast.toString(), true);
                     ast = solver_.getModel(null, true).t0;
                     long end3 = LibUtils.tick();
                     totalSearch += LibUtils.computeTime(start3, end3);
