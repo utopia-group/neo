@@ -114,6 +114,10 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                             if (objList.isEmpty()) return false;
                         }
                         List<BoolExpr> abs = abstractDeepCode(worker, tgt.get());
+                        if (abs.isEmpty()) {
+                            z3_.clearConflict();
+                            return false;
+                        }
 //                        System.out.println("working on PE:" + worker + " res:" + tgt.get());
 
                         cstList.addAll(abs);
@@ -133,7 +137,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
         if (!sat) {
             System.out.println("Prune program:" + node);
-        } 
+        }
         return sat;
     }
 
@@ -189,7 +193,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
         for (String cstStr : comp.getConstraint()) {
             String targetCst = StringUtils.replaceEach(cstStr, spec, dest);
-            if(targetCst.contains("#")) continue;
+            if (targetCst.contains("#")) continue;
             BoolExpr expr = z3_.convertStrToExpr(targetCst);
             cstList.add(expr);
             clauseToNodeMap_.put(expr.toString(), worker.id);
@@ -241,11 +245,28 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         cstList.add(firstCst);
         cstList.add(lastCst);
 
-        clauseToNodeMap_.put(lenCst.toString(), worker.id);
-        clauseToNodeMap_.put(maxCst.toString(), worker.id);
-        clauseToNodeMap_.put(minCst.toString(), worker.id);
-        clauseToNodeMap_.put(firstCst.toString(), worker.id);
-        clauseToNodeMap_.put(lastCst.toString(), worker.id);
+        if ("root".equals(worker.function) || worker.function.contains("input")) {
+            clauseToNodeMap_.put(lenCst.toString(), worker.id);
+            clauseToNodeMap_.put(maxCst.toString(), worker.id);
+            clauseToNodeMap_.put(minCst.toString(), worker.id);
+            clauseToNodeMap_.put(firstCst.toString(), worker.id);
+            clauseToNodeMap_.put(lastCst.toString(), worker.id);
+        } else {
+            List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
+            clauseToNodeMap_.put(lenCst.toString(), currAssigns);
+            clauseToNodeMap_.put(maxCst.toString(), currAssigns);
+            clauseToNodeMap_.put(minCst.toString(), currAssigns);
+            clauseToNodeMap_.put(firstCst.toString(), currAssigns);
+            clauseToNodeMap_.put(lastCst.toString(), currAssigns);
+            Set<String> peCore = new HashSet<>();
+
+            peCore.add(lenCst.toString());
+            peCore.add(maxCst.toString());
+            peCore.add(minCst.toString());
+            peCore.add(firstCst.toString());
+            peCore.add(lastCst.toString());
+            if (MorpheusSynthesizer.learning_ && z3_.hasCache(peCore)) return new ArrayList<>();
+        }
         //cache current cst.
         cstCache_.put(key, cstList);
         return cstList;
