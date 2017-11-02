@@ -81,11 +81,12 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
 
         // Perform type-checking and PE.
         validator_.cleanPEMap();
-//        System.out.println("Verifying.... " + node);
+//        System.out.println("Verifying.... " + node + " curr:" + curr);
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         List<BoolExpr> cstList = new ArrayList<>();
 
+        int currId = 0;
         queue.add(node);
         while (!queue.isEmpty()) {
             Node worker = queue.remove();
@@ -113,6 +114,8 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                 if (!worker.children.isEmpty() && comp != null) {
                     if ((curr != null) && (worker.id == curr.id)) {
                         long start2 = LibUtils.tick();
+                        if (worker.children.size() > 1)
+                            currId = worker.children.get(1).id;
 //                        System.out.println("type on node: " + worker);
                         Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
                         Object judge = validRes.t0;
@@ -129,6 +132,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                                 return false;
                             }
                             List<BoolExpr> abs = abstractTable(worker, workerDf, inputs);
+                            if (abs.isEmpty()) {
+                                z3_.clearConflict();
+                                return false;
+                            }
                             cstList.addAll(abs);
                         }
                     }
@@ -144,7 +151,9 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         }
 
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
-        if (!sat) System.out.println("Prune program:" + node);
+        if (!sat) {
+            System.out.println("Prune program:" + node);
+        }
         return sat;
     }
 
@@ -177,6 +186,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
 //        System.out.println("current workder: " + worker.id + " " + worker);
         Pair<Integer, String> key = new Pair<>(worker.id, comp.getName());
+        z3_.updateTypeMap(worker.id, comp.getType());
         if (cstCache_.containsKey(key))
             return cstCache_.get(key);
 
@@ -242,6 +252,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             strVal = worker.toString();
         Pair<Integer, String> key = new Pair<>(worker.id, strVal);
         if (cstCache_.containsKey(key)) {
+            if (!"root".equals(worker.function) && !worker.function.contains("input")) {
+                //Need to also update current assignment.
+                List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
+                for (BoolExpr o : cstCache_.get(key)) {
+                    clauseToNodeMap_.put(o.toString(), currAssigns);
+                }
+            }
             return cstCache_.get(key);
         }
         int row = df.getNrow();
@@ -317,6 +334,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             clauseToNodeMap_.put(groupCst.toString(), currAssigns);
             clauseToNodeMap_.put(headCst.toString(), currAssigns);
             clauseToNodeMap_.put(contentCst.toString(), currAssigns);
+            Set<String> peCore = new HashSet<>();
+            peCore.add(rowCst.toString());
+            peCore.add(colCst.toString());
+            peCore.add(groupCst.toString());
+            peCore.add(headCst.toString());
+            peCore.add(contentCst.toString());
+            if (MorpheusSynthesizer.learning_ && z3_.hasCache(peCore)) return new ArrayList<>();
         }
         //cache current cst.
         cstCache_.put(key, cstList);
@@ -324,7 +348,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     }
 
     private boolean isValid(DataFrame df) {
-        if(df instanceof GroupedDataFrame) {
+        if (df instanceof GroupedDataFrame) {
             GroupedDataFrame gdf = (GroupedDataFrame) df;
             return gdf.getGroups$krangl_main().size() == 0;
         }

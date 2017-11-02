@@ -32,7 +32,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     private boolean silent_ = true;
 
-    private boolean learning_ = true;
+    public static boolean learning_ = true;
 
     private Checker checker_;
 
@@ -76,7 +76,7 @@ public class MorpheusSynthesizer implements Synthesizer {
 
     public MorpheusSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc, boolean learning, Decider decider) {
         learning_ = learning;
-        solver_ = new MorpheusSolver(grammar, depth, decider);
+        solver_ = new MorpheusSolver(grammar, depth, decider, learning);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
@@ -118,7 +118,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) partial++;
             else concrete++;
 
-//            System.out.println("Checking Program: " + ast);
+            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
             //if (!coreAst_.contains(ast.toString())){
@@ -134,7 +134,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                     List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
                     long start2 = LibUtils.tick();
                     if (!conflictsType.isEmpty()) {
-                        if (coreCache_.contains(conflictsType.toString())) {
+                        if (coreCache_.contains(conflictsType.toString()) || (conflictsType.size() == 1)) {
                             astPair = solver_.getModel(null, true);
                             ast = astPair.t0;
                             curr = astPair.t1;

@@ -2,6 +2,7 @@
   "id": 1,
   "name": "spread",
   "high": true,
+  "type":"table",
   "arguments": [
     "Table",
     "ColName",

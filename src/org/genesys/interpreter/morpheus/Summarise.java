@@ -109,19 +109,30 @@ public class Summarise implements Unop {
             }
         }
 
-        if ((nCol <= colIdx) || ((df.getCols().get(colIdx) instanceof StringCol) && !aggr.equals("count"))) {
-            List<String> blackList = new ArrayList<>();
-            if (MorpheusGrammar.colListMap.get(nCol) != null)
-                blackList.addAll(MorpheusGrammar.colMap.get(nCol));
-            blackList.addAll(strList);
-            if (!blackList.isEmpty()) {
+
+        if (nCol <= colIdx && MorpheusGrammar.colListMap.get(nCol) != null) {
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                //arg1
+                partialConflictMap.put(thdChild.id, MorpheusGrammar.colListMap.get(nCol));
+            }
+            return new Pair<>(null, conflictList);
+        }
+
+        if ((df.getCols().get(colIdx) instanceof StringCol) && !"count".equals(aggr)) {
+            if (!strList.isEmpty()) {
                 for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                     //current node.
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));
                     //arg0
                     partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
                     //arg1
-                    partialConflictMap.put(thdChild.id, blackList);
+                    partialConflictMap.put(thdChild.id, strList);
+
+                    partialConflictMap.put(sndChild.id, Arrays.asList("min", "mean", "sum"));
                 }
             }
             return new Pair<>(null, conflictList);
@@ -130,8 +141,6 @@ public class Summarise implements Unop {
         String colName = df.getNames().get(colIdx);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();
 
-//        System.out.println("summarise============" + colName);
-//        Extensions.print(df);
         DataFrame res = df.summarize(getFormula(colName, newColName, aggr));
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.

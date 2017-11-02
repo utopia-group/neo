@@ -2,6 +2,7 @@
   "id": 6,
   "name": "summarise",
   "high": true,
+  "type":"table",
   "arguments": [
     "Table",
     "Aggregate",
@@ -10,7 +11,7 @@
   "template": "summarise(#Table0,#STR0=#0(`#1`))",
   "constraint": [
     "(declare-const CO_SPEC Int)(assert (>= 3 CO_SPEC))",
-    "(declare-const RO_SPEC Int)(declare-const RI0_SPEC Int)(assert (<= RO_SPEC RI0_SPEC))",
+    "(declare-const RO_SPEC Int)(declare-const RI0_SPEC Int)(assert (< RO_SPEC RI0_SPEC))",
     "(declare-const CO_SPEC Int)(declare-const CI0_SPEC Int)(assert (<= CO_SPEC (+ 1 CI0_SPEC)))",
     "(declare-const RO_SPEC Int)(declare-const IG0_SPEC Int)(assert (= IG0_SPEC RO_SPEC))",
     "(declare-const IH0_SPEC Int)(declare-const OH_SPEC Int)(assert (>= (+ IH0_SPEC 1) OH_SPEC))",

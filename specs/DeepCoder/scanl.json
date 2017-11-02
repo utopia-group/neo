@@ -1,9 +1,0 @@
-{
-  "id":21,
-  "name":"SCANL1",
-  "constraint":
-  [
-  "(declare-const IN1_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= IN1_LEN_SPEC OUT_LEN_SPEC))",
-  "(declare-const IN2_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= IN2_LEN_SPEC OUT_LEN_SPEC))"
-  ]
-}

@@ -18,6 +18,7 @@ import org.sat4j.specs.TimeoutException;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ public class SATUtils {
     /* making propagate faster */
     public enum ClauseType {TYPEIH, ASSIGNMENT, SKTASSIGNMENT, EQCLASS};
     private Set<IConstr> assignments_ = new HashSet<>();
+    private HashMap<IConstr, VecInt> assignment2clause_ = new HashMap<>();
     private Set<IConstr> eqlearnts_ = new HashSet<>();
     private List<Pair<VecInt, List<Pair<Integer,String>>>> allEqLearnts_ = new ArrayList<>();
 
@@ -143,19 +145,20 @@ public class SATUtils {
     }
 
 
-    public boolean blockTrail(List<Integer> trail) {
+    public boolean blockTrail(VecInt trail) {
         assert (solver_ != null);
         assert (!trail.isEmpty());
 
 //        System.out.println("block trail= " + trail);
 //        System.out.println("lvl = " + solver_.decisionLevel());
 
-        VecInt clause = new VecInt();
-        for (int i = 0; i < trail.size(); i++) {
-            clause.push(-trail.get(i));
-        }
+//        VecInt clause = new VecInt();
+//        for (int i = 0; i < trail.size(); i++) {
+//            clause.push(-trail.get(i));
+//        }
+
         boolean conflict = false;
-        conflict = addClause(clause, ClauseType.ASSIGNMENT);
+        conflict = addClause(trail, ClauseType.ASSIGNMENT);
 //        if (solver_.decisionLevel() == 0) conflict = addClause(clause);
 //        else conflict = addClauseOnTheFly(clause);
 
@@ -292,6 +295,7 @@ public class SATUtils {
             // c can be null if it is already satisfied, e.g. we learned an unit clause (rare but possible)
             if (c != null) {
                 if (ct.equals(ClauseType.ASSIGNMENT)) {
+                    assignment2clause_.put(c,clause);
                     assignments_.add(c);
                 }
 
@@ -300,10 +304,26 @@ public class SATUtils {
                 }
 
                 if (ct.equals(ClauseType.SKTASSIGNMENT)) {
+
+                    List<IConstr> toberemoved = new ArrayList<>();
                     for (IConstr ctr : assignments_) {
-                        solver_.removeConstr(ctr);
+                        VecInt cls = assignment2clause_.get(ctr);
+                        if (cls.size() < clause.size()){
+                            // keep the clause until we change the first component?
+                            if (cls.get(0) != clause.get(0)){
+                                toberemoved.add(ctr);
+                            }
+                        } else {
+                            toberemoved.add(ctr);
+                        }
                     }
-                    assignments_.clear();
+
+                    for (IConstr ctr : toberemoved) {
+                        solver_.removeConstr(ctr);
+                        assignments_.remove(ctr);
+                        assignment2clause_.remove(ctr);
+                    }
+                    //assignments_.clear();
                 }
             }
         } catch (ContradictionException e) {
@@ -330,8 +350,11 @@ public class SATUtils {
 
         boolean conflict = false;
         try {
+
             IConstr c = solver_.addClause(clause);
-            learnts_.add(new Pair<IConstr,Integer>(c,line));
+            // can the clause be satisfied?
+            if (c != null)
+                learnts_.add(new Pair<IConstr,Integer>(c,line));
         } catch (ContradictionException e) {
             conflict = true;
         }
@@ -353,8 +376,8 @@ public class SATUtils {
         List<Pair<IConstr,Integer>> tmp = new ArrayList<>();
         for (Pair<IConstr,Integer> c : learnts_){
             if (c.t1 > line) {
-                solver_.removeConstr(c.t0);
                 tmp.add(c);
+                solver_.removeConstr(c.t0);
             }
         }
         learnts_.removeAll(tmp);

@@ -17,6 +17,8 @@ public class BaseInterpreter implements Interpreter<Node, Object> {
 
     private final Map<Pair<Node, Object>, Maybe> cache_ = new HashMap<>();
 
+    private final int bad_num = 256;
+
     @Override
     public Maybe<Object> execute(Node node, Object input) {
         List<Object> arglist = new ArrayList<>();
@@ -25,6 +27,14 @@ public class BaseInterpreter implements Interpreter<Node, Object> {
             Maybe<Object> object = this.execute(child, input);
             if (!object.has()) {
                 return object;
+            } else {
+                Object o = object.get();
+                if (o instanceof Integer) {
+                    int inVal = (int) o;
+                    if (bad_num == inVal) {
+                        return new Maybe<>(bad_num);
+                    }
+                }
             }
             arglist.add(object.get());
         }

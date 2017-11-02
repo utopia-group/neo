@@ -1,6 +1,7 @@
 package org.genesys.interpreter.deepcode;
 
 import org.genesys.interpreter.Unop;
+import org.genesys.interpreter.Binop;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +10,12 @@ import java.util.List;
  * Created by yufeng on 5/31/17.
  */
 public class CountList implements Unop {
-    private final Unop unop;
+    private final Binop op;
+    private int rhs;
 
-    public CountList(Unop unop) {
-        this.unop = unop;
+    public CountList(Binop unop, int l) {
+        this.op = unop;
+        this.rhs = l;
     }
 
     public Object apply(Object obj) {
@@ -26,7 +29,17 @@ public class CountList implements Unop {
             return cnt;
         } else {
             for (Object elem : list) {
-                if ((boolean) this.unop.apply(elem)) {
+                if (op.toString().equals("l(a,b).(< a b)") && (Integer)elem < rhs) {
+                    cnt++;
+                } else if (op.toString().equals("l(a,b).(> a b)") && (Integer)elem > rhs) {
+                    cnt++;
+                } else if (op.toString().equals("l(a,b).(== a b)") && (Integer)elem == rhs) {
+                    cnt++;
+                } else if (op.toString().equals("l(a,b).(!= a b)") && (Integer)elem != rhs) {
+                    cnt++;
+                } else if (op.toString().equals("l(a,b).(%= a b)") && (Integer)elem % rhs == 0) {
+                    cnt++;
+                } else if (op.toString().equals("l(a,b).(%!= a b)") && (Integer)elem % rhs != 0) {
                     cnt++;
                 }
             }

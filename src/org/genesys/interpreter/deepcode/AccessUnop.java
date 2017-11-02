@@ -19,7 +19,9 @@ public class AccessUnop implements Unop {
         List xs = (List) pair.get(0);
         int n = (Integer) pair.get(1);
         Object res = 256;
-        if (xs.size() > n) {
+        if (n < 0)
+            return res;
+        else if (xs.size() > n) {
             res = xs.get(n);
         }
         return res;

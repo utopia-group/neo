@@ -56,7 +56,7 @@ public class GeneratorSynthesizer implements Synthesizer {
     public GeneratorSynthesizer(Grammar grammar, Problem problem, Checker checker, Interpreter interpreter, int depth, String specLoc,
                                 String filename, Decider decider, Generator generator) {
         filename_ = filename;
-        solver_ = new MorpheusSolver(grammar, depth, decider);
+        solver_ = new MorpheusSolver(grammar, depth, decider, false);
         checker_ = checker;
         interpreter_ = interpreter;
         problem_ = problem;
@@ -111,13 +111,21 @@ public class GeneratorSynthesizer implements Synthesizer {
             }
 
         } else if (out instanceof List){
-            if (((List)out).isEmpty())
+            if (((List)out).isEmpty() || ((List)out).size() == 20)
                 valid = false;
-            for (Object o : (List)out){
-                if ((Integer)o > 255 || (Integer)o < -256){
-                    valid = false;
-                    break;
+
+            if (valid) {
+                Set<Integer> contents = new HashSet<>();
+                for (Object o : (List) out) {
+                    if ((Integer) o > 255 || (Integer) o < -256) {
+                        valid = false;
+                        break;
+                    } else {
+                        contents.add((Integer)o);
+                    }
                 }
+                if (contents.size() <= 1)
+                    valid = false;
             }
         }
 
@@ -198,10 +206,10 @@ public class GeneratorSynthesizer implements Synthesizer {
         return res;
     }
 
-    public void writeToJSON(String filename){
+    public void writeToJSON(String filename, Node program){
 
-        SampleObject sample = new SampleObject(filename,inputs_,outputs_);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        SampleObject sample = new SampleObject(filename,inputs_,outputs_, program);
+        Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         String json = gson.toJson(sample);
 //        System.out.println(json);
 
@@ -231,6 +239,8 @@ public class GeneratorSynthesizer implements Synthesizer {
             int itn = 0;
             List<List<Object>> inputs = new ArrayList<>();
             List<Object> outputs = new ArrayList<>();
+            int min = -128;
+            int max = 128;
 
             while (inputs.size() != 5) {
                try {
@@ -241,17 +251,17 @@ public class GeneratorSynthesizer implements Synthesizer {
                    switch(opt){
                        case A2A:
                        case A2I:
-                           in.add(generateList(20, -256, 255));
+                           in.add(generateList(20, min, max));
                            break;
                        case AI2A:
                        case AI2I:
-                           in.add(generateList(20, -256, 255));
-                           in.add(generateInteger(-256,255));
+                           in.add(generateList(20, min, max));
+                           in.add(generateInteger(min,max));
                            break;
                        case AA2A:
                        case AA2I:
-                           in.add(generateList(20, -256, 255));
-                           in.add(generateList(20, -256, 255));
+                           in.add(generateList(20, min, max));
+                           in.add(generateList(20, min, max));
                            break;
                        default:
                            assert(false);
@@ -273,7 +283,7 @@ public class GeneratorSynthesizer implements Synthesizer {
                     //break;
                 }
                 itn++;
-                if (itn == 10){
+                if (itn == 100){
                    passed = false;
                    break;
                 }
@@ -287,7 +297,7 @@ public class GeneratorSynthesizer implements Synthesizer {
                 outputs_ = outputs;
 //                System.out.println("inputs = " + inputs);
 //                System.out.println("outputs = " + outputs);
-                writeToJSON(filename_);
+                writeToJSON(filename_, program);
             }
         }
         long end = LibUtils.tick();

@@ -2,6 +2,8 @@ package org.genesys.utils;
 
 import krangl.DataCol;
 import krangl.DataFrame;
+import krangl.IntCol;
+import krangl.StringCol;
 
 import javax.xml.crypto.Data;
 import java.util.*;
@@ -140,12 +142,96 @@ public class MorpheusUtil {
     }
 
     public String removeZeros(String str) {
-        if(!str.contains(".")) return str;
+        if (!str.contains(".")) return str;
         return str.replaceAll("[0]*$", "").replaceAll(".$", "");
 
     }
 
+    //Return a list of numeric columns that contains 0.
+    public List<String> zeroColumn(DataFrame df) {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < df.getCols().size(); i++) {
+            DataCol col = df.getCols().get(i);
+            if (col instanceof IntCol) {
+                IntCol icol = (IntCol) col;
+                for (Integer o : icol.getValues()) {
+                    if (o == 0) {
+                        list.add(String.valueOf(i));
+                        break;
+                    }
+
+                }
+            }
+
+
+        }
+        return list;
+    }
+
+    public int getLen(Object obj) {
+        assert obj != null;
+        if (obj instanceof Integer)
+            return 1;
+        else if (obj instanceof List)
+            return ((List) obj).size();
+        else
+            throw new UnsupportedOperationException("Invalid obj." + obj.getClass());
+    }
+
+    public int getMax(Object obj) {
+        if (obj instanceof Integer)
+            return (Integer) obj;
+        else if (obj instanceof List) {
+            List aList = (List) obj;
+            assert !aList.isEmpty();
+            int maxIndex = aList.indexOf(Collections.max(aList));
+            return (int) aList.get(maxIndex);
+        } else {
+            throw new UnsupportedOperationException("Invalid obj." + obj.getClass());
+        }
+
+    }
+
+    public int getMin(Object obj) {
+        if (obj instanceof Integer)
+            return (Integer) obj;
+        else if (obj instanceof List) {
+            List aList = (List) obj;
+            assert !aList.isEmpty();
+            int minIndex = aList.indexOf(Collections.min(aList));
+            return (int) aList.get(minIndex);
+        } else {
+            throw new UnsupportedOperationException("Invalid obj." + obj.getClass());
+        }
+    }
+
+    public int getFirst(Object obj) {
+        if (obj instanceof Integer)
+            return (Integer) obj;
+        else if (obj instanceof List) {
+            List aList = (List) obj;
+            assert !aList.isEmpty();
+            return (int) aList.get(0);
+        } else {
+            throw new UnsupportedOperationException("Invalid obj." + obj.getClass());
+        }
+    }
+
+    public int getLast(Object obj) {
+        if (obj instanceof Integer)
+            return (Integer) obj;
+        else if (obj instanceof List) {
+            List aList = (List) obj;
+            assert !aList.isEmpty();
+            int e = (int) aList.get(aList.size() - 1);
+            return e;
+        } else {
+            throw new UnsupportedOperationException("Invalid obj." + obj.getClass());
+        }
+    }
+
     public static void main(String[] args) {
+        MorpheusUtil util_ = MorpheusUtil.getInstance();
         Set<Integer> sel = new HashSet<>(Arrays.asList(1, 3, 5));
         Set<Integer> sel2 = new HashSet<>(Arrays.asList(-5, -99));
         Set<Integer> sel3 = new HashSet<>(Arrays.asList(-1, -3));
@@ -162,6 +248,28 @@ public class MorpheusUtil {
         System.out.println(MorpheusUtil.getInstance().removeZeros(str));
         System.out.println(MorpheusUtil.getInstance().removeZeros("12.0"));
         System.out.println(MorpheusUtil.getInstance().removeZeros("120"));
+
+        List<Integer> aList = Arrays.asList(3, 4, 2, 1, 5);
+        List<Integer> aList2 = Arrays.asList(3);
+        Object o3 = 9;
+        assert util_.getLen(aList) == 5;
+        assert util_.getMax(aList) == 5;
+        assert util_.getMin(aList) == 1;
+        assert util_.getFirst(aList) == 3;
+        assert util_.getLast(aList) == 5;
+
+        assert util_.getLen(aList2) == 1;
+        assert util_.getMax(aList2) == 3;
+        assert util_.getMin(aList2) == 3;
+        assert util_.getFirst(aList2) == 3;
+        assert util_.getLast(aList2) == 3;
+
+        assert util_.getLen(o3) == 1;
+        assert util_.getMax(o3) == 9;
+        assert util_.getMin(o3) == 9;
+        assert util_.getFirst(o3) == 9;
+        assert util_.getLast(o3) == 9;
+
     }
 
 }

@@ -2,6 +2,7 @@
   "id":10,
   "name":"filter",
   "high":true,
+  "type":"table",
   "arguments":
   [
     "Table", 

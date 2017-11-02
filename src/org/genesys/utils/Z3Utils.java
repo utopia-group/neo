@@ -39,7 +39,7 @@ public class Z3Utils {
 
     private List<Pair<Integer, List<String>>> conflicts_ = new ArrayList<>();
 
-    private Map<String, List<String>> eq_map = new HashMap<>();
+    private Map<Pair<String, String>, List<String>> eq_map = new HashMap<>();
 
     protected Z3Utils() {
         ctx_ = new Context();
@@ -210,7 +210,8 @@ public class Z3Utils {
 
     public void printUnsatCore(Map<String, Object> clauseToNodeMap, Map<String, String> clauseToSpecMap_, Collection<Component> components) {
 //        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
-        conflicts_.clear();
+        clearConflict();
+        Set<String> peCores = new HashSet<>();
         for (BoolExpr e : solver_.getUnsatCore()) {
             String core = cstMap_.get(e).toString();
 //            System.out.println(e + " " + cstMap_.get(e) + " *****" + clauseToNodeMap.containsKey(core));
@@ -223,17 +224,45 @@ public class Z3Utils {
                     nodeId = (Integer) nodeObj;
                 else {
                     List<Pair<Integer, List<String>>> folComp = (List<Pair<Integer, List<String>>>) nodeObj;
+//                    System.out.println("PE core=======" + cstMap_.get(e));
+                    peCores.add(cstMap_.get(e).toString());
                     conflicts_.addAll(folComp);
                     continue;
                 }
                 if (!clauseToSpecMap_.containsKey(core)) continue;
                 String core_str = clauseToSpecMap_.get(core);
-                assert eq_map.containsKey(core_str);
-                List<String> eq_vec = eq_map.get(core_str);
+                String type = nodeTypeMap.get(nodeId);
+                Pair<String, String> queryKey = new Pair<>(core_str, type);
+                assert eq_map.containsKey(queryKey);
+                List<String> eq_vec = eq_map.get(queryKey);
                 Pair<Integer, List<String>> conflict = new Pair<>(nodeId, eq_vec);
                 if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
+        coreCache_.add(peCores);
+    }
+
+    public void clearConflict() {
+        conflicts_.clear();
+    }
+
+    private Set<Set<String>> coreCache_ = new HashSet<>();
+
+    private Map<Integer, String> nodeTypeMap = new HashMap<>();
+
+    public void updateTypeMap(int nodeId, String type) {
+        nodeTypeMap.put(nodeId, type);
+    }
+
+    public void cleanCache() {
+        coreCache_.clear();
+    }
+
+    public boolean hasCache(Set<String> peSet) {
+        for (Set<String> s : coreCache_) {
+            if (peSet.containsAll(s)) return true;
+        }
+        return false;
     }
 
     public List<Pair<Integer, List<String>>> getConflicts() {
@@ -250,29 +279,34 @@ public class Z3Utils {
 
     public void initEqMap(Collection<Component> components) {
         Set<String> constraints = new HashSet<>();
+        Set<String> types = new HashSet<>();
         for (Component comp : components) {
             constraints.addAll(comp.getConstraint());
+            types.add(comp.getType());
         }
 
         for (String key : constraints) {
             BoolExpr core = convertStrToExpr2(key);
-            List<String> eq_vec = new ArrayList<>();
 
-            for (Component comp : components) {
-                solver_core.push();
-                for (String cst : comp.getConstraint()) {
-                    BoolExpr comCst = convertStrToExpr2(cst);
-                    solver_core.add(comCst);
+            for (String type : types) {
+                List<String> eq_vec = new ArrayList<>();
+                for (Component comp : components) {
+                    if (!comp.getType().equals(type)) continue;
+                    solver_core.push();
+                    for (String cst : comp.getConstraint()) {
+                        BoolExpr comCst = convertStrToExpr2(cst);
+                        solver_core.add(comCst);
+                    }
+                    solver_core.add(ctx_core.mkNot(core));
+                    boolean flag = (solver_core.check() == Status.SATISFIABLE);
+                    solver_core.pop();
+                    if (!flag && !eq_vec.contains(comp.getId())) {
+                        eq_vec.add(comp.getName());
+                    }
                 }
-                solver_core.add(ctx_core.mkNot(core));
-                boolean flag = (solver_core.check() == Status.SATISFIABLE);
-                solver_core.pop();
-                if (!flag && !eq_vec.contains(comp.getId())) {
-                    eq_vec.add(comp.getName());
-                }
+                eq_map.put(new Pair<>(key, type), eq_vec);
             }
 
-            eq_map.put(key, eq_vec);
         }
     }
 }

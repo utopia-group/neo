@@ -2,6 +2,7 @@
   "id": 7,
   "name": "group_by",
   "high": true,
+  "type":"table",
   "arguments": [
     "Table",
     "ColList"

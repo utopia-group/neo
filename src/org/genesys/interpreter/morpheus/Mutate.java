@@ -188,6 +188,20 @@ public class Mutate implements Unop {
             return new Pair<>(null, total);
         }
 
+        List<String> zeros = MorpheusUtil.getInstance().zeroColumn(df);
+
+
+        if(!zeros.isEmpty()) {
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(frdChild.id, zeros);
+            }
+            return new Pair<>(null, conflictList);
+        }
+
         String lhsColName = df.getNames().get(lhs);
         String rhsColName = df.getNames().get(rhs);
         String newColName = MorpheusUtil.getInstance().getMorpheusString();

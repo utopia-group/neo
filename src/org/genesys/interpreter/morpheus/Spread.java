@@ -120,13 +120,13 @@ public class Spread implements Unop {
             }
 
             for (int j = 0; j < 5; j++) {
-                List<Map<Integer, List<String>>> bakList = LibUtils.deepClone(conflictList);
-                for (Map<Integer, List<String>> partialConflictMap : bakList) {
-                    partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                    partialConflictMap.put(sndChild.id, Arrays.asList(String.valueOf(j)));
-                    partialConflictMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
-                }
+                List<Map<Integer, List<String>>> bakList = new ArrayList<>();
+                Map<Integer, List<String>> eqMap = new HashMap<>();
+                eqMap.put(ast.id, Arrays.asList(ast.function));
+                eqMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                eqMap.put(sndChild.id, Arrays.asList(String.valueOf(j)));
+                eqMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
+                bakList.add(eqMap);
                 total.addAll(bakList);
             }
             return new Pair<>(null, total);

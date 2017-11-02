@@ -76,7 +76,36 @@ public class Generator {
     }
 
     private void random(){
-        option_ = randomEnum(Options.class);
+
+        Random rand = new Random();
+        int  n = rand.nextInt(100) + 1;
+
+        if (n >= 25){
+            // output is an array
+            Random r2 = new Random();
+            int  n2 = r2.nextInt(3) + 1;
+            if (n2 == 1){
+                option_ = Options.A2A;
+            } else if (n2 == 2){
+                option_ = Options.AI2A;
+            } else if (n2 == 2){
+                option_ = Options.AA2A;
+            }
+
+        } else {
+            // output is an int
+            Random r2 = new Random();
+            int  n2 = r2.nextInt(3) + 1;
+            if (n2 == 1){
+                option_ = Options.A2I;
+            } else if (n2 == 2){
+                option_ = Options.AI2I;
+            } else if (n2 == 2){
+                option_ = Options.AA2I;
+            }
+        }
+
+        //option_ = randomEnum(Options.class);
     }
 
     private List<Object> generateExample(int size, int min, int max){
