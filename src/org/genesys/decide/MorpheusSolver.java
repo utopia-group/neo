@@ -295,50 +295,57 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         GeneratePermutations(s,result,0, current);
         for (List<String> r : result){
             Pair<VecInt, List<Pair<Integer,String>>> clause = new Pair<>(new VecInt(),new ArrayList<>());
+            boolean root = false;
             for (int i = 0;  i < r.size(); i++){
                 Pair<Integer, String> id = new Pair<>(nodes.get(i), r.get(i));
+                if (nodes.get(i) == 0)
+                    root = true;
                 assert (nameNodes_.containsKey(id));
                 clause.t0.push(-nameNodes_.get(id));
                 clause.t1.add(id);
             }
 
-            if (!clause.t0.contains(cpTrailSAT_.get(cpTrailSAT_.size()-1))){
-                // partial assignment
-                boolean contains = true;
-                for (Pair<Integer,String> pair : clause.t1){
-                    if (sketchNodes_.contains(pair.t0) && !currentSketch_.contains(pair)){
-                        contains = false;
-                        break;
-                    }
-                }
-                if (contains) {
-                    // learnt clause is relevant to this sketch
-                    // find the relevant part of the trail
-                    VecInt cc = new VecInt();
-                    int pos = 0;
-                    for (int i = cpTrailSAT_.size()-1; i >= 0; i--){
-                        if (clause.t0.contains(cpTrailSAT_.get(i))){
-                            pos = i;
+            if (!root){
+                SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
+            } else {
+
+                if (!clause.t0.contains(cpTrailSAT_.get(cpTrailSAT_.size() - 1))) {
+                    // partial assignment
+                    boolean contains = true;
+                    for (Pair<Integer, String> pair : clause.t1) {
+                        if (sketchNodes_.contains(pair.t0) && !currentSketch_.contains(pair)) {
+                            contains = false;
                             break;
                         }
                     }
+                    if (contains) {
+                        // learnt clause is relevant to this sketch
+                        // find the relevant part of the trail
+                        VecInt cc = new VecInt();
+                        int pos = 0;
+                        for (int i = cpTrailSAT_.size() - 1; i >= 0; i--) {
+                            if (clause.t0.contains(cpTrailSAT_.get(i))) {
+                                pos = i;
+                                break;
+                            }
+                        }
 
-                    for (int i = 0; i < pos; i++){
-                        cc.push(cpTrailSAT_.get(i));
+                        for (int i = 0; i < pos; i++) {
+                            cc.push(cpTrailSAT_.get(i));
+                        }
+
+                        if (!assignmentsCache_.containsKey(cc.toString())) {
+                            assignmentsCache_.put(cc.toString(), new HashSet());
+                        }
+                        assignmentsCache_.get(cc.toString()).add(cpTrailSAT_.get(pos));
+                        // maybe it is also relevant to other eq classes
+                        clauses.add(clause);
+                    } else {
+                        clauses.add(clause);
                     }
-
-                    if (!assignmentsCache_.containsKey(cc.toString())){
-                        assignmentsCache_.put(cc.toString(),new HashSet());
-                    }
-                    assignmentsCache_.get(cc.toString()).add(cpTrailSAT_.get(pos));
-                    // maybe it is also relevant to other eq classes
-                    clauses.add(clause);
-
                 } else {
                     clauses.add(clause);
                 }
-            } else {
-                clauses.add(clause);
             }
         }
 
@@ -1675,8 +1682,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                             currentSketch_.add(pp);
                         }
 
-                        backtrackStep1(0, false);
-                        step_ = 1;
+//                        backtrackStep1(0, false);
+//                        step_ = 1;
 
                         SATUtils.getInstance().cleanLearnts();
                         if (!currentSketchClause_.isEmpty()) {
@@ -1698,12 +1705,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     iterations_ = 0;
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                     Z3Utils.getInstance().cleanCache();
+                    //System.out.println("#constraints = " + SATUtils.getInstance().getSolver().nConstraints());
                 } else {
                     if (iterations_ > ITERATION_LIMIT){
                         // go to next sketch
                         backtrackStep1(0,false);
                         step_ = 1;
-
                         SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.ASSIGNMENT);
                     }
                 }

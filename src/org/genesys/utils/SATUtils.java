@@ -30,7 +30,7 @@ import org.genesys.models.Pair;
 public class SATUtils {
 
     /* making propagate faster */
-    public enum ClauseType {TYPEIH, ASSIGNMENT, SKTASSIGNMENT, EQCLASS};
+    public enum ClauseType {TYPEIH, ASSIGNMENT, SKTASSIGNMENT, EQCLASS, GLOBAL, LEARNT};
     private Set<IConstr> assignments_ = new HashSet<>();
     private HashMap<IConstr, VecInt> assignment2clause_ = new HashMap<>();
     private Set<IConstr> eqlearnts_ = new HashSet<>();
@@ -47,6 +47,8 @@ public class SATUtils {
     private boolean init = false;
 
     private List<Pair<IConstr,Integer>> learnts_ = new ArrayList<>();
+
+    private int globalClauses_ = 0;
 
     public void createSolver() {
         MiniSATLearning<DataStructureFactory> learning = new MiniSATLearning<DataStructureFactory>();
@@ -294,6 +296,11 @@ public class SATUtils {
             IConstr c = solver_.addClause(clause);
             // c can be null if it is already satisfied, e.g. we learned an unit clause (rare but possible)
             if (c != null) {
+                if (ct.equals(ClauseType.GLOBAL)){
+                    globalClauses_++;
+//                    System.out.println("GLOBAL = " + globalClauses_);
+                }
+
                 if (ct.equals(ClauseType.ASSIGNMENT)) {
                     assignment2clause_.put(c,clause);
                     assignments_.add(c);
