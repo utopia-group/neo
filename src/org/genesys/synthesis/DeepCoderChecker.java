@@ -33,6 +33,10 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
     private Interpreter interpreter_ = new DeepCoderInterpreter();
 
+    private Map<Pair<Integer, String>, List<BoolExpr>> cstCache_ = new HashMap<>();
+
+    private final String alignId_ = "alignOutput";
+
     //Properties: LEN, MAX, MIN, FIRST, LAST
     private String[] spec = {
             "OUT_LEN_SPEC", "OUT_MAX_SPEC", "OUT_MIN_SPEC", "OUT_FIRST_SPEC", "OUT_LAST_SPEC",
@@ -136,7 +140,10 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
     private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
 //        System.out.println("current workder: " + worker.id + " " + worker);
+        Pair<Integer, String> key = new Pair<>(worker.id, comp.getName());
         z3_.updateTypeMap(worker.id, comp.getType());
+        if (cstCache_.containsKey(key))
+            return cstCache_.get(key);
         String[] dest = new String[15];
         String lenVar = "V_LEN" + worker.id;
         String maxVar = "V_MAX" + worker.id;
@@ -188,11 +195,28 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             clauseToNodeMap_.put(expr.toString(), worker.id);
             clauseToSpecMap_.put(expr.toString(), cstStr);
         }
+        //cache current cst.
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
     private List<BoolExpr> abstractDeepCode(Node worker, Object obj) {
         List<BoolExpr> cstList = new ArrayList<>();
+        String strVal = worker.function;
+        if (!"root".equals(worker.function))
+            strVal = worker.toString();
+        Pair<Integer, String> key = new Pair<>(worker.id, strVal);
+        if (cstCache_.containsKey(key)) {
+            if (!"root".equals(worker.function) && !worker.function.contains("input")) {
+                //Need to also update current assignment.
+                List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
+                for (BoolExpr o : cstCache_.get(key)) {
+                    clauseToNodeMap_.put(o.toString(), currAssigns);
+                }
+            }
+            return cstCache_.get(key);
+        }
+
         int len = util_.getLen(obj);
         int max = util_.getMax(obj);
         int min = util_.getMin(obj);
@@ -222,10 +246,15 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         clauseToNodeMap_.put(minCst.toString(), worker.id);
         clauseToNodeMap_.put(firstCst.toString(), worker.id);
         clauseToNodeMap_.put(lastCst.toString(), worker.id);
+        //cache current cst.
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
     private List<BoolExpr> alignOutput(Node worker) {
+        Pair<Integer, String> key = new Pair<>(worker.id, alignId_);
+        if (cstCache_.containsKey(key))
+            return cstCache_.get(key);
         List<BoolExpr> cstList = new ArrayList<>();
         String lenVar = "V_LEN" + worker.id;
         String maxVar = "V_MAX" + worker.id;
@@ -252,11 +281,23 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         cstList.add(eqMinCst);
         cstList.add(eqFirstCst);
         cstList.add(eqLastCst);
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
     @Override
     public List<Pair<Integer, List<String>>> learnCore() {
         return new ArrayList<>();
+    }
+
+    // Given an AST, generate clause for its current assignments
+    private List<Pair<Integer, List<String>>> getCurrentAssignment(Node node) {
+        List<Pair<Integer, List<String>>> clauses = new ArrayList<>();
+        Pair<Integer, List<String>> worker = new Pair<>(node.id, Arrays.asList(node.function));
+        clauses.add(worker);
+        for (Node child : node.children) {
+            clauses.addAll(getCurrentAssignment(child));
+        }
+        return clauses;
     }
 }
