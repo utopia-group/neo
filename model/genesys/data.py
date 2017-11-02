@@ -94,9 +94,7 @@ def read_deep_coder_train_dataset(filename, funcs_filename, fo_filename, num_val
 
         # construct the label by iterating over functions in the program
         ngram = [len(funcs), len(funcs)]
-        cur_funcs = program.src.split()
-        cur_funcs.reverse()
-        for func in cur_funcs:
+        for func in program.src.split():
             if func in funcs:
                 label = np.zeros([len(funcs)], dtype=np.int64).tolist()
                 label[funcs[func]] = 1
