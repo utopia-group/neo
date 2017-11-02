@@ -331,6 +331,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         assignmentsCache_.put(cc.toString(),new HashSet());
                     }
                     assignmentsCache_.get(cc.toString()).add(cpTrailSAT_.get(pos));
+                    // maybe it is also relevant to other eq classes
+                    clauses.add(clause);
 
                 } else {
                     clauses.add(clause);
