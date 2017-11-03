@@ -135,9 +135,9 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         }
 
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
-        if (!sat) {
-            System.out.println("Prune program:" + node);
-        }
+//        if (!sat) {
+//            System.out.println("Prune program:" + node);
+//        }
         return sat;
     }
 

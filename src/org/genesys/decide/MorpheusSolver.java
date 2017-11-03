@@ -249,7 +249,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
-            System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
+            //System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
             if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
             else if (global) learnCoreSimple(core);
             else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
