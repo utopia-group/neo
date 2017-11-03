@@ -1,0 +1,2709 @@
+0.00/0.16	Buildfile: /export/starexec/sandbox2/solver/bin/build.xml
+0.00/0.30	
+0.00/0.30	build:
+0.00/0.45	    [mkdir] Created dir: /export/starexec/sandbox2/solver/bin/classes
+0.00/0.48	    [javac] /export/starexec/sandbox2/solver/bin/build.xml:4: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+0.92/0.54	    [javac] Compiling 152 source files to /export/starexec/sandbox2/solver/bin/classes
+12.01/3.98	    [javac] Note: Some input files use unchecked or unsafe operations.
+12.01/3.98	    [javac] Note: Recompile with -Xlint:unchecked for details.
+12.22/4.01	      [jar] Building jar: /export/starexec/sandbox2/solver/bin/genesys.jar
+12.63/4.11	
+12.63/4.11	jar:
+12.63/4.12	      [jar] Building jar: /export/starexec/sandbox2/solver/bin/genesys.jar
+12.71/4.21	
+12.71/4.21	neoDeep:
+13.58/4.51	     [java] Run DeepCoder main...Problem{name='size3/prog410.json', examples=[Example{input=[[-35, 101, -88, 39, 61, -97, -91, 16, -72, -55, -124, 12, -119, -15, 39, -3, 76, -66, 79, -72], 7], output=100}, Example{input=[[-12, -1, -12, -13, 49, 71, 70, 9, -46, 10, 24, 105, 118, 37, -83, 115, 39, -121, 62, -69], 10], output=70}, Example{input=[[14, 8, -25, -64, -103, -43, -48, 121, -93, -7, -10, 50, -87, -60, 62, -94, -55, 24, 61, -93], 2], output=13}, Example{input=[[122, 4, -38, 81, -34, 33, 60, -123, 122, -112, 56, 44, -117, 59, 67, 48, -67, -81, 12, -82], 0], output=121}, Example{input=[[-72, 67, -67, 30, 24, 7, 63, -25, 112, -3, -53, -50, -119, -97, 101, 47, -43, 123, -60, 107], 14], output=111}]}
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #1: MAXIMUM MAP-MUL COUNT 
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #2: MAXIMUM MAP-MUL MINIMUM 
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #3: MAXIMUM MAP-MUL SUM 
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #4: MAXIMUM MAP-MUL HEAD 
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #5: MAXIMUM MAP-MUL LAST 
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #6: MAXIMUM MAP-MUL ACCESS 
+16.08/6.42	     [java] Sketch #iterations = 0
+16.08/6.42	     [java] Sketch #7: MAXIMUM TAKE COUNT 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #8: MAXIMUM TAKE MINIMUM 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #9: MAXIMUM TAKE SUM 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #10: MAXIMUM TAKE HEAD 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #11: MAXIMUM TAKE LAST 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #12: MAXIMUM TAKE ACCESS 
+16.42/6.52	     [java] Sketch #iterations = 2
+16.42/6.52	     [java] Sketch #13: MAXIMUM DROP ACCESS 
+16.42/6.52	     [java] Sketch #iterations = 2
+16.42/6.52	     [java] Sketch #14: COUNT MAP-MUL MAXIMUM 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #15: COUNT TAKE MAXIMUM 
+16.42/6.52	     [java] Sketch #iterations = 0
+16.42/6.52	     [java] Sketch #16: COUNT TAKE ACCESS 
+17.13/6.83	     [java] Sketch #iterations = 74
+17.13/6.83	     [java] Sketch #17: COUNT DROP ACCESS 
+17.51/6.93	     [java] Sketch #iterations = 74
+17.51/6.93	     [java] Sketch #18: MINIMUM TAKE ACCESS 
+17.51/6.93	     [java] Sketch #iterations = 2
+17.51/6.93	     [java] Sketch #19: MINIMUM DROP ACCESS 
+17.51/6.93	     [java] Sketch #iterations = 2
+17.51/6.93	     [java] Sketch #20: SUM TAKE ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 2
+17.76/7.04	     [java] Sketch #21: SUM DROP ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 2
+17.76/7.04	     [java] Sketch #22: HEAD TAKE ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 2
+17.76/7.04	     [java] Sketch #23: HEAD DROP ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 2
+17.76/7.04	     [java] Sketch #24: LAST TAKE ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 2
+17.76/7.04	     [java] Sketch #25: LAST DROP ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 2
+17.76/7.04	     [java] Sketch #26: ACCESS MAP-MUL MAXIMUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #27: ACCESS MAP-MUL COUNT 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #28: ACCESS MAP-MUL MINIMUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #29: ACCESS MAP-MUL SUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #30: ACCESS MAP-MUL HEAD 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #31: ACCESS MAP-MUL LAST 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #32: ACCESS TAKE MAXIMUM 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #33: ACCESS TAKE COUNT 
+17.76/7.04	     [java] Learning: (0)[(9) COUNT ][(5) TAKE DROP FILTER ]
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #34: ACCESS TAKE MINIMUM 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #35: ACCESS TAKE SUM 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #36: ACCESS TAKE HEAD 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #37: ACCESS TAKE LAST 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #38: ACCESS DROP MAXIMUM 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #39: ACCESS DROP COUNT 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #40: ACCESS DROP MINIMUM 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #41: ACCESS DROP SUM 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #42: ACCESS DROP HEAD 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #43: ACCESS DROP LAST 
+17.76/7.04	     [java] Sketch #iterations = 1
+17.76/7.04	     [java] Sketch #44: MAP-MUL MAXIMUM COUNT 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #45: MAP-MUL MAXIMUM MINIMUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #46: MAP-MUL MAXIMUM SUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #47: MAP-MUL MAXIMUM HEAD 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #48: MAP-MUL MAXIMUM LAST 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #49: MAP-MUL MAXIMUM ACCESS 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #50: MAP-MUL COUNT MAXIMUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #51: MAP-MUL ACCESS MAXIMUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #52: MAP-MUL ACCESS COUNT 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #53: MAP-MUL ACCESS MINIMUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #54: MAP-MUL ACCESS SUM 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #55: MAP-MUL ACCESS HEAD 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #56: MAP-MUL ACCESS LAST 
+17.76/7.04	     [java] Sketch #iterations = 0
+17.76/7.04	     [java] Sketch #57: MAP-MUL MAP-MUL ACCESS 
+17.76/7.04	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) MAP-MUL ][(2) input0 ][(3) -3 ][(1) MAP-MUL ][(2) input0 ][(3) -3 ]
+17.76/7.04	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) MAP-MUL ][(2) input0 ][(3) -2 ][(1) MAP-MUL ][(2) input0 ][(3) -2 ]
+17.76/7.04	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) MAP-MUL ][(2) input0 ][(3) -1 ][(1) MAP-MUL ][(2) input0 ][(3) -1 ]
+18.01/7.14	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-MUL ][(2) input0 ][(3) 1 ]
+18.01/7.14	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-MUL ][(2) input0 ][(3) 2 ]
+18.01/7.14	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-MUL ][(2) input0 ][(3) 3 ]
+18.01/7.14	     [java] Sketch #iterations = 15
+18.01/7.14	     [java] Sketch #58: MAP-MUL MAP-DIV ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #59: MAP-MUL MAP-DIV MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #60: MAP-MUL MAP-DIV COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #61: MAP-MUL MAP-DIV MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #62: MAP-MUL MAP-DIV SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #63: MAP-MUL MAP-DIV HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #64: MAP-MUL MAP-DIV LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #65: MAP-MUL MAP-PLUS ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 9
+18.01/7.14	     [java] Sketch #66: MAP-MUL MAP-POW ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #67: MAP-MUL MAP-POW MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #68: MAP-MUL MAP-POW COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #69: MAP-MUL MAP-POW MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #70: MAP-MUL MAP-POW SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #71: MAP-MUL MAP-POW HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #72: MAP-MUL MAP-POW LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #73: MAP-MUL FILTER ACCESS 
+18.01/7.14	     [java] Learning: (0)[(9) ACCESS ][(5) TAKE DROP FILTER ][(1) MAP-MUL ][(2) input0 ][(3) -3 ][(1) MAP-MUL ][(2) input0 ][(3) -3 ]
+18.01/7.14	     [java] Learning: (0)[(9) ACCESS ][(5) TAKE DROP FILTER ][(1) MAP-MUL ][(2) input0 ][(3) -2 ][(1) MAP-MUL ][(2) input0 ][(3) -2 ]
+18.01/7.14	     [java] Learning: (0)[(9) ACCESS ][(5) TAKE DROP FILTER ][(1) MAP-MUL ][(2) input0 ][(3) -1 ][(1) MAP-MUL ][(2) input0 ][(3) -1 ]
+18.01/7.14	     [java] Learning: (0)[(9) HEAD LAST ACCESS MINIMUM MAXIMUM ][(5) TAKE DROP FILTER ZIPWITH-MIN SCANL1-MAX SCANL1-MIN SORT REVERSE ][(1) MAP-MUL ][(2) input0 ][(3) 0 ]
+18.01/7.14	     [java] Sketch #iterations = 5
+18.01/7.14	     [java] Sketch #74: MAP-MUL ZIPWITH-PLUS ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #75: MAP-MUL ZIPWITH-PLUS MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #76: MAP-MUL ZIPWITH-PLUS COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #77: MAP-MUL ZIPWITH-PLUS MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #78: MAP-MUL ZIPWITH-PLUS SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #79: MAP-MUL ZIPWITH-PLUS HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #80: MAP-MUL ZIPWITH-PLUS LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #81: MAP-MUL ZIPWITH-MINUS ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 4
+18.01/7.14	     [java] Sketch #82: MAP-MUL ZIPWITH-MUL ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #83: MAP-MUL ZIPWITH-MUL MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #84: MAP-MUL ZIPWITH-MUL COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #85: MAP-MUL ZIPWITH-MUL MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #86: MAP-MUL ZIPWITH-MUL SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #87: MAP-MUL ZIPWITH-MUL HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #88: MAP-MUL ZIPWITH-MUL LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #89: MAP-MUL ZIPWITH-MIN ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #90: MAP-MUL ZIPWITH-MAX ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #91: MAP-MUL ZIPWITH-MAX MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #92: MAP-MUL ZIPWITH-MAX COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #93: MAP-MUL ZIPWITH-MAX MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #94: MAP-MUL ZIPWITH-MAX SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #95: MAP-MUL ZIPWITH-MAX HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #96: MAP-MUL ZIPWITH-MAX LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #97: MAP-MUL SORT ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #98: MAP-MUL REVERSE ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #99: MAP-MUL REVERSE MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #100: MAP-MUL REVERSE COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #101: MAP-MUL REVERSE MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #102: MAP-MUL REVERSE SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #103: MAP-MUL REVERSE HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #104: MAP-MUL REVERSE LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #105: MAP-MUL SCANL1-PLUS MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #106: MAP-MUL SCANL1-PLUS COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #107: MAP-MUL SCANL1-PLUS MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #108: MAP-MUL SCANL1-PLUS SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #109: MAP-MUL SCANL1-PLUS HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #110: MAP-MUL SCANL1-PLUS LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #111: MAP-MUL SCANL1-PLUS ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 2
+18.01/7.14	     [java] Sketch #112: MAP-MUL SCANL1-MINUS ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #113: MAP-MUL SCANL1-MINUS MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #114: MAP-MUL SCANL1-MINUS COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #115: MAP-MUL SCANL1-MINUS MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #116: MAP-MUL SCANL1-MINUS SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #117: MAP-MUL SCANL1-MINUS HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #118: MAP-MUL SCANL1-MINUS LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #119: MAP-MUL SCANL1-MUL ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 2
+18.01/7.14	     [java] Sketch #120: MAP-MUL SCANL1-MIN ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #121: MAP-MUL SCANL1-MIN MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #122: MAP-MUL SCANL1-MIN COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #123: MAP-MUL SCANL1-MIN MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #124: MAP-MUL SCANL1-MIN SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #125: MAP-MUL SCANL1-MIN HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #126: MAP-MUL SCANL1-MIN LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #127: MAP-MUL SCANL1-MAX MAXIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #128: MAP-MUL SCANL1-MAX COUNT 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #129: MAP-MUL SCANL1-MAX MINIMUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #130: MAP-MUL SCANL1-MAX SUM 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #131: MAP-MUL SCANL1-MAX HEAD 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #132: MAP-MUL SCANL1-MAX LAST 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #133: MAP-MUL SCANL1-MAX ACCESS 
+18.01/7.14	     [java] Sketch #iterations = 0
+18.01/7.14	     [java] Sketch #134: MAP-MUL TAKE MAXIMUM 
+18.37/7.24	     [java] Sketch #iterations = 7
+18.37/7.24	     [java] Sketch #135: MAP-MUL TAKE COUNT 
+18.37/7.24	     [java] Sketch #iterations = 0
+18.37/7.24	     [java] Sketch #136: MAP-MUL TAKE MINIMUM 
+18.37/7.24	     [java] Sketch #iterations = 7
+18.37/7.25	     [java] Sketch #137: MAP-MUL TAKE SUM 
+18.37/7.25	     [java] Sketch #iterations = 8
+18.37/7.25	     [java] Sketch #138: MAP-MUL TAKE HEAD 
+18.37/7.25	     [java] Sketch #iterations = 7
+18.37/7.25	     [java] Sketch #139: MAP-MUL TAKE LAST 
+18.37/7.25	     [java] Sketch #iterations = 7
+18.37/7.25	     [java] Sketch #140: MAP-MUL TAKE ACCESS 
+18.37/7.25	     [java] Sketch #iterations = 0
+18.37/7.25	     [java] Sketch #141: MAP-MUL DROP MAXIMUM 
+18.37/7.25	     [java] Sketch #iterations = 7
+18.37/7.25	     [java] Sketch #142: MAP-MUL DROP COUNT 
+18.37/7.25	     [java] Sketch #iterations = 0
+18.37/7.25	     [java] Sketch #143: MAP-MUL DROP MINIMUM 
+18.37/7.25	     [java] Sketch #iterations = 7
+18.37/7.25	     [java] Sketch #144: MAP-MUL DROP SUM 
+18.57/7.35	     [java] Sketch #iterations = 8
+18.57/7.35	     [java] Sketch #145: MAP-MUL DROP HEAD 
+18.57/7.35	     [java] Sketch #iterations = 7
+18.57/7.35	     [java] Sketch #146: MAP-MUL DROP LAST 
+18.57/7.35	     [java] Sketch #iterations = 7
+18.57/7.35	     [java] Sketch #147: MAP-MUL DROP ACCESS 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #148: MAP-DIV MAXIMUM COUNT 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #149: MAP-DIV MAXIMUM MINIMUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #150: MAP-DIV MAXIMUM SUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #151: MAP-DIV MAXIMUM HEAD 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #152: MAP-DIV MAXIMUM LAST 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #153: MAP-DIV MAXIMUM ACCESS 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #154: MAP-DIV COUNT MAXIMUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #155: MAP-DIV ACCESS MAXIMUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #156: MAP-DIV ACCESS COUNT 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #157: MAP-DIV ACCESS MINIMUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #158: MAP-DIV ACCESS SUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #159: MAP-DIV ACCESS HEAD 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #160: MAP-DIV ACCESS LAST 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #161: MAP-DIV MAP-MUL ACCESS 
+18.57/7.35	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) MAP-DIV ][(2) input0 ][(3) -1 ][(1) MAP-DIV ][(2) input0 ][(3) -1 ]
+18.57/7.35	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-DIV ][(2) input0 ][(3) 1 ]
+18.57/7.35	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-DIV ][(2) input0 ][(3) 2 ]
+18.57/7.35	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-DIV ][(2) input0 ][(3) 3 ]
+18.57/7.35	     [java] Sketch #iterations = 21
+18.57/7.35	     [java] Sketch #162: MAP-DIV MAP-DIV ACCESS 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #163: MAP-DIV MAP-DIV MAXIMUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #164: MAP-DIV MAP-DIV COUNT 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #165: MAP-DIV MAP-DIV MINIMUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #166: MAP-DIV MAP-DIV SUM 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #167: MAP-DIV MAP-DIV HEAD 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #168: MAP-DIV MAP-DIV LAST 
+18.57/7.35	     [java] Sketch #iterations = 0
+18.57/7.35	     [java] Sketch #169: MAP-DIV MAP-PLUS ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 17
+18.74/7.45	     [java] Sketch #170: MAP-DIV MAP-POW ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #171: MAP-DIV MAP-POW MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #172: MAP-DIV MAP-POW COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #173: MAP-DIV MAP-POW MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #174: MAP-DIV MAP-POW SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #175: MAP-DIV MAP-POW HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #176: MAP-DIV MAP-POW LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #177: MAP-DIV FILTER ACCESS 
+18.74/7.45	     [java] Learning: (0)[(9) HEAD LAST ACCESS MINIMUM MAXIMUM ][(5) TAKE DROP FILTER ZIPWITH-MIN SCANL1-MAX SCANL1-MIN SORT REVERSE ][(1) MAP-DIV ][(2) input0 ][(3) -3 ]
+18.74/7.45	     [java] Learning: (0)[(9) HEAD LAST ACCESS MINIMUM MAXIMUM ][(5) TAKE DROP FILTER ZIPWITH-MIN SCANL1-MAX SCANL1-MIN SORT REVERSE ][(1) MAP-DIV ][(2) input0 ][(3) -2 ]
+18.74/7.45	     [java] Learning: (0)[(9) ACCESS ][(5) TAKE DROP FILTER ][(1) MAP-DIV ][(2) input0 ][(3) -1 ][(1) MAP-DIV ][(2) input0 ][(3) -1 ]
+18.74/7.45	     [java] Sketch #iterations = 4
+18.74/7.45	     [java] Sketch #178: MAP-DIV ZIPWITH-PLUS ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #179: MAP-DIV ZIPWITH-PLUS MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #180: MAP-DIV ZIPWITH-PLUS COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #181: MAP-DIV ZIPWITH-PLUS MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #182: MAP-DIV ZIPWITH-PLUS SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #183: MAP-DIV ZIPWITH-PLUS HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #184: MAP-DIV ZIPWITH-PLUS LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #185: MAP-DIV ZIPWITH-MINUS ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 6
+18.74/7.45	     [java] Sketch #186: MAP-DIV ZIPWITH-MUL ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #187: MAP-DIV ZIPWITH-MUL MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #188: MAP-DIV ZIPWITH-MUL COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #189: MAP-DIV ZIPWITH-MUL MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #190: MAP-DIV ZIPWITH-MUL SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #191: MAP-DIV ZIPWITH-MUL HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #192: MAP-DIV ZIPWITH-MUL LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #193: MAP-DIV ZIPWITH-MIN ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #194: MAP-DIV ZIPWITH-MAX ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #195: MAP-DIV ZIPWITH-MAX MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #196: MAP-DIV ZIPWITH-MAX COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #197: MAP-DIV ZIPWITH-MAX MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #198: MAP-DIV ZIPWITH-MAX SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #199: MAP-DIV ZIPWITH-MAX HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #200: MAP-DIV ZIPWITH-MAX LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #201: MAP-DIV SORT ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #202: MAP-DIV REVERSE ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #203: MAP-DIV REVERSE MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #204: MAP-DIV REVERSE COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #205: MAP-DIV REVERSE MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #206: MAP-DIV REVERSE SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #207: MAP-DIV REVERSE HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #208: MAP-DIV REVERSE LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #209: MAP-DIV SCANL1-PLUS MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #210: MAP-DIV SCANL1-PLUS COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #211: MAP-DIV SCANL1-PLUS MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #212: MAP-DIV SCANL1-PLUS SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #213: MAP-DIV SCANL1-PLUS HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #214: MAP-DIV SCANL1-PLUS LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #215: MAP-DIV SCANL1-PLUS ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 3
+18.74/7.45	     [java] Sketch #216: MAP-DIV SCANL1-MINUS ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #217: MAP-DIV SCANL1-MINUS MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #218: MAP-DIV SCANL1-MINUS COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #219: MAP-DIV SCANL1-MINUS MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #220: MAP-DIV SCANL1-MINUS SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #221: MAP-DIV SCANL1-MINUS HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #222: MAP-DIV SCANL1-MINUS LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #223: MAP-DIV SCANL1-MUL ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 3
+18.74/7.45	     [java] Sketch #224: MAP-DIV SCANL1-MIN ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #225: MAP-DIV SCANL1-MIN MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #226: MAP-DIV SCANL1-MIN COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #227: MAP-DIV SCANL1-MIN MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #228: MAP-DIV SCANL1-MIN SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #229: MAP-DIV SCANL1-MIN HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #230: MAP-DIV SCANL1-MIN LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #231: MAP-DIV SCANL1-MAX MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #232: MAP-DIV SCANL1-MAX COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #233: MAP-DIV SCANL1-MAX MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #234: MAP-DIV SCANL1-MAX SUM 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #235: MAP-DIV SCANL1-MAX HEAD 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #236: MAP-DIV SCANL1-MAX LAST 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #237: MAP-DIV SCANL1-MAX ACCESS 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #238: MAP-DIV TAKE MAXIMUM 
+18.74/7.45	     [java] Sketch #iterations = 5
+18.74/7.45	     [java] Sketch #239: MAP-DIV TAKE COUNT 
+18.74/7.45	     [java] Sketch #iterations = 0
+18.74/7.45	     [java] Sketch #240: MAP-DIV TAKE MINIMUM 
+18.74/7.45	     [java] Sketch #iterations = 5
+18.74/7.45	     [java] Sketch #241: MAP-DIV TAKE SUM 
+19.02/7.56	     [java] Sketch #iterations = 7
+19.02/7.56	     [java] Sketch #242: MAP-DIV TAKE HEAD 
+19.02/7.56	     [java] Sketch #iterations = 5
+19.02/7.56	     [java] Sketch #243: MAP-DIV TAKE LAST 
+19.02/7.56	     [java] Sketch #iterations = 5
+19.02/7.56	     [java] Sketch #244: MAP-DIV TAKE ACCESS 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #245: MAP-DIV DROP MAXIMUM 
+19.02/7.56	     [java] Sketch #iterations = 5
+19.02/7.56	     [java] Sketch #246: MAP-DIV DROP COUNT 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #247: MAP-DIV DROP MINIMUM 
+19.02/7.56	     [java] Sketch #iterations = 5
+19.02/7.56	     [java] Sketch #248: MAP-DIV DROP SUM 
+19.02/7.56	     [java] Sketch #iterations = 7
+19.02/7.56	     [java] Sketch #249: MAP-DIV DROP HEAD 
+19.02/7.56	     [java] Sketch #iterations = 5
+19.02/7.56	     [java] Sketch #250: MAP-DIV DROP LAST 
+19.02/7.56	     [java] Sketch #iterations = 5
+19.02/7.56	     [java] Sketch #251: MAP-DIV DROP ACCESS 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #252: MAP-PLUS MAXIMUM COUNT 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #253: MAP-PLUS MAXIMUM MINIMUM 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #254: MAP-PLUS MAXIMUM SUM 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #255: MAP-PLUS MAXIMUM HEAD 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #256: MAP-PLUS MAXIMUM LAST 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #257: MAP-PLUS MAXIMUM ACCESS 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #258: MAP-PLUS COUNT MAXIMUM 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #259: MAP-PLUS ACCESS MAXIMUM 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #260: MAP-PLUS ACCESS COUNT 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #261: MAP-PLUS ACCESS MINIMUM 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #262: MAP-PLUS ACCESS SUM 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #263: MAP-PLUS ACCESS HEAD 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #264: MAP-PLUS ACCESS LAST 
+19.02/7.56	     [java] Sketch #iterations = 0
+19.02/7.56	     [java] Sketch #265: MAP-PLUS MAP-MUL ACCESS 
+19.02/7.56	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) -3 ]
+19.02/7.56	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) -2 ]
+19.02/7.56	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) -1 ]
+19.02/7.56	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) 0 ]
+19.02/7.56	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) 1 ]
+19.28/7.65	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) 2 ]
+19.28/7.65	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-PLUS ][(2) input0 ][(3) 3 ]
+19.28/7.65	     [java] Sketch #iterations = 8
+19.28/7.65	     [java] Sketch #266: MAP-PLUS MAP-DIV ACCESS 
+19.28/7.65	     [java] Sketch #iterations = 0
+19.28/7.65	     [java] Sketch #267: MAP-PLUS TAKE MAXIMUM 
+19.28/7.65	     [java] Sketch #iterations = 8
+19.28/7.65	     [java] Sketch #268: MAP-PLUS TAKE COUNT 
+19.28/7.65	     [java] Sketch #iterations = 0
+19.28/7.65	     [java] Sketch #269: MAP-PLUS TAKE MINIMUM 
+19.28/7.65	     [java] Sketch #iterations = 8
+19.28/7.65	     [java] Sketch #270: MAP-PLUS TAKE SUM 
+19.28/7.65	     [java] Sketch #iterations = 8
+19.28/7.65	     [java] Sketch #271: MAP-PLUS TAKE HEAD 
+19.28/7.65	     [java] Sketch #iterations = 8
+19.28/7.65	     [java] Sketch #272: MAP-PLUS TAKE LAST 
+19.28/7.65	     [java] Sketch #iterations = 8
+19.28/7.65	     [java] Sketch #273: MAP-PLUS TAKE ACCESS 
+19.28/7.65	     [java] Sketch #iterations = 0
+19.28/7.65	     [java] Sketch #274: MAP-PLUS DROP MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 8
+19.55/7.76	     [java] Sketch #275: MAP-PLUS DROP COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #276: MAP-PLUS DROP MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 8
+19.55/7.76	     [java] Sketch #277: MAP-PLUS DROP SUM 
+19.55/7.76	     [java] Sketch #iterations = 8
+19.55/7.76	     [java] Sketch #278: MAP-PLUS DROP HEAD 
+19.55/7.76	     [java] Sketch #iterations = 8
+19.55/7.76	     [java] Sketch #279: MAP-PLUS DROP LAST 
+19.55/7.76	     [java] Sketch #iterations = 8
+19.55/7.76	     [java] Sketch #280: MAP-PLUS DROP ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #281: MAP-POW MAXIMUM COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #282: MAP-POW MAXIMUM MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #283: MAP-POW MAXIMUM SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #284: MAP-POW MAXIMUM HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #285: MAP-POW MAXIMUM LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #286: MAP-POW MAXIMUM ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #287: MAP-POW COUNT MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #288: MAP-POW ACCESS MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #289: MAP-POW ACCESS COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #290: MAP-POW ACCESS MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #291: MAP-POW ACCESS SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #292: MAP-POW ACCESS HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #293: MAP-POW ACCESS LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #294: MAP-POW MAP-MUL ACCESS 
+19.55/7.76	     [java] Learning: (0)[(9) ACCESS ][(1) MAP-POW ][(2) input0 ][(3) 2 ]
+19.55/7.76	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) MAP-POW ][(2) input0 ][(3) 3 ][(1) MAP-POW ][(2) input0 ][(3) 3 ]
+19.55/7.76	     [java] Sketch #iterations = 3
+19.55/7.76	     [java] Sketch #295: MAP-POW MAP-DIV ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #296: MAP-POW MAP-PLUS ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #297: MAP-POW MAP-PLUS MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #298: MAP-POW MAP-PLUS COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #299: MAP-POW MAP-PLUS MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #300: MAP-POW MAP-PLUS SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #301: MAP-POW MAP-PLUS HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #302: MAP-POW MAP-PLUS LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #303: MAP-POW MAP-POW ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #304: MAP-POW FILTER ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #305: MAP-POW FILTER MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #306: MAP-POW FILTER COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #307: MAP-POW FILTER MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #308: MAP-POW FILTER SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #309: MAP-POW FILTER HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #310: MAP-POW FILTER LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #311: MAP-POW ZIPWITH-PLUS MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #312: MAP-POW ZIPWITH-PLUS COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #313: MAP-POW ZIPWITH-PLUS ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #314: MAP-POW ZIPWITH-MINUS ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #315: MAP-POW ZIPWITH-MINUS MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #316: MAP-POW ZIPWITH-MINUS COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #317: MAP-POW ZIPWITH-MINUS MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #318: MAP-POW ZIPWITH-MINUS SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #319: MAP-POW ZIPWITH-MINUS HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #320: MAP-POW ZIPWITH-MINUS LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #321: MAP-POW ZIPWITH-MUL ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #322: MAP-POW ZIPWITH-MIN ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #323: MAP-POW ZIPWITH-MIN MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #324: MAP-POW ZIPWITH-MIN COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #325: MAP-POW ZIPWITH-MIN MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #326: MAP-POW ZIPWITH-MIN SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #327: MAP-POW ZIPWITH-MIN HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #328: MAP-POW ZIPWITH-MIN LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #329: MAP-POW ZIPWITH-MAX ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #330: MAP-POW SORT ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #331: MAP-POW SORT MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #332: MAP-POW SORT COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #333: MAP-POW SORT MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #334: MAP-POW SORT SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #335: MAP-POW SORT HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #336: MAP-POW SORT LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #337: MAP-POW REVERSE ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #338: MAP-POW SCANL1-PLUS ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #339: MAP-POW SCANL1-PLUS MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #340: MAP-POW SCANL1-PLUS COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #341: MAP-POW SCANL1-PLUS MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #342: MAP-POW SCANL1-PLUS SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #343: MAP-POW SCANL1-PLUS HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #344: MAP-POW SCANL1-PLUS LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #345: MAP-POW SCANL1-MINUS ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #346: MAP-POW SCANL1-MUL ACCESS 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #347: MAP-POW SCANL1-MUL MAXIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #348: MAP-POW SCANL1-MUL COUNT 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #349: MAP-POW SCANL1-MUL MINIMUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #350: MAP-POW SCANL1-MUL SUM 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #351: MAP-POW SCANL1-MUL HEAD 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #352: MAP-POW SCANL1-MUL LAST 
+19.55/7.76	     [java] Sketch #iterations = 0
+19.55/7.76	     [java] Sketch #353: MAP-POW SCANL1-MIN ACCESS 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #354: MAP-POW SCANL1-MAX ACCESS 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #355: MAP-POW SCANL1-MAX MAXIMUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #356: MAP-POW SCANL1-MAX COUNT 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #357: MAP-POW SCANL1-MAX MINIMUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #358: MAP-POW SCANL1-MAX SUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #359: MAP-POW SCANL1-MAX HEAD 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #360: MAP-POW SCANL1-MAX LAST 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #361: MAP-POW TAKE MAXIMUM 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #362: MAP-POW TAKE COUNT 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #363: MAP-POW TAKE MINIMUM 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #364: MAP-POW TAKE SUM 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #365: MAP-POW TAKE HEAD 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #366: MAP-POW TAKE LAST 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #367: MAP-POW TAKE ACCESS 
+19.82/7.86	     [java] Sketch #iterations = 2
+19.82/7.86	     [java] Sketch #368: MAP-POW DROP MAXIMUM 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #369: MAP-POW DROP COUNT 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #370: MAP-POW DROP MINIMUM 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #371: MAP-POW DROP SUM 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #372: MAP-POW DROP HEAD 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #373: MAP-POW DROP LAST 
+19.82/7.86	     [java] Sketch #iterations = 3
+19.82/7.86	     [java] Sketch #374: MAP-POW DROP ACCESS 
+19.82/7.86	     [java] Sketch #iterations = 2
+19.82/7.86	     [java] Sketch #375: FILTER MAXIMUM COUNT 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #376: FILTER MAXIMUM MINIMUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #377: FILTER MAXIMUM SUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #378: FILTER MAXIMUM HEAD 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #379: FILTER MAXIMUM LAST 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #380: FILTER MAXIMUM ACCESS 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #381: FILTER COUNT MAXIMUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #382: FILTER ACCESS MAXIMUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #383: FILTER ACCESS COUNT 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #384: FILTER ACCESS MINIMUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #385: FILTER ACCESS SUM 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #386: FILTER ACCESS HEAD 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #387: FILTER ACCESS LAST 
+19.82/7.86	     [java] Sketch #iterations = 0
+19.82/7.86	     [java] Sketch #388: FILTER MAP-MUL ACCESS 
+19.82/7.86	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) FILTER ][(2) input0 ][(3) l(a,b).(> a b) ][(4) -3 ][(1) FILTER ][(2) input0 ][(3) l(a,b).(> a b) ][(4) -3 ]
+19.82/7.86	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(< a b) ][(4) -3 ]
+19.82/7.86	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(== a b) ][(4) -3 ]
+19.82/7.86	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(== a b) ][(4) -3 ]
+20.07/7.96	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) FILTER ][(2) input0 ][(3) l(a,b).(%= a b) ][(4) -3 ][(1) FILTER ][(2) input0 ][(3) l(a,b).(%= a b) ][(4) -3 ]
+20.07/7.96	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(%= a b) ][(4) -2 ]
+20.07/7.96	     [java] Sketch #iterations = 38
+20.07/7.96	     [java] Sketch #389: FILTER MAP-DIV ACCESS 
+20.07/7.96	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) FILTER ][(2) input0 ][(3) l(a,b).(> a b) ][(4) -2 ][(1) FILTER ][(2) input0 ][(3) l(a,b).(> a b) ][(4) -2 ]
+20.07/7.96	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(< a b) ][(4) -2 ]
+20.07/7.96	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(%= a b) ][(4) 2 ]
+20.07/7.96	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) FILTER ][(2) input0 ][(3) l(a,b).(%= a b) ][(4) 3 ][(1) FILTER ][(2) input0 ][(3) l(a,b).(%= a b) ][(4) 3 ]
+20.07/7.96	     [java] Sketch #iterations = 38
+20.07/7.96	     [java] Sketch #390: FILTER MAP-PLUS ACCESS 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #391: FILTER MAP-PLUS MAXIMUM 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #392: FILTER MAP-PLUS COUNT 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #393: FILTER MAP-PLUS MINIMUM 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #394: FILTER MAP-PLUS SUM 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #395: FILTER MAP-PLUS HEAD 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #396: FILTER MAP-PLUS LAST 
+20.07/7.96	     [java] Sketch #iterations = 0
+20.07/7.96	     [java] Sketch #397: FILTER MAP-POW ACCESS 
+20.07/7.97	     [java] Learning: (0)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) FILTER ][(2) input0 ][(3) l(a,b).(> a b) ][(4) -1 ][(1) FILTER ][(2) input0 ][(3) l(a,b).(> a b) ][(4) -1 ]
+20.07/7.97	     [java] Learning: (0)[(9) ACCESS ][(1) FILTER ][(2) input0 ][(3) l(a,b).(< a b) ][(4) -1 ]
+20.07/7.97	     [java] Sketch #iterations = 34
+20.07/7.97	     [java] Sketch #398: FILTER ZIPWITH-PLUS ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #399: FILTER ZIPWITH-PLUS MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #400: FILTER ZIPWITH-PLUS COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #401: FILTER ZIPWITH-PLUS MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #402: FILTER ZIPWITH-PLUS SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #403: FILTER ZIPWITH-PLUS HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #404: FILTER ZIPWITH-PLUS LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #405: FILTER ZIPWITH-MINUS ACCESS 
+20.07/7.97	     [java] Learning: (0)[(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) TAKE DROP FILTER ]
+20.07/7.97	     [java] Sketch #iterations = 33
+20.07/7.97	     [java] Sketch #406: FILTER ZIPWITH-MUL ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #407: FILTER ZIPWITH-MIN MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #408: FILTER ZIPWITH-MUL MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #409: FILTER ZIPWITH-MIN COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #410: FILTER ZIPWITH-MUL COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #411: FILTER ZIPWITH-MIN MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #412: FILTER ZIPWITH-MUL MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #413: FILTER ZIPWITH-MIN SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #414: FILTER ZIPWITH-MUL SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #415: FILTER ZIPWITH-MIN HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #416: FILTER ZIPWITH-MUL HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #417: FILTER ZIPWITH-MIN LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #418: FILTER ZIPWITH-MUL LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #419: FILTER ZIPWITH-MIN ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #420: FILTER ZIPWITH-MAX MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #421: FILTER SORT MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #422: FILTER ZIPWITH-MAX COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #423: FILTER SORT COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #424: FILTER ZIPWITH-MAX MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #425: FILTER SORT MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #426: FILTER ZIPWITH-MAX SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #427: FILTER SORT SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #428: FILTER ZIPWITH-MAX HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #429: FILTER SORT HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #430: FILTER ZIPWITH-MAX LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #431: FILTER SORT LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #432: FILTER ZIPWITH-MAX ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #433: FILTER SORT ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #434: FILTER REVERSE MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #435: FILTER SCANL1-PLUS MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #436: FILTER REVERSE COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #437: FILTER SCANL1-PLUS COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #438: FILTER REVERSE MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #439: FILTER SCANL1-PLUS MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #440: FILTER REVERSE SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #441: FILTER SCANL1-PLUS SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #442: FILTER REVERSE HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #443: FILTER SCANL1-PLUS HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #444: FILTER REVERSE LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #445: FILTER SCANL1-PLUS LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #446: FILTER REVERSE ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #447: FILTER SCANL1-PLUS ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #448: FILTER SCANL1-MINUS MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #449: FILTER SCANL1-MUL MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #450: FILTER SCANL1-MINUS COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #451: FILTER SCANL1-MUL COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #452: FILTER SCANL1-MINUS MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #453: FILTER SCANL1-MUL MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #454: FILTER SCANL1-MINUS SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #455: FILTER SCANL1-MUL SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #456: FILTER SCANL1-MINUS HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #457: FILTER SCANL1-MUL HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #458: FILTER SCANL1-MINUS LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #459: FILTER SCANL1-MUL LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #460: FILTER SCANL1-MINUS ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #461: FILTER SCANL1-MUL ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #462: FILTER SCANL1-MIN MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #463: FILTER SCANL1-MAX MAXIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #464: FILTER SCANL1-MIN COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #465: FILTER SCANL1-MAX COUNT 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #466: FILTER SCANL1-MIN MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #467: FILTER SCANL1-MAX MINIMUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #468: FILTER SCANL1-MIN SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #469: FILTER SCANL1-MAX SUM 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #470: FILTER SCANL1-MIN HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #471: FILTER SCANL1-MAX HEAD 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #472: FILTER SCANL1-MIN LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #473: FILTER SCANL1-MAX LAST 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #474: FILTER SCANL1-MIN ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #475: FILTER SCANL1-MAX ACCESS 
+20.07/7.97	     [java] Sketch #iterations = 0
+20.07/7.97	     [java] Sketch #476: FILTER TAKE MAXIMUM 
+20.43/8.07	     [java] Sketch #iterations = 43
+20.43/8.07	     [java] Sketch #477: FILTER TAKE COUNT 
+20.43/8.07	     [java] Sketch #iterations = 0
+20.43/8.07	     [java] Sketch #478: FILTER TAKE MINIMUM 
+20.69/8.17	     [java] Sketch #iterations = 43
+20.69/8.17	     [java] Sketch #479: FILTER TAKE SUM 
+20.69/8.17	     [java] Sketch #iterations = 43
+20.69/8.17	     [java] Sketch #480: FILTER TAKE HEAD 
+20.93/8.27	     [java] Sketch #iterations = 43
+20.93/8.27	     [java] Sketch #481: FILTER TAKE LAST 
+21.33/8.37	     [java] Sketch #iterations = 43
+21.33/8.37	     [java] Sketch #482: FILTER TAKE ACCESS 
+21.33/8.37	     [java] Sketch #iterations = 37
+21.33/8.37	     [java] Sketch #483: FILTER DROP MAXIMUM 
+21.58/8.47	     [java] Sketch #iterations = 43
+21.58/8.47	     [java] Sketch #484: FILTER DROP COUNT 
+21.58/8.47	     [java] Sketch #iterations = 0
+21.58/8.47	     [java] Sketch #485: FILTER DROP MINIMUM 
+21.82/8.57	     [java] Sketch #iterations = 43
+21.82/8.57	     [java] Sketch #486: FILTER DROP SUM 
+21.82/8.57	     [java] Sketch #iterations = 43
+21.82/8.57	     [java] Sketch #487: FILTER DROP HEAD 
+22.18/8.67	     [java] Sketch #iterations = 43
+22.18/8.67	     [java] Sketch #488: FILTER DROP LAST 
+22.38/8.77	     [java] Sketch #iterations = 43
+22.38/8.77	     [java] Sketch #489: FILTER DROP ACCESS 
+22.38/8.77	     [java] Sketch #iterations = 37
+22.38/8.77	     [java] Sketch #490: ZIPWITH-PLUS MAP-MUL MAXIMUM 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #491: ZIPWITH-PLUS MAP-MUL COUNT 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #492: ZIPWITH-PLUS MAP-MUL MINIMUM 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #493: ZIPWITH-PLUS MAP-MUL SUM 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #494: ZIPWITH-PLUS MAP-MUL HEAD 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #495: ZIPWITH-PLUS MAP-MUL LAST 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #496: ZIPWITH-PLUS MAP-MUL ACCESS 
+22.38/8.77	     [java] Learning: (0)[(9) ACCESS ][(1) ZIPWITH-PLUS ]
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #497: ZIPWITH-PLUS MAP-DIV ACCESS 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #498: ZIPWITH-PLUS TAKE MAXIMUM 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #499: ZIPWITH-PLUS TAKE COUNT 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #500: ZIPWITH-PLUS TAKE MINIMUM 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #501: ZIPWITH-PLUS TAKE SUM 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #502: ZIPWITH-PLUS TAKE HEAD 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #503: ZIPWITH-PLUS TAKE LAST 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #504: ZIPWITH-PLUS TAKE ACCESS 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #505: ZIPWITH-PLUS DROP MAXIMUM 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #506: ZIPWITH-PLUS DROP COUNT 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #507: ZIPWITH-PLUS DROP MINIMUM 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #508: ZIPWITH-PLUS DROP SUM 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #509: ZIPWITH-PLUS DROP HEAD 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #510: ZIPWITH-PLUS DROP LAST 
+22.38/8.77	     [java] Sketch #iterations = 1
+22.38/8.77	     [java] Sketch #511: ZIPWITH-PLUS DROP ACCESS 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #512: ZIPWITH-MINUS MAP-MUL MAXIMUM 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #513: ZIPWITH-MINUS MAP-MUL COUNT 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #514: ZIPWITH-MINUS MAP-MUL MINIMUM 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #515: ZIPWITH-MINUS MAP-MUL SUM 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #516: ZIPWITH-MINUS MAP-MUL HEAD 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #517: ZIPWITH-MINUS MAP-MUL LAST 
+22.38/8.77	     [java] Sketch #iterations = 0
+22.38/8.77	     [java] Sketch #518: ZIPWITH-MINUS MAP-MUL ACCESS 
+22.63/8.87	     [java] Sketch #iterations = 8
+22.63/8.87	     [java] Sketch #519: ZIPWITH-MINUS MAP-DIV ACCESS 
+22.63/8.87	     [java] Sketch #iterations = 7
+22.63/8.87	     [java] Sketch #520: ZIPWITH-MINUS MAP-PLUS ACCESS 
+22.63/8.87	     [java] Sketch #iterations = 8
+22.63/8.87	     [java] Sketch #521: ZIPWITH-MINUS MAP-POW ACCESS 
+22.63/8.87	     [java] Sketch #iterations = 3
+22.63/8.87	     [java] Sketch #522: ZIPWITH-MINUS FILTER ACCESS 
+22.63/8.87	     [java] Learning: (1)[(9) HEAD LAST ACCESS MINIMUM MAXIMUM ][(5) TAKE DROP FILTER ZIPWITH-MIN SCANL1-MAX SCANL1-MIN SORT REVERSE ][(1) ZIPWITH-MINUS ]
+22.63/8.87	     [java] Sketch #iterations = 1
+22.63/8.87	     [java] Sketch #523: ZIPWITH-MINUS SORT ACCESS 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #524: ZIPWITH-MINUS REVERSE ACCESS 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #525: ZIPWITH-MINUS REVERSE MAXIMUM 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #526: ZIPWITH-MINUS REVERSE COUNT 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #527: ZIPWITH-MINUS REVERSE MINIMUM 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #528: ZIPWITH-MINUS REVERSE SUM 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #529: ZIPWITH-MINUS REVERSE HEAD 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #530: ZIPWITH-MINUS REVERSE LAST 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #531: ZIPWITH-MINUS SCANL1-PLUS MAXIMUM 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #532: ZIPWITH-MINUS SCANL1-PLUS COUNT 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #533: ZIPWITH-MINUS SCANL1-PLUS MINIMUM 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #534: ZIPWITH-MINUS SCANL1-PLUS SUM 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #535: ZIPWITH-MINUS SCANL1-PLUS HEAD 
+22.63/8.87	     [java] Sketch #iterations = 0
+22.63/8.87	     [java] Sketch #536: ZIPWITH-MINUS SCANL1-PLUS LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #537: ZIPWITH-MINUS SCANL1-PLUS ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 1
+22.63/8.88	     [java] Sketch #538: ZIPWITH-MINUS SCANL1-MINUS ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 1
+22.63/8.88	     [java] Sketch #539: ZIPWITH-MINUS SCANL1-MUL ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 1
+22.63/8.88	     [java] Sketch #540: ZIPWITH-MINUS SCANL1-MIN ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #541: ZIPWITH-MINUS SCANL1-MAX ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #542: ZIPWITH-MINUS SCANL1-MAX MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #543: ZIPWITH-MINUS SCANL1-MAX COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #544: ZIPWITH-MINUS SCANL1-MAX MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #545: ZIPWITH-MINUS SCANL1-MAX SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #546: ZIPWITH-MINUS SCANL1-MAX HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #547: ZIPWITH-MINUS SCANL1-MAX LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #548: ZIPWITH-MINUS TAKE MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #549: ZIPWITH-MINUS TAKE COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #550: ZIPWITH-MINUS TAKE MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #551: ZIPWITH-MINUS TAKE SUM 
+22.63/8.88	     [java] Sketch #iterations = 1
+22.63/8.88	     [java] Sketch #552: ZIPWITH-MINUS TAKE HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #553: ZIPWITH-MINUS TAKE LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #554: ZIPWITH-MINUS TAKE ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #555: ZIPWITH-MINUS DROP MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #556: ZIPWITH-MINUS DROP COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #557: ZIPWITH-MINUS DROP MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #558: ZIPWITH-MINUS DROP SUM 
+22.63/8.88	     [java] Sketch #iterations = 1
+22.63/8.88	     [java] Sketch #559: ZIPWITH-MINUS DROP HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #560: ZIPWITH-MINUS DROP LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #561: ZIPWITH-MINUS DROP ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #562: ZIPWITH-MUL MAP-MUL MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #563: ZIPWITH-MUL MAP-MUL COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #564: ZIPWITH-MUL MAP-MUL MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #565: ZIPWITH-MUL MAP-MUL SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #566: ZIPWITH-MUL MAP-MUL HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #567: ZIPWITH-MUL MAP-MUL LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #568: ZIPWITH-MUL MAP-MUL ACCESS 
+22.63/8.88	     [java] Learning: (1)[(9) ACCESS ][(5) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) ZIPWITH-MAX ZIPWITH-MIN ZIPWITH-MINUS ZIPWITH-MUL ZIPWITH-PLUS MAP-DIV MAP-MUL MAP-PLUS MAP-POW SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SORT SCANL1-PLUS REVERSE ][(1) ZIPWITH-MUL ]
+22.63/8.88	     [java] Sketch #iterations = 1
+22.63/8.88	     [java] Sketch #569: ZIPWITH-MUL MAP-DIV ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #570: ZIPWITH-MUL MAP-PLUS ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #571: ZIPWITH-MUL MAP-PLUS MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #572: ZIPWITH-MUL MAP-PLUS COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #573: ZIPWITH-MUL MAP-PLUS MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #574: ZIPWITH-MUL MAP-PLUS SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #575: ZIPWITH-MUL MAP-PLUS HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #576: ZIPWITH-MUL MAP-PLUS LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #577: ZIPWITH-MUL MAP-POW ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #578: ZIPWITH-MUL FILTER ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #579: ZIPWITH-MUL FILTER MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #580: ZIPWITH-MUL FILTER COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #581: ZIPWITH-MUL FILTER MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #582: ZIPWITH-MUL FILTER SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #583: ZIPWITH-MUL FILTER HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #584: ZIPWITH-MUL FILTER LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #585: ZIPWITH-MUL SORT MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #586: ZIPWITH-MUL SORT COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #587: ZIPWITH-MUL SORT ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #588: ZIPWITH-MUL REVERSE ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #589: ZIPWITH-MUL REVERSE MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #590: ZIPWITH-MUL REVERSE COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #591: ZIPWITH-MUL REVERSE MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #592: ZIPWITH-MUL REVERSE SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #593: ZIPWITH-MUL REVERSE HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #594: ZIPWITH-MUL REVERSE LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #595: ZIPWITH-MUL SCANL1-PLUS ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #596: ZIPWITH-MUL SCANL1-MINUS ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #597: ZIPWITH-MUL SCANL1-MINUS MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #598: ZIPWITH-MUL SCANL1-MINUS COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #599: ZIPWITH-MUL SCANL1-MINUS MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #600: ZIPWITH-MUL SCANL1-MINUS SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #601: ZIPWITH-MUL SCANL1-MINUS HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #602: ZIPWITH-MUL SCANL1-MINUS LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #603: ZIPWITH-MUL SCANL1-MUL ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #604: ZIPWITH-MUL SCANL1-MIN ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #605: ZIPWITH-MUL SCANL1-MIN MAXIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #606: ZIPWITH-MUL SCANL1-MIN COUNT 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #607: ZIPWITH-MUL SCANL1-MIN MINIMUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #608: ZIPWITH-MUL SCANL1-MIN SUM 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #609: ZIPWITH-MUL SCANL1-MIN HEAD 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #610: ZIPWITH-MUL SCANL1-MIN LAST 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #611: ZIPWITH-MUL SCANL1-MAX ACCESS 
+22.63/8.88	     [java] Sketch #iterations = 0
+22.63/8.88	     [java] Sketch #612: ZIPWITH-MUL TAKE MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #613: ZIPWITH-MUL TAKE COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #614: ZIPWITH-MUL TAKE MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #615: ZIPWITH-MUL TAKE SUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #616: ZIPWITH-MUL TAKE HEAD 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #617: ZIPWITH-MUL TAKE LAST 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #618: ZIPWITH-MUL TAKE ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #619: ZIPWITH-MUL DROP MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #620: ZIPWITH-MUL DROP COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #621: ZIPWITH-MUL DROP MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #622: ZIPWITH-MUL DROP SUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #623: ZIPWITH-MUL DROP HEAD 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #624: ZIPWITH-MUL DROP LAST 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #625: ZIPWITH-MUL DROP ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #626: ZIPWITH-MIN MAP-MUL MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #627: ZIPWITH-MIN MAP-MUL COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #628: ZIPWITH-MIN MAP-MUL MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #629: ZIPWITH-MIN MAP-MUL SUM 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #630: ZIPWITH-MIN MAP-MUL HEAD 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #631: ZIPWITH-MIN MAP-MUL LAST 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #632: ZIPWITH-MIN MAP-MUL ACCESS 
+22.87/8.98	     [java] Learning: (1)[(9) ACCESS ][(1) ZIPWITH-MIN ]
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #633: ZIPWITH-MIN MAP-DIV ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #634: ZIPWITH-MIN TAKE MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #635: ZIPWITH-MIN TAKE COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #636: ZIPWITH-MIN TAKE MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #637: ZIPWITH-MIN TAKE SUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #638: ZIPWITH-MIN TAKE HEAD 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #639: ZIPWITH-MIN TAKE LAST 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #640: ZIPWITH-MIN TAKE ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #641: ZIPWITH-MIN DROP MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #642: ZIPWITH-MIN DROP COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #643: ZIPWITH-MIN DROP MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #644: ZIPWITH-MIN DROP SUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #645: ZIPWITH-MIN DROP HEAD 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #646: ZIPWITH-MIN DROP LAST 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #647: ZIPWITH-MIN DROP ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #648: ZIPWITH-MAX MAP-MUL MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #649: ZIPWITH-MAX MAP-MUL COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #650: ZIPWITH-MAX MAP-MUL MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #651: ZIPWITH-MAX MAP-MUL SUM 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #652: ZIPWITH-MAX MAP-MUL HEAD 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #653: ZIPWITH-MAX MAP-MUL LAST 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #654: ZIPWITH-MAX MAP-MUL ACCESS 
+22.87/8.98	     [java] Learning: (1)[(9) ACCESS ][(1) ZIPWITH-MAX ]
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #655: ZIPWITH-MAX MAP-DIV ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #656: ZIPWITH-MAX TAKE MAXIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #657: ZIPWITH-MAX TAKE COUNT 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #658: ZIPWITH-MAX TAKE MINIMUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #659: ZIPWITH-MAX TAKE SUM 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #660: ZIPWITH-MAX TAKE HEAD 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #661: ZIPWITH-MAX TAKE LAST 
+22.87/8.98	     [java] Sketch #iterations = 1
+22.87/8.98	     [java] Sketch #662: ZIPWITH-MAX TAKE ACCESS 
+22.87/8.98	     [java] Sketch #iterations = 0
+22.87/8.98	     [java] Sketch #663: ZIPWITH-MAX DROP MAXIMUM 
+23.11/9.08	     [java] Sketch #iterations = 1
+23.11/9.08	     [java] Sketch #664: ZIPWITH-MAX DROP COUNT 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #665: ZIPWITH-MAX DROP MINIMUM 
+23.11/9.08	     [java] Sketch #iterations = 1
+23.11/9.08	     [java] Sketch #666: ZIPWITH-MAX DROP SUM 
+23.11/9.08	     [java] Sketch #iterations = 1
+23.11/9.08	     [java] Sketch #667: ZIPWITH-MAX DROP HEAD 
+23.11/9.08	     [java] Sketch #iterations = 1
+23.11/9.08	     [java] Sketch #668: ZIPWITH-MAX DROP LAST 
+23.11/9.08	     [java] Sketch #iterations = 1
+23.11/9.08	     [java] Sketch #669: ZIPWITH-MAX DROP ACCESS 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #670: SORT MAXIMUM COUNT 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #671: SORT MAXIMUM MINIMUM 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #672: SORT MAXIMUM SUM 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #673: SORT MAXIMUM HEAD 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #674: SORT MAXIMUM LAST 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #675: SORT MAXIMUM ACCESS 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #676: SORT COUNT MAXIMUM 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #677: SORT ACCESS MAXIMUM 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #678: SORT ACCESS COUNT 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #679: SORT ACCESS MINIMUM 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #680: SORT ACCESS SUM 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #681: SORT ACCESS HEAD 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #682: SORT ACCESS LAST 
+23.11/9.08	     [java] Sketch #iterations = 0
+23.11/9.08	     [java] Sketch #683: SORT MAP-MUL ACCESS 
+23.11/9.08	     [java] Sketch #iterations = 8
+23.11/9.08	     [java] Sketch #684: SORT MAP-DIV ACCESS 
+23.11/9.08	     [java] Sketch #iterations = 7
+23.11/9.08	     [java] Sketch #685: SORT MAP-PLUS ACCESS 
+23.11/9.08	     [java] Sketch #iterations = 8
+23.11/9.08	     [java] Sketch #686: SORT MAP-POW ACCESS 
+23.11/9.08	     [java] Sketch #iterations = 3
+23.11/9.08	     [java] Sketch #687: SORT FILTER ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 43
+23.46/9.18	     [java] Sketch #688: SORT ZIPWITH-PLUS ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 2
+23.46/9.18	     [java] Sketch #689: SORT ZIPWITH-MINUS ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 2
+23.46/9.18	     [java] Sketch #690: SORT ZIPWITH-MUL ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 2
+23.46/9.18	     [java] Sketch #691: SORT ZIPWITH-MIN ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 2
+23.46/9.18	     [java] Sketch #692: SORT ZIPWITH-MAX ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 2
+23.46/9.18	     [java] Sketch #693: SORT REVERSE ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #694: SORT SCANL1-PLUS ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #695: SORT SCANL1-MINUS ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #696: SORT SCANL1-MUL ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #697: SORT SCANL1-MIN ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #698: SORT SCANL1-MAX ACCESS 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #699: SORT TAKE MAXIMUM 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #700: SORT TAKE COUNT 
+23.46/9.18	     [java] Sketch #iterations = 0
+23.46/9.18	     [java] Sketch #701: SORT TAKE MINIMUM 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #702: SORT TAKE SUM 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #703: SORT TAKE HEAD 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #704: SORT TAKE LAST 
+23.46/9.18	     [java] Sketch #iterations = 1
+23.46/9.18	     [java] Sketch #705: SORT TAKE ACCESS 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #706: SORT DROP MAXIMUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #707: SORT DROP COUNT 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #708: SORT DROP MINIMUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #709: SORT DROP SUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #710: SORT DROP HEAD 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #711: SORT DROP LAST 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #712: SORT DROP ACCESS 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #713: REVERSE MAXIMUM COUNT 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #714: REVERSE MAXIMUM MINIMUM 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #715: REVERSE MAXIMUM SUM 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #716: REVERSE MAXIMUM HEAD 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #717: REVERSE MAXIMUM LAST 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #718: REVERSE MAXIMUM ACCESS 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #719: REVERSE COUNT MAXIMUM 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #720: REVERSE ACCESS MAXIMUM 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #721: REVERSE ACCESS COUNT 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #722: REVERSE ACCESS MINIMUM 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #723: REVERSE ACCESS SUM 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #724: REVERSE ACCESS HEAD 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #725: REVERSE ACCESS LAST 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #726: REVERSE MAP-MUL ACCESS 
+23.69/9.28	     [java] Learning: (1)[(9) ACCESS ][(1) REVERSE ]
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #727: REVERSE MAP-DIV ACCESS 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #728: REVERSE TAKE MAXIMUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #729: REVERSE TAKE COUNT 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #730: REVERSE TAKE MINIMUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #731: REVERSE TAKE SUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #732: REVERSE TAKE HEAD 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #733: REVERSE TAKE LAST 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #734: REVERSE TAKE ACCESS 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #735: REVERSE DROP MAXIMUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #736: REVERSE DROP COUNT 
+23.69/9.28	     [java] Sketch #iterations = 0
+23.69/9.28	     [java] Sketch #737: REVERSE DROP MINIMUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #738: REVERSE DROP SUM 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #739: REVERSE DROP HEAD 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.28	     [java] Sketch #740: REVERSE DROP LAST 
+23.69/9.28	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #741: REVERSE DROP ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #742: SCANL1-PLUS MAXIMUM COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #743: SCANL1-PLUS MAXIMUM MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #744: SCANL1-PLUS MAXIMUM SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #745: SCANL1-PLUS MAXIMUM HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #746: SCANL1-PLUS MAXIMUM LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #747: SCANL1-PLUS MAXIMUM ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #748: SCANL1-PLUS COUNT MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #749: SCANL1-PLUS ACCESS MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #750: SCANL1-PLUS ACCESS COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #751: SCANL1-PLUS ACCESS MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #752: SCANL1-PLUS ACCESS SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #753: SCANL1-PLUS ACCESS HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #754: SCANL1-PLUS ACCESS LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #755: SCANL1-PLUS MAP-MUL ACCESS 
+23.69/9.29	     [java] Learning: (1)[(9) ACCESS ][(1) TAKE SCANL1-MAX SCANL1-MIN SCANL1-MINUS SCANL1-MUL SCANL1-PLUS ]
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #756: SCANL1-PLUS MAP-DIV ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #757: SCANL1-PLUS TAKE MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #758: SCANL1-PLUS TAKE COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #759: SCANL1-PLUS TAKE MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #760: SCANL1-PLUS TAKE SUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #761: SCANL1-PLUS TAKE HEAD 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #762: SCANL1-PLUS TAKE LAST 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #763: SCANL1-PLUS TAKE ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #764: SCANL1-PLUS DROP MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #765: SCANL1-PLUS DROP COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #766: SCANL1-PLUS DROP MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #767: SCANL1-PLUS DROP SUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #768: SCANL1-PLUS DROP HEAD 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #769: SCANL1-PLUS DROP LAST 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #770: SCANL1-PLUS DROP ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #771: SCANL1-MINUS MAXIMUM COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #772: SCANL1-MINUS MAXIMUM MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #773: SCANL1-MINUS MAXIMUM SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #774: SCANL1-MINUS MAXIMUM HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #775: SCANL1-MINUS MAXIMUM LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #776: SCANL1-MINUS MAXIMUM ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #777: SCANL1-MINUS COUNT MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #778: SCANL1-MINUS COUNT MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #779: SCANL1-MINUS COUNT SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #780: SCANL1-MINUS COUNT HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #781: SCANL1-MINUS COUNT LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #782: SCANL1-MINUS COUNT ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #783: SCANL1-MINUS MINIMUM COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #784: SCANL1-MINUS MINIMUM MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #785: SCANL1-MINUS MINIMUM SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #786: SCANL1-MINUS MINIMUM HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #787: SCANL1-MINUS MINIMUM LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #788: SCANL1-MINUS MINIMUM ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #789: SCANL1-MINUS SUM COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #790: SCANL1-MINUS SUM MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #791: SCANL1-MINUS SUM MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #792: SCANL1-MINUS SUM HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #793: SCANL1-MINUS SUM LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #794: SCANL1-MINUS SUM ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #795: SCANL1-MINUS HEAD COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #796: SCANL1-MINUS HEAD MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #797: SCANL1-MINUS HEAD MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #798: SCANL1-MINUS HEAD SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #799: SCANL1-MINUS HEAD LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #800: SCANL1-MINUS HEAD ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #801: SCANL1-MINUS LAST COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #802: SCANL1-MINUS LAST MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #803: SCANL1-MINUS LAST MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #804: SCANL1-MINUS LAST SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #805: SCANL1-MINUS LAST HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #806: SCANL1-MINUS LAST ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #807: SCANL1-MINUS ACCESS MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #808: SCANL1-MINUS ACCESS COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #809: SCANL1-MINUS ACCESS MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #810: SCANL1-MINUS ACCESS SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #811: SCANL1-MINUS ACCESS HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #812: SCANL1-MINUS ACCESS LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #813: SCANL1-MINUS MAP-MUL MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #814: SCANL1-MINUS MAP-MUL COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #815: SCANL1-MINUS MAP-MUL MINIMUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #816: SCANL1-MINUS MAP-MUL SUM 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #817: SCANL1-MINUS MAP-MUL HEAD 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #818: SCANL1-MINUS MAP-MUL LAST 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #819: SCANL1-MINUS MAP-MUL ACCESS 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #820: SCANL1-MINUS TAKE MAXIMUM 
+23.69/9.29	     [java] Sketch #iterations = 1
+23.69/9.29	     [java] Sketch #821: SCANL1-MINUS TAKE COUNT 
+23.69/9.29	     [java] Sketch #iterations = 0
+23.69/9.29	     [java] Sketch #822: SCANL1-MINUS TAKE MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #823: SCANL1-MINUS TAKE SUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #824: SCANL1-MINUS TAKE HEAD 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #825: SCANL1-MINUS TAKE LAST 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #826: SCANL1-MINUS TAKE ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #827: SCANL1-MINUS DROP MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #828: SCANL1-MINUS DROP COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #829: SCANL1-MINUS DROP MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #830: SCANL1-MINUS DROP SUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #831: SCANL1-MINUS DROP HEAD 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #832: SCANL1-MINUS DROP LAST 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #833: SCANL1-MINUS DROP ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #834: SCANL1-MUL MAXIMUM COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #835: SCANL1-MUL MAXIMUM MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #836: SCANL1-MUL MAXIMUM SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #837: SCANL1-MUL MAXIMUM HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #838: SCANL1-MUL MAXIMUM LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #839: SCANL1-MUL MAXIMUM ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #840: SCANL1-MUL COUNT MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #841: SCANL1-MUL COUNT MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #842: SCANL1-MUL COUNT SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #843: SCANL1-MUL COUNT HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #844: SCANL1-MUL COUNT LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #845: SCANL1-MUL COUNT ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #846: SCANL1-MUL MINIMUM COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #847: SCANL1-MUL MINIMUM MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #848: SCANL1-MUL MINIMUM SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #849: SCANL1-MUL MINIMUM HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #850: SCANL1-MUL MINIMUM LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #851: SCANL1-MUL MINIMUM ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #852: SCANL1-MUL SUM COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #853: SCANL1-MUL SUM MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #854: SCANL1-MUL SUM MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #855: SCANL1-MUL SUM HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #856: SCANL1-MUL SUM LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #857: SCANL1-MUL SUM ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #858: SCANL1-MUL HEAD COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #859: SCANL1-MUL HEAD MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #860: SCANL1-MUL HEAD MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #861: SCANL1-MUL HEAD SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #862: SCANL1-MUL HEAD LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #863: SCANL1-MUL HEAD ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #864: SCANL1-MUL LAST COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #865: SCANL1-MUL LAST MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #866: SCANL1-MUL LAST MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #867: SCANL1-MUL LAST SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #868: SCANL1-MUL LAST HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #869: SCANL1-MUL LAST ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #870: SCANL1-MUL ACCESS MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #871: SCANL1-MUL ACCESS COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #872: SCANL1-MUL ACCESS MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #873: SCANL1-MUL ACCESS SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #874: SCANL1-MUL ACCESS HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #875: SCANL1-MUL ACCESS LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #876: SCANL1-MUL MAP-MUL MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #877: SCANL1-MUL MAP-MUL COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #878: SCANL1-MUL MAP-MUL MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #879: SCANL1-MUL MAP-MUL SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #880: SCANL1-MUL MAP-MUL HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #881: SCANL1-MUL MAP-MUL LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #882: SCANL1-MUL MAP-MUL ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #883: SCANL1-MUL TAKE MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #884: SCANL1-MUL TAKE COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #885: SCANL1-MUL TAKE MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #886: SCANL1-MUL TAKE SUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #887: SCANL1-MUL TAKE HEAD 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #888: SCANL1-MUL TAKE LAST 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #889: SCANL1-MUL TAKE ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #890: SCANL1-MUL DROP MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #891: SCANL1-MUL DROP COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #892: SCANL1-MUL DROP MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #893: SCANL1-MUL DROP SUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #894: SCANL1-MUL DROP HEAD 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #895: SCANL1-MUL DROP LAST 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #896: SCANL1-MUL DROP ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #897: SCANL1-MIN MAXIMUM COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #898: SCANL1-MIN MAXIMUM MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #899: SCANL1-MIN MAXIMUM SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #900: SCANL1-MIN MAXIMUM HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #901: SCANL1-MIN MAXIMUM LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #902: SCANL1-MIN MAXIMUM ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #903: SCANL1-MIN COUNT MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #904: SCANL1-MIN COUNT MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #905: SCANL1-MIN COUNT SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #906: SCANL1-MIN COUNT HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #907: SCANL1-MIN COUNT LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #908: SCANL1-MIN COUNT ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #909: SCANL1-MIN MINIMUM COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #910: SCANL1-MIN MINIMUM MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #911: SCANL1-MIN MINIMUM SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #912: SCANL1-MIN MINIMUM HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #913: SCANL1-MIN MINIMUM LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #914: SCANL1-MIN MINIMUM ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #915: SCANL1-MIN SUM COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #916: SCANL1-MIN SUM MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #917: SCANL1-MIN SUM MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #918: SCANL1-MIN SUM HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #919: SCANL1-MIN SUM LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #920: SCANL1-MIN SUM ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #921: SCANL1-MIN HEAD COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #922: SCANL1-MIN HEAD MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #923: SCANL1-MIN HEAD MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #924: SCANL1-MIN HEAD SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #925: SCANL1-MIN HEAD LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #926: SCANL1-MIN HEAD ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #927: SCANL1-MIN LAST COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #928: SCANL1-MIN LAST MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #929: SCANL1-MIN LAST MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #930: SCANL1-MIN LAST SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #931: SCANL1-MIN LAST HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #932: SCANL1-MIN LAST ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #933: SCANL1-MIN ACCESS MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #934: SCANL1-MIN ACCESS COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #935: SCANL1-MIN ACCESS MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #936: SCANL1-MIN ACCESS SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #937: SCANL1-MIN ACCESS HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #938: SCANL1-MIN ACCESS LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #939: SCANL1-MIN MAP-MUL MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #940: SCANL1-MIN MAP-MUL COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #941: SCANL1-MIN MAP-MUL MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #942: SCANL1-MIN MAP-MUL SUM 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #943: SCANL1-MIN MAP-MUL HEAD 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #944: SCANL1-MIN MAP-MUL LAST 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #945: SCANL1-MIN MAP-MUL ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #946: SCANL1-MIN TAKE MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #947: SCANL1-MIN TAKE COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #948: SCANL1-MIN TAKE MINIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #949: SCANL1-MIN TAKE SUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #950: SCANL1-MIN TAKE HEAD 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #951: SCANL1-MIN TAKE LAST 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #952: SCANL1-MIN TAKE ACCESS 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #953: SCANL1-MIN DROP MAXIMUM 
+23.88/9.39	     [java] Sketch #iterations = 1
+23.88/9.39	     [java] Sketch #954: SCANL1-MIN DROP COUNT 
+23.88/9.39	     [java] Sketch #iterations = 0
+23.88/9.39	     [java] Sketch #955: SCANL1-MIN DROP MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #956: SCANL1-MIN DROP SUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #957: SCANL1-MIN DROP HEAD 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #958: SCANL1-MIN DROP LAST 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #959: SCANL1-MIN DROP ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #960: SCANL1-MAX MAXIMUM COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #961: SCANL1-MAX MAXIMUM MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #962: SCANL1-MAX MAXIMUM SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #963: SCANL1-MAX MAXIMUM HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #964: SCANL1-MAX MAXIMUM LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #965: SCANL1-MAX MAXIMUM ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #966: SCANL1-MAX COUNT MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #967: SCANL1-MAX COUNT MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #968: SCANL1-MAX COUNT SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #969: SCANL1-MAX COUNT HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #970: SCANL1-MAX COUNT LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #971: SCANL1-MAX COUNT ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #972: SCANL1-MAX MINIMUM COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #973: SCANL1-MAX MINIMUM MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #974: SCANL1-MAX MINIMUM SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #975: SCANL1-MAX MINIMUM HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #976: SCANL1-MAX MINIMUM LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #977: SCANL1-MAX MINIMUM ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #978: SCANL1-MAX SUM COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #979: SCANL1-MAX SUM MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #980: SCANL1-MAX SUM MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #981: SCANL1-MAX SUM HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #982: SCANL1-MAX SUM LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #983: SCANL1-MAX SUM ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #984: SCANL1-MAX HEAD COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #985: SCANL1-MAX HEAD MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #986: SCANL1-MAX HEAD MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #987: SCANL1-MAX HEAD SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #988: SCANL1-MAX HEAD LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #989: SCANL1-MAX HEAD ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #990: SCANL1-MAX LAST COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #991: SCANL1-MAX LAST MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #992: SCANL1-MAX LAST MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #993: SCANL1-MAX LAST SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #994: SCANL1-MAX LAST HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #995: SCANL1-MAX LAST ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #996: SCANL1-MAX ACCESS MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #997: SCANL1-MAX ACCESS COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #998: SCANL1-MAX ACCESS MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #999: SCANL1-MAX ACCESS SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1000: SCANL1-MAX ACCESS HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1001: SCANL1-MAX ACCESS LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1002: SCANL1-MAX MAP-MUL MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1003: SCANL1-MAX MAP-MUL COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1004: SCANL1-MAX MAP-MUL MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1005: SCANL1-MAX MAP-MUL SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1006: SCANL1-MAX MAP-MUL HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1007: SCANL1-MAX MAP-MUL LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1008: SCANL1-MAX MAP-MUL ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1009: SCANL1-MAX TAKE MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1010: SCANL1-MAX TAKE COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1011: SCANL1-MAX TAKE MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1012: SCANL1-MAX TAKE SUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1013: SCANL1-MAX TAKE HEAD 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1014: SCANL1-MAX TAKE LAST 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1015: SCANL1-MAX TAKE ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1016: SCANL1-MAX DROP MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1017: SCANL1-MAX DROP COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1018: SCANL1-MAX DROP MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1019: SCANL1-MAX DROP SUM 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1020: SCANL1-MAX DROP HEAD 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1021: SCANL1-MAX DROP LAST 
+24.15/9.49	     [java] Sketch #iterations = 1
+24.15/9.49	     [java] Sketch #1022: SCANL1-MAX DROP ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1023: TAKE MAXIMUM COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1024: TAKE MAXIMUM MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1025: TAKE MAXIMUM SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1026: TAKE MAXIMUM HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1027: TAKE MAXIMUM LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1028: TAKE MAXIMUM ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1029: TAKE COUNT MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1030: TAKE COUNT MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1031: TAKE COUNT SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1032: TAKE COUNT HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1033: TAKE COUNT LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1034: TAKE COUNT ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1035: TAKE MINIMUM COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1036: TAKE MINIMUM MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1037: TAKE MINIMUM SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1038: TAKE MINIMUM HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1039: TAKE MINIMUM LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1040: TAKE MINIMUM ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1041: TAKE SUM COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1042: TAKE SUM MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1043: TAKE SUM MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1044: TAKE SUM HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1045: TAKE SUM LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1046: TAKE SUM ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1047: TAKE HEAD COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1048: TAKE HEAD MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1049: TAKE HEAD MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1050: TAKE HEAD SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1051: TAKE HEAD LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1052: TAKE HEAD ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1053: TAKE LAST COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1054: TAKE LAST MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1055: TAKE LAST MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1056: TAKE LAST SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1057: TAKE LAST HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1058: TAKE LAST ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1059: TAKE ACCESS COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1060: TAKE ACCESS MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1061: TAKE ACCESS MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1062: TAKE ACCESS SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1063: TAKE ACCESS HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1064: TAKE ACCESS LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1065: TAKE MAP-MUL MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1066: TAKE MAP-DIV MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1067: TAKE MAP-MUL COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1068: TAKE MAP-DIV COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1069: TAKE MAP-MUL MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1070: TAKE MAP-DIV MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1071: TAKE MAP-MUL SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1072: TAKE MAP-DIV SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1073: TAKE MAP-MUL HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1074: TAKE MAP-DIV HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1075: TAKE MAP-MUL LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1076: TAKE MAP-DIV LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1077: TAKE MAP-MUL ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1078: TAKE MAP-PLUS MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1079: TAKE MAP-POW MAXIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1080: TAKE MAP-PLUS COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1081: TAKE MAP-POW COUNT 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1082: TAKE MAP-PLUS MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1083: TAKE MAP-POW MINIMUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1084: TAKE MAP-PLUS SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1085: TAKE MAP-POW SUM 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1086: TAKE MAP-PLUS HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1087: TAKE MAP-POW HEAD 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1088: TAKE MAP-PLUS LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1089: TAKE MAP-POW LAST 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1090: TAKE MAP-PLUS ACCESS 
+24.15/9.49	     [java] Sketch #iterations = 0
+24.15/9.49	     [java] Sketch #1091: TAKE FILTER MAXIMUM 
+24.49/9.59	     [java] Sketch #iterations = 43
+24.49/9.59	     [java] Sketch #1092: TAKE FILTER COUNT 
+24.49/9.59	     [java] Sketch #iterations = 0
+24.49/9.59	     [java] Sketch #1093: TAKE FILTER MINIMUM 
+24.49/9.59	     [java] Sketch #iterations = 43
+24.49/9.59	     [java] Sketch #1094: TAKE FILTER SUM 
+24.66/9.69	     [java] Sketch #iterations = 43
+24.66/9.69	     [java] Sketch #1095: TAKE FILTER HEAD 
+24.66/9.69	     [java] Sketch #iterations = 43
+24.66/9.69	     [java] Sketch #1096: TAKE FILTER LAST 
+25.01/9.80	     [java] Sketch #iterations = 43
+25.01/9.80	     [java] Sketch #1097: TAKE FILTER ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1098: TAKE ZIPWITH-PLUS MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1099: TAKE ZIPWITH-MINUS MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1100: TAKE ZIPWITH-PLUS COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1101: TAKE ZIPWITH-MINUS COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1102: TAKE ZIPWITH-PLUS MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1103: TAKE ZIPWITH-MINUS MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1104: TAKE ZIPWITH-PLUS SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1105: TAKE ZIPWITH-MINUS SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1106: TAKE ZIPWITH-PLUS HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1107: TAKE ZIPWITH-MINUS HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1108: TAKE ZIPWITH-PLUS LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1109: TAKE ZIPWITH-MINUS LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1110: TAKE ZIPWITH-PLUS ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1111: TAKE ZIPWITH-MUL MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1112: TAKE ZIPWITH-MIN MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1113: TAKE ZIPWITH-MUL COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1114: TAKE ZIPWITH-MIN COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1115: TAKE ZIPWITH-MUL MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1116: TAKE ZIPWITH-MIN MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1117: TAKE ZIPWITH-MUL SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1118: TAKE ZIPWITH-MIN SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1119: TAKE ZIPWITH-MUL HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1120: TAKE ZIPWITH-MIN HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1121: TAKE ZIPWITH-MUL LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1122: TAKE ZIPWITH-MIN LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1123: TAKE ZIPWITH-MUL ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1124: TAKE ZIPWITH-MAX MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1125: TAKE SORT MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1126: TAKE ZIPWITH-MAX COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1127: TAKE SORT COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1128: TAKE ZIPWITH-MAX MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1129: TAKE SORT MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1130: TAKE ZIPWITH-MAX SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1131: TAKE SORT SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1132: TAKE ZIPWITH-MAX HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1133: TAKE SORT HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1134: TAKE ZIPWITH-MAX LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1135: TAKE SORT LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1136: TAKE ZIPWITH-MAX ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1137: TAKE REVERSE MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1138: TAKE SCANL1-PLUS MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1139: TAKE REVERSE COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1140: TAKE SCANL1-PLUS COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1141: TAKE REVERSE MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1142: TAKE SCANL1-PLUS MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1143: TAKE REVERSE SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1144: TAKE SCANL1-PLUS SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1145: TAKE REVERSE HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1146: TAKE SCANL1-PLUS HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1147: TAKE REVERSE LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1148: TAKE SCANL1-PLUS LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1149: TAKE REVERSE ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1150: TAKE SCANL1-MINUS MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1151: TAKE SCANL1-MUL MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1152: TAKE SCANL1-MINUS COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1153: TAKE SCANL1-MUL COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1154: TAKE SCANL1-MINUS MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1155: TAKE SCANL1-MUL MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1156: TAKE SCANL1-MINUS SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1157: TAKE SCANL1-MUL SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1158: TAKE SCANL1-MINUS HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1159: TAKE SCANL1-MUL HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1160: TAKE SCANL1-MINUS LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1161: TAKE SCANL1-MUL LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1162: TAKE SCANL1-MINUS ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1163: TAKE SCANL1-MIN MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1164: TAKE SCANL1-MAX MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1165: TAKE SCANL1-MIN COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1166: TAKE SCANL1-MAX COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1167: TAKE SCANL1-MIN MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1168: TAKE SCANL1-MAX MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1169: TAKE SCANL1-MIN SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1170: TAKE SCANL1-MAX SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1171: TAKE SCANL1-MIN HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1172: TAKE SCANL1-MAX HEAD 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1173: TAKE SCANL1-MIN LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1174: TAKE SCANL1-MAX LAST 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1175: TAKE SCANL1-MIN ACCESS 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1176: TAKE DROP MAXIMUM 
+25.01/9.80	     [java] Sketch #iterations = 1
+25.01/9.80	     [java] Sketch #1177: TAKE DROP COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1178: TAKE DROP MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 1
+25.01/9.80	     [java] Sketch #1179: TAKE DROP SUM 
+25.01/9.80	     [java] Sketch #iterations = 1
+25.01/9.80	     [java] Sketch #1180: TAKE DROP HEAD 
+25.01/9.80	     [java] Sketch #iterations = 1
+25.01/9.80	     [java] Sketch #1181: TAKE DROP LAST 
+25.01/9.80	     [java] Sketch #iterations = 1
+25.01/9.80	     [java] Sketch #1182: DROP MAXIMUM COUNT 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1183: DROP MAXIMUM MINIMUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1184: DROP MAXIMUM SUM 
+25.01/9.80	     [java] Sketch #iterations = 0
+25.01/9.80	     [java] Sketch #1185: DROP MAXIMUM HEAD 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1186: DROP MAXIMUM LAST 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1187: DROP MAXIMUM ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 2
+25.36/9.90	     [java] Sketch #1188: DROP COUNT MAXIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1189: DROP COUNT ACCESS 
+25.36/9.90	     [java] Learning: (1)[(9) HEAD LAST ACCESS MINIMUM MAXIMUM COUNT SUM ][(5) COUNT ][(6) input0 ][(7) l(a,b).(%= a b) ][(8) 3 ]
+25.36/9.90	     [java] Sketch #iterations = 37
+25.36/9.90	     [java] Sketch #1190: DROP MINIMUM ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 2
+25.36/9.90	     [java] Sketch #1191: DROP SUM ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 2
+25.36/9.90	     [java] Sketch #1192: DROP HEAD ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 2
+25.36/9.90	     [java] Sketch #1193: DROP LAST ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 2
+25.36/9.90	     [java] Sketch #1194: DROP MAP-MUL MAXIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1195: DROP MAP-DIV MAXIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1196: DROP MAP-MUL COUNT 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1197: DROP MAP-DIV COUNT 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1198: DROP MAP-MUL MINIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1199: DROP MAP-DIV MINIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1200: DROP MAP-MUL SUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1201: DROP MAP-DIV SUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1202: DROP MAP-MUL HEAD 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1203: DROP MAP-DIV HEAD 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1204: DROP MAP-MUL LAST 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1205: DROP MAP-DIV LAST 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1206: DROP MAP-MUL ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1207: DROP MAP-DIV ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1208: DROP MAP-PLUS MAXIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1209: DROP MAP-POW MAXIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1210: DROP MAP-PLUS COUNT 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1211: DROP MAP-POW COUNT 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1212: DROP MAP-PLUS MINIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1213: DROP MAP-POW MINIMUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1214: DROP MAP-PLUS SUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1215: DROP MAP-POW SUM 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1216: DROP MAP-PLUS HEAD 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1217: DROP MAP-POW HEAD 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1218: DROP MAP-PLUS LAST 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1219: DROP MAP-POW LAST 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1220: DROP MAP-PLUS ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1221: DROP MAP-POW ACCESS 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1222: DROP FILTER MAXIMUM 
+25.36/9.90	     [java] Sketch #iterations = 43
+25.36/9.90	     [java] Sketch #1223: DROP FILTER COUNT 
+25.36/9.90	     [java] Sketch #iterations = 0
+25.36/9.90	     [java] Sketch #1224: DROP FILTER MINIMUM 
+25.53/10.00	     [java] Sketch #iterations = 43
+25.53/10.00	     [java] Sketch #1225: DROP FILTER SUM 
+25.88/10.10	     [java] Sketch #iterations = 43
+25.88/10.10	     [java] Sketch #1226: DROP FILTER HEAD 
+25.88/10.10	     [java] Sketch #iterations = 43
+25.88/10.10	     [java] Sketch #1227: DROP FILTER LAST 
+26.12/10.20	     [java] Sketch #iterations = 43
+26.12/10.20	     [java] Sketch #1228: DROP FILTER ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 43
+26.24/10.30	     [java] Sketch #1229: DROP ZIPWITH-PLUS MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1230: DROP ZIPWITH-MINUS MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1231: DROP ZIPWITH-PLUS COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1232: DROP ZIPWITH-MINUS COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1233: DROP ZIPWITH-PLUS MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1234: DROP ZIPWITH-MINUS MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1235: DROP ZIPWITH-PLUS SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1236: DROP ZIPWITH-MINUS SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1237: DROP ZIPWITH-PLUS HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1238: DROP ZIPWITH-MINUS HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1239: DROP ZIPWITH-PLUS LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1240: DROP ZIPWITH-MINUS LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1241: DROP ZIPWITH-PLUS ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1242: DROP ZIPWITH-MINUS ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1243: DROP ZIPWITH-MUL MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1244: DROP ZIPWITH-MIN MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1245: DROP ZIPWITH-MUL COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1246: DROP ZIPWITH-MIN COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1247: DROP ZIPWITH-MUL MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1248: DROP ZIPWITH-MIN MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1249: DROP ZIPWITH-MUL SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1250: DROP ZIPWITH-MIN SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1251: DROP ZIPWITH-MUL HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1252: DROP ZIPWITH-MIN HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1253: DROP ZIPWITH-MUL LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1254: DROP ZIPWITH-MIN LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1255: DROP ZIPWITH-MUL ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1256: DROP ZIPWITH-MIN ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1257: DROP ZIPWITH-MAX MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1258: DROP SORT MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1259: DROP ZIPWITH-MAX COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1260: DROP SORT COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1261: DROP ZIPWITH-MAX MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1262: DROP SORT MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1263: DROP ZIPWITH-MAX SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1264: DROP SORT SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1265: DROP ZIPWITH-MAX HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1266: DROP SORT HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1267: DROP ZIPWITH-MAX LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1268: DROP SORT LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1269: DROP ZIPWITH-MAX ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1270: DROP SORT ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1271: DROP REVERSE MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1272: DROP SCANL1-PLUS MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1273: DROP REVERSE COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1274: DROP SCANL1-PLUS COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1275: DROP REVERSE MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1276: DROP SCANL1-PLUS MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1277: DROP REVERSE SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1278: DROP SCANL1-PLUS SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1279: DROP REVERSE HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1280: DROP SCANL1-PLUS HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1281: DROP REVERSE LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1282: DROP SCANL1-PLUS LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1283: DROP REVERSE ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1284: DROP SCANL1-PLUS ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1285: DROP SCANL1-MINUS MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1286: DROP SCANL1-MUL MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1287: DROP SCANL1-MINUS COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1288: DROP SCANL1-MUL COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1289: DROP SCANL1-MINUS MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1290: DROP SCANL1-MUL MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1291: DROP SCANL1-MINUS SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1292: DROP SCANL1-MUL SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1293: DROP SCANL1-MINUS HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1294: DROP SCANL1-MUL HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1295: DROP SCANL1-MINUS LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1296: DROP SCANL1-MUL LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1297: DROP SCANL1-MINUS ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1298: DROP SCANL1-MUL ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1299: DROP SCANL1-MIN MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1300: DROP SCANL1-MAX MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1301: DROP SCANL1-MIN COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1302: DROP SCANL1-MAX COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1303: DROP SCANL1-MIN MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1304: DROP SCANL1-MAX MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1305: DROP SCANL1-MIN SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1306: DROP SCANL1-MAX SUM 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1307: DROP SCANL1-MIN HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1308: DROP SCANL1-MAX HEAD 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1309: DROP SCANL1-MIN LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1310: DROP SCANL1-MAX LAST 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1311: DROP SCANL1-MIN ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1312: DROP SCANL1-MAX ACCESS 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1313: DROP TAKE MAXIMUM 
+26.24/10.30	     [java] Sketch #iterations = 1
+26.24/10.30	     [java] Sketch #1314: DROP TAKE COUNT 
+26.24/10.30	     [java] Sketch #iterations = 0
+26.24/10.30	     [java] Sketch #1315: DROP TAKE MINIMUM 
+26.24/10.30	     [java] Sketch #iterations = 1
+26.24/10.30	     [java] Sketch #1316: DROP TAKE SUM 
+26.24/10.30	     [java] Sketch #iterations = 1
+26.24/10.30	     [java] Sketch #1317: DROP TAKE HEAD 
+26.24/10.30	     [java] Sketch #iterations = 1
+26.24/10.30	     [java] Sketch #1318: DROP TAKE LAST 
+26.24/10.30	     [java] s NO SOLUTION
+26.40/10.33	     [java] Exception in thread "main" java.lang.NullPointerException
+26.40/10.33	     [java] 	at org.genesys.synthesis.MorpheusSynthesizer.synthesize(MorpheusSynthesizer.java:199)
+26.40/10.33	     [java] 	at org.genesys.clients.DeepCoderMainMorpheus.main(DeepCoderMainMorpheus.java:61)
+26.45/10.99	
+26.45/10.99	BUILD FAILED
+26.45/10.99	/export/starexec/sandbox2/solver/bin/build.xml:88: Java returned: 1
+26.45/10.99	
+26.45/10.99	Total time: 10 seconds
+26.45/11.01	EOF
