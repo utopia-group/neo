@@ -94,7 +94,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             components_.put(comp.getId(), comp);
         }
         //init equivalent class map
-        Z3Utils.getInstance().initEqMap(components_.values());
+        //Z3Utils.getInstance().initEqMap(components_.values());
     }
 
     @Override
@@ -122,7 +122,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
             //if (!coreAst_.contains(ast.toString())){
-            isSatisfiable = checker_.check(problem_, ast, curr);
+            //isSatisfiable = checker_.check(problem_, ast, curr);
             //}
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
