@@ -5,7 +5,7 @@ input_length = 20         # lengths of input lists
 output_length = 20        # lengths of output lists
 
 # DSL Operator parameters
-num_dsl_ops = 34          # number of DSL operators
+num_dsl_ops = 39          # number of DSL operators
 dsl_embedding_dim = 20    # dimension of the vector embedding of dsl operators
 ngram_length = 2          # length of dsl ngrams
 
