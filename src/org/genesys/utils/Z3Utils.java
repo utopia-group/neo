@@ -229,7 +229,16 @@ public class Z3Utils {
                     conflicts_.addAll(folComp);
                     continue;
                 }
-                if (!clauseToSpecMap_.containsKey(core)) continue;
+                if (!clauseToSpecMap_.containsKey(core)) {
+                    /* Need to a input to the conflict.*/
+                    if (nodeId != 0) {
+                        String type = nodeTypeMap.get(nodeId);
+                        assert type.contains("input") : type;
+                        Pair<Integer, List<String>> conflict = new Pair<>(nodeId, Arrays.asList(type));
+                        if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
+                    }
+                    continue;
+                }
                 String core_str = clauseToSpecMap_.get(core);
                 String type = nodeTypeMap.get(nodeId);
                 Pair<String, String> queryKey = new Pair<>(core_str, type);

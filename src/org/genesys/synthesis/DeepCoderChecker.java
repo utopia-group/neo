@@ -251,6 +251,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             clauseToNodeMap_.put(minCst.toString(), worker.id);
             clauseToNodeMap_.put(firstCst.toString(), worker.id);
             clauseToNodeMap_.put(lastCst.toString(), worker.id);
+            z3_.updateTypeMap(worker.id, worker.function);
         } else {
             List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
             clauseToNodeMap_.put(lenCst.toString(), currAssigns);
