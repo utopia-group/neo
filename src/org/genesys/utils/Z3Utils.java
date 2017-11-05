@@ -231,7 +231,7 @@ public class Z3Utils {
                 }
                 if (!clauseToSpecMap_.containsKey(core)) {
                     /* Need to a input to the conflict.*/
-                    if (nodeId != 0) {
+                    if (nodeId != 0 && nodeTypeMap.containsKey(nodeId)) {
                         String type = nodeTypeMap.get(nodeId);
                         assert type.contains("input") : type;
                         Pair<Integer, List<String>> conflict = new Pair<>(nodeId, Arrays.asList(type));
