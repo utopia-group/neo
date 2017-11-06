@@ -80,6 +80,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private final List<Production> domainOutput_ = new ArrayList<>();
     private final List<Production> domainInput_ = new ArrayList<>();
 
+    private final HashMap<Pair<Integer,Integer>,Integer> map2ktree_ = new HashMap<>();
+
     private final HashMap<String,List<Integer>> higherGrouping_ = new HashMap<>();
 
     private List<Node> loc_ = new ArrayList<Node>();
@@ -422,6 +424,31 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         return node;
     }
 
+    private void buildTree(){
+
+        Node node = new Node();
+        int id = 1;
+        node.id = id++;
+        node.level = 1;
+        map2ktree_.put(new Pair<Integer,Integer>(1,0),1);
+
+        List<Node> working = new ArrayList<>();
+        working.add(node);
+        while (!working.isEmpty()){
+            node = working.remove(working.size() - 1);
+            for (int i = 0; i < maxChildren_; i++){
+                Node child = new Node();
+                child.id = id++;
+                child.level = node.level+1;
+                node.addChild(child);
+                map2ktree_.put(new Pair<Integer,Integer>(i+1,node.id),child.id);
+                if (child.level <= loc_.size())
+                    working.add(child);
+            }
+        }
+
+    }
+
 
     @Override
     public boolean isPartial(){
@@ -470,6 +497,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         satUtils_.createVars(nbVariables_);
 
         buildSATFormula();
+        buildTree();
 
         // Decision level for Neo and SAT solver
         level_ = 0;
@@ -1037,7 +1065,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             node.component = decisionComponent;
             node.level = level_;
 
-//            System.out.println("NEO decision Inputs = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+            //System.out.println("NEO decision Inputs = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
             Pair<Node, Pair<Integer,Integer>> p2 = new Pair<Node, Pair<Integer,Integer>>(node, p);
@@ -1112,7 +1140,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
             assert (node.function.equals(highTrail_.get(currentLine_).t0.children.get(currentChild_).function));
 
-//            System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+            //System.out.println("NEO decision = " + decisionNeo.function + " @" + level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
             Pair<Node, Pair<Integer,Integer>> p2 = new Pair<Node, Pair<Integer,Integer>>(node, p);
@@ -1188,7 +1216,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             node.component = decisionComponent;
             node.level = ++level_;
 
-//            System.out.println("NEO decision = " + decisionNeo.function + " @" +level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
+            //System.out.println("NEO decision = " + decisionNeo.function + " @" +level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
 
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
@@ -1464,8 +1492,30 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         assert(!ast.isEmpty());
         root.addChild(ast.get(ast.size()-1));
+        System.out.println("P' = " + root);
+
+        List<Node> bfs = new ArrayList<>();
+        bfs.add(root);
+        while (!bfs.isEmpty()) {
+            Node node = bfs.remove(bfs.size() - 1);
+            //System.out.println("node = " + node + " id = " + node.id + " function = " + node.function);
+            for (int i = 0; i < node.children.size(); i++) {
+                Node child = node.children.get(i);
+                //System.out.println("child = " + child);
+                Pair p = new Pair<>(i+1,node.id);
+                assert (map2ktree_.containsKey(p));
+                //System.out.println("child = " + child + " id is now = " + map2ktree_.get(p) + " from pair= " + p);
+                if (current != null && child.id == current.id)
+                    current.id = map2ktree_.get(p);
+                child.id = map2ktree_.get(p);
+                bfs.add(child);
+            }
+        }
 
         //printTree(root);
+        System.out.println("P = " + root);
+        assert (root.id == 0);
+//        System.out.println("current' = " + current);
         Pair<Node,Node> result = new Pair<Node,Node>(root,current);
 //        long e = LibUtils.tick();
 //        translateTime_ += LibUtils.computeTime(s,e);

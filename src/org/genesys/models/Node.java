@@ -113,6 +113,7 @@ public class Node {
         }
         sb.append(this.function).append(" ");
         for (Node child : this.children) {
+            sb.append("[id=" + child.id + "]");
             sb.append(child.toString()).append(" ");
         }
         sb.deleteCharAt(sb.length() - 1);
