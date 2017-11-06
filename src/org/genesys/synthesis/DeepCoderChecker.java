@@ -200,7 +200,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             clauseToSpecMap_.put(expr.toString(), cstStr);
         }
         //cache current cst.
-        cstCache_.put(key, cstList);
+//        cstCache_.put(key, cstList);
         return cstList;
     }
 
@@ -269,7 +269,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             if (MorpheusSynthesizer.learning_ && z3_.hasCache(peCore)) return new ArrayList<>();
         }
         //cache current cst.
-        cstCache_.put(key, cstList);
+//        cstCache_.put(key, cstList);
         return cstList;
     }
 
