@@ -81,6 +81,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private final List<Production> domainInput_ = new ArrayList<>();
 
     private final HashMap<Pair<Integer,Integer>,Integer> map2ktree_ = new HashMap<>();
+    private final HashMap<Integer,Integer> mapold2new_ = new HashMap<>();
+    private final HashMap<Integer,Integer> mapnew2old_ = new HashMap<>();
 
     private final HashMap<String,List<Integer>> higherGrouping_ = new HashMap<>();
 
@@ -1493,6 +1495,13 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         assert(!ast.isEmpty());
         root.addChild(ast.get(ast.size()-1));
         System.out.println("P' = " + root);
+        if (current != null) {
+//            System.out.println("current' = " + current.id);
+//            System.out.println("current' = " + current.function);
+        }
+
+        mapnew2old_.clear();
+        mapold2new_.clear();
 
         List<Node> bfs = new ArrayList<>();
         bfs.add(root);
@@ -1504,12 +1513,20 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 //System.out.println("child = " + child);
                 Pair p = new Pair<>(i+1,node.id);
                 assert (map2ktree_.containsKey(p));
-                //System.out.println("child = " + child + " id is now = " + map2ktree_.get(p) + " from pair= " + p);
-                if (current != null && child.id == current.id)
-                    current.id = map2ktree_.get(p);
+
+                mapold2new_.put(child.id,map2ktree_.get(p));
+                mapnew2old_.put(map2ktree_.get(p),child.id);
                 child.id = map2ktree_.get(p);
+
                 bfs.add(child);
             }
+        }
+
+        if (current != null){
+            assert (mapold2new_.containsKey(current.id));
+            current.id = mapold2new_.get(current.id);
+//            System.out.println("current = " + current.id);
+//            System.out.println("current = " + current.function);
         }
 
         //printTree(root);
