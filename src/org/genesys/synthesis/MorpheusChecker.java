@@ -107,6 +107,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                 assert !nums.isEmpty();
                 int index = Integer.valueOf(nums.get(0));
                 DataFrame inDf = inputs.get(index);
+                z3_.updateTypeMap(worker.id, worker.function);
 
                 List<BoolExpr> abs = abstractTable(worker, inDf, inputs);
                 cstList.addAll(abs);
@@ -151,9 +152,9 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         }
 
         boolean sat = z3_.isSat(cstList, clauseToNodeMap_, clauseToSpecMap_, components_.values());
-        if (!sat) {
-            System.out.println("Prune program:" + node);
-        }
+//        if (!sat) {
+//            System.out.println("Prune program:" + node);
+//        }
         return sat;
     }
 
@@ -257,6 +258,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                 List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
                 for (BoolExpr o : cstCache_.get(key)) {
                     clauseToNodeMap_.put(o.toString(), currAssigns);
+                }
+            } else {
+                for (BoolExpr o : cstCache_.get(key)) {
+                    clauseToNodeMap_.put(o.toString(), worker.id);
                 }
             }
             return cstCache_.get(key);
