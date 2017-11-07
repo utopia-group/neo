@@ -223,7 +223,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
         //long s = LibUtils.tick();
         boolean conflict = false;
-        System.out.println("core = " + core);
+        //System.out.println("core = " + core);
 
         HashMap<Integer,String> node2function = new HashMap<>();
         List<Node> bfs = new ArrayList<>();
@@ -262,7 +262,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
-            System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
+            //System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
             if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
             else if (global) learnCoreSimple(core);
             else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
