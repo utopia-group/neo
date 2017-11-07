@@ -223,6 +223,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     public boolean learnCore(List<Pair<Integer, List<String>>> core, boolean global) {
         //long s = LibUtils.tick();
         boolean conflict = false;
+        System.out.println("core = " + core);
 
         HashMap<Integer,String> node2function = new HashMap<>();
         List<Node> bfs = new ArrayList<>();
@@ -230,7 +231,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         bfs.add(root);
         while (!bfs.isEmpty()) {
             Node node = bfs.remove(bfs.size() - 1);
-            node2function.put(node.id,node.function);
+            //assert (mapnew2old_.containsKey(node.id));
+            //int node_id = mapnew2old_.get(node.id);
+            int node_id = node.id;
+            node2function.put(node_id,node.function);
             for (int i = 0; i < node.children.size(); i++)
                 bfs.add(node.children.get(i));
         }
@@ -239,9 +243,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         String learnt = "";
         for (Pair<Integer,List<String>> p : core){
             List<Integer> eq = new ArrayList<>();
-            learnt = learnt + "[(" + p.t0 + ") ";
+            if (!mapnew2old_.containsKey(p.t0)){
+                System.out.println("node = " + p.t0);
+            }
+            assert (mapnew2old_.containsKey(p.t0));
+            int node_id = mapnew2old_.get(p.t0);
+            learnt = learnt + "[(" + node_id + ") ";
             for (String l : p.t1) {
-                Pair<Integer, String> id2 = new Pair<>(p.t0, l);
+                Pair<Integer, String> id2 = new Pair<>(node_id, l);
                 if (!nameNodes_.containsKey(id2))
                     continue;
                 eq.add(nameNodes_.get(id2));
@@ -253,7 +262,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             learnt = learnt + "]";
         }
         if (!eqClauses.isEmpty()) {
-            //System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
+            System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
             if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
             else if (global) learnCoreSimple(core);
             else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
@@ -301,7 +310,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             Pair<VecInt, List<Pair<Integer,String>>> clause = new Pair<>(new VecInt(),new ArrayList<>());
             boolean root = false;
             for (int i = 0;  i < r.size(); i++){
-                Pair<Integer, String> id = new Pair<>(nodes.get(i), r.get(i));
+                assert (mapnew2old_.containsKey(nodes.get(i)));
+                int node_id = mapnew2old_.get(nodes.get(i));
+                Pair<Integer, String> id = new Pair<>(node_id, r.get(i));
                 if (nodes.get(i) == 0)
                     root = true;
                 assert (nameNodes_.containsKey(id));
@@ -1494,7 +1505,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         assert(!ast.isEmpty());
         root.addChild(ast.get(ast.size()-1));
-        System.out.println("P' = " + root);
+        //System.out.println("P' = " + root);
         if (current != null) {
 //            System.out.println("current' = " + current.id);
 //            System.out.println("current' = " + current.function);
@@ -1530,7 +1541,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
 
         //printTree(root);
-        System.out.println("P = " + root);
+        //System.out.println("P = " + root);
         assert (root.id == 0);
 //        System.out.println("current' = " + current);
         Pair<Node,Node> result = new Pair<Node,Node>(root,current);
