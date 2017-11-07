@@ -98,6 +98,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                 assert !nums.isEmpty();
                 int index = Integer.valueOf(nums.get(0));
                 Object inDf = inputs.get(index);
+                z3_.updateTypeMap(worker.id, worker.function);
 
                 List<BoolExpr> abs = abstractDeepCode(worker, inDf);
 
@@ -200,7 +201,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             clauseToSpecMap_.put(expr.toString(), cstStr);
         }
         //cache current cst.
-//        cstCache_.put(key, cstList);
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
@@ -251,7 +252,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             clauseToNodeMap_.put(minCst.toString(), worker.id);
             clauseToNodeMap_.put(firstCst.toString(), worker.id);
             clauseToNodeMap_.put(lastCst.toString(), worker.id);
-            z3_.updateTypeMap(worker.id, worker.function);
         } else {
             List<Pair<Integer, List<String>>> currAssigns = getCurrentAssignment(worker);
             clauseToNodeMap_.put(lenCst.toString(), currAssigns);
@@ -269,7 +269,7 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             if (MorpheusSynthesizer.learning_ && z3_.hasCache(peCore)) return new ArrayList<>();
         }
         //cache current cst.
-//        cstCache_.put(key, cstList);
+        cstCache_.put(key, cstList);
         return cstList;
     }
 
