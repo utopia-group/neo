@@ -108,11 +108,18 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 
                     if ((curr != null) && (worker.id == curr.id)) {
                         Maybe<Object> tgt = interpreter_.execute(worker, inputs);
-                        if (!tgt.has()) return false;
+                        if (!tgt.has()) {
+                            z3_.clearConflict();
+                            return false;
+                        }
                         Object obj = tgt.get();
                         if (obj instanceof List) {
                             List objList = (List) obj;
-                            if (objList.isEmpty()) return false;
+                            if (objList.isEmpty()) {
+                                //TODO: type-inhabitant for filter and count
+                                z3_.clearConflict();
+                                return false;
+                            }
                         }
                         List<BoolExpr> abs = abstractDeepCode(worker, tgt.get());
                         if (abs.isEmpty()) {
