@@ -218,6 +218,10 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
                 for (BoolExpr o : cstCache_.get(key)) {
                     clauseToNodeMap_.put(o.toString(), currAssigns);
                 }
+            } else {
+                for (BoolExpr o : cstCache_.get(key)) {
+                    clauseToNodeMap_.put(o.toString(), worker.id);
+                }
             }
             return cstCache_.get(key);
         }
