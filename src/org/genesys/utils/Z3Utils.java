@@ -225,7 +225,14 @@ public class Z3Utils {
                 else {
                     List<Pair<Integer, List<String>>> folComp = (List<Pair<Integer, List<String>>>) nodeObj;
 //                    System.out.println("PE core=======" + cstMap_.get(e));
-                    peCores.add(cstMap_.get(e).toString());
+                    peCores.add(core);
+
+                    if (MorpheusSynthesizer.learning_ && core.contains("V_ON") && (folComp.size() > 0)) {
+                        Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
+                        conflicts_.clear();
+                        conflicts_.add(lastOne);
+                        break;
+                    }
                     conflicts_.addAll(folComp);
                     continue;
                 }
