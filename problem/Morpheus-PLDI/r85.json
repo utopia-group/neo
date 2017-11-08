@@ -1,0 +1,36 @@
+{
+    "examples": [
+        {
+            "input": [
+                {
+                    "content": [
+                    "Eric","height","6",
+                    "Bob","height","5",
+                    "Mark","height","4",
+                    "Bob","weight","120",
+                    "Bob","weight","118",
+                    "Eric","weight","100",
+                    "Mark","weight","180",
+                    "Eric","grade","A",
+                    "Bob","grade","B",
+                    "Mark","grade","C"
+                    ], 
+                    "header": [
+                    "name","metric","values"
+                    ]
+                }
+            ], 
+            "output": {
+                "content": [
+                "Bob",1,1,2,
+                "Eric",1,1,1
+                ], 
+                "header": [
+                   "name","grade","height","weight"
+                ]
+            }
+        }
+    ], 
+    "name": "r85",
+    "url": "https://stackoverflow.com/questions/47168931/duplicate-identifier-error-in-tidyr"
+}

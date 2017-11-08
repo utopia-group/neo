@@ -1,0 +1,33 @@
+{
+    "examples": [
+        {
+            "input": [
+                {
+                    "content": [
+
+                    "ID1",1,1,0,0,
+                    "ID2",0,1,0,1,
+                    "ID3",1,1,0,1,
+                    "ID4",1,1,1,1
+                    ], 
+                    "header": [
+                    "ID","A","B","C","D"
+                    ]
+                }
+            ], 
+            "output": {
+                "content": [
+                    "ID1",2,
+                    "ID2",2,
+                    "ID3",3,
+                    "ID4",4
+                ], 
+                "header": [
+                    "ID","flag"
+                ]
+            }
+        }
+    ], 
+    "name": "r86",
+    "url": "https://stackoverflow.com/questions/47166679/consolidate-flag-columns-into-single-column-in-r"
+}

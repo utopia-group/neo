@@ -1,0 +1,65 @@
+{
+    "examples": [
+        {
+            "input": [
+                {
+                    "content": [
+                        "Carrie", 
+                        4, 
+                        0, 
+                        1, 
+                        1,
+                        "Fried-Green-Tomatoes", 
+                        2, 
+                        0, 
+                        0, 
+                        0,
+                        "Amadeus", 
+                        5, 
+                        1, 
+                        0, 
+                        1,
+                        "Amityville-Horror", 
+                        1, 
+                        0, 
+                        0, 
+                        0,
+                        "Dracula", 
+                        2, 
+                        0, 
+                        1, 
+                        1,
+                        "Speed", 
+                        4, 
+                        1, 
+                        0,
+                        0
+                    ], 
+                    "header": [
+                        "Title", 
+                        "Rating", 
+                        "Action", 
+                        "Sci.Fi",
+                        "Animation"
+                    ]
+                }
+            ], 
+            "output": {
+                "content": [
+                    "Action", 
+                    4.5, 
+                    "Animation",
+                    3.66667,
+                    "Sci.Fi", 
+                    3
+                ], 
+                "header": [
+                    "genre", 
+                    "average"
+                ]
+            }
+        }
+    ], 
+    "name": "r98",
+    "url": "http://stackoverflow.com/questions/27970550/how-do-you-calculate-the-average-rating-per-genre"
+}
