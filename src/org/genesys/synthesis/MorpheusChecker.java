@@ -46,7 +46,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     private String[] spec2 = {
             "CO_SPEC", "RO_SPEC", "OG_SPEC", "OH_SPEC", "OC_SPEC",
             "CI0_SPEC", "RI0_SPEC", "IG0_SPEC", "IH0_SPEC", "IC0_SPEC",
-            "CI1_SPEC", "RI1_SPEC", "IG1_SPEC", "IH1_SPEC", "IC1_SPEC"
+            "CI1_SPEC", "RI1_SPEC", "IG1_SPEC", "IH1_SPEC", "IC1_SPEC", "GI0_SPEC"
     };
 
     public MorpheusChecker(String specLoc, MorpheusGrammar g) throws FileNotFoundException {
@@ -191,7 +191,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         if (cstCache_.containsKey(key))
             return cstCache_.get(key);
 
-        String[] dest = new String[15];
+        String[] dest = new String[16];
         String colVar = "V_COL" + worker.id;
         String rowVar = "V_ROW" + worker.id;
         String groupVar = "V_GROUP" + worker.id;
@@ -232,10 +232,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         dest[12] = groupChild1Var;
         dest[13] = headChild1Var;
         dest[14] = contentChild1Var;
+        dest[15] = "V_ON" + child0.id;
+
         List<BoolExpr> cstList = new ArrayList<>();
 
         for (String cstStr : comp.getConstraint()) {
             String targetCst = StringUtils.replaceEach(cstStr, spec2, dest);
+            assert !targetCst.contains("#") : targetCst;
             BoolExpr expr = Z3Utils.getInstance().convertStrToExpr(targetCst);
             cstList.add(expr);
             clauseToNodeMap_.put(expr.toString(), worker.id);
@@ -326,6 +329,16 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         cstList.add(headCst);
         cstList.add(contentCst);
 
+        BoolExpr onCst = z3_.trueExpr();
+        String onVar = "V_ON" + worker.id;
+        if (worker.function.equals("group_by")) {
+            assert df instanceof GroupedDataFrame;
+            GroupedDataFrame gdf = (GroupedDataFrame) df;
+            int on = gdf.getBy().size();
+            onCst = z3_.genEqCst(onVar, on);
+            cstList.add(onCst);
+        }
+
         if ("root".equals(worker.function) || worker.function.contains("input")) {
             clauseToNodeMap_.put(rowCst.toString(), worker.id);
             clauseToNodeMap_.put(colCst.toString(), worker.id);
@@ -345,6 +358,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
             peCore.add(groupCst.toString());
             peCore.add(headCst.toString());
             peCore.add(contentCst.toString());
+            if (worker.function.equals("group_by")) {
+                clauseToNodeMap_.put(onCst.toString(), currAssigns);
+                peCore.add(onCst.toString());
+            }
             if (MorpheusSynthesizer.learning_ && z3_.hasCache(peCore)) return new ArrayList<>();
         }
         //cache current cst.

@@ -9,6 +9,7 @@ import org.genesys.interpreter.Unop;
 import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
+import org.genesys.synthesis.MorpheusSynthesizer;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
 
@@ -217,6 +218,10 @@ public class Filter implements Unop {
             partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
             partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
             partialConflictMap.put(frdChild.id, Arrays.asList(frdChild.function));
+        }
+        //Working on learning for filter.
+        if ((res.getNrow() == df.getNrow()) && MorpheusSynthesizer.learning_) {
+            return new Pair<>(null, conflictList);
         }
         return new Pair<>(res, conflictList);
     }

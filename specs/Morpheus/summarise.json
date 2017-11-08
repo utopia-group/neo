@@ -11,6 +11,7 @@
   "template": "summarise(#Table0,#STR0=#0(`#1`))",
   "constraint": [
     "(declare-const CO_SPEC Int)(assert (>= 3 CO_SPEC))",
+    "(declare-const CO_SPEC Int)(declare-const GI0_SPEC Int)(assert (= (+ 1 GI0_SPEC) CO_SPEC))",
     "(declare-const RO_SPEC Int)(declare-const RI0_SPEC Int)(assert (< RO_SPEC RI0_SPEC))",
     "(declare-const CO_SPEC Int)(declare-const CI0_SPEC Int)(assert (<= CO_SPEC (+ 1 CI0_SPEC)))",
     "(declare-const RO_SPEC Int)(declare-const IG0_SPEC Int)(assert (= IG0_SPEC RO_SPEC))",
