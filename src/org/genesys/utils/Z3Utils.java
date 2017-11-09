@@ -255,7 +255,8 @@ public class Z3Utils {
                 if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
             }
         }
-        coreCache_.add(peCores);
+        if(!peCores.isEmpty())
+            coreCache_.add(peCores);
     }
 
     public void clearConflict() {
