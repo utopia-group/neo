@@ -361,6 +361,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             }
 
             //System.out.println("root = " + root);
+            // why is this faster?
+            root = false;
 
             if (!root){
                 SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
