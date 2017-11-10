@@ -5,6 +5,7 @@ import org.genesys.language.Grammar;
 import org.genesys.language.Production;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
+import org.genesys.models.Trio;
 import org.genesys.utils.LibUtils;
 import org.genesys.utils.SATUtils;
 import org.genesys.utils.Z3Utils;
@@ -27,6 +28,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private SATUtils satUtils_;
 
     private Grammar grammar_;
+
+    private int nbSketches_ = 0;
 
     private int iterations_ = 0;
 
@@ -100,8 +103,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private int step_ = 1;
     private int step2lvl_ = 1;
 
+    private boolean disableLearning_ = true;
+
     private int learntLine_ = 0;
     private int currentLine_ = 0;
+
+    private String treeSketch_ = "";
 
     private final Map<Pair<Integer, Production>, Integer> varNodes_ = new HashMap<>();
     private final Map<Pair<Integer, String>, Integer> nameNodes_ = new HashMap<>();
@@ -140,6 +147,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private VecInt clauseLearn_ = new VecInt();
 
     private boolean learning_ = false;
+
+    private HashMap<Integer,Pair<Integer,String>> intermediateLearning_ = new HashMap<Integer,Pair<Integer,String>>();
+    private boolean treeLearning_ = false;
 
     public MorpheusSolver(Grammar g, Decider decider) {
         satUtils_ = SATUtils.getInstance();
@@ -225,6 +235,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         boolean conflict = false;
         //System.out.println("core = " + core);
 
+//        if (disableLearning_){
+//            //disableLearning_ = false;
+//            return conflict;
+//        }
+
+        if (!learning_)
+            return conflict;
+
         HashMap<Integer,String> node2function = new HashMap<>();
         List<Node> bfs = new ArrayList<>();
         Node root = ast_.t0;
@@ -241,11 +259,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         List<List<Integer>> eqClauses = new ArrayList<>();
         String learnt = "";
+        Set<String> functions = new HashSet<>();
         for (Pair<Integer,List<String>> p : core){
             List<Integer> eq = new ArrayList<>();
-            if (!mapnew2old_.containsKey(p.t0)){
-                System.out.println("node = " + p.t0);
-            }
             assert (mapnew2old_.containsKey(p.t0));
             int node_id = mapnew2old_.get(p.t0);
             learnt = learnt + "[(" + node_id + ") ";
@@ -254,19 +270,42 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 if (!nameNodes_.containsKey(id2))
                     continue;
                 eq.add(nameNodes_.get(id2));
+                functions.add(l);
                 learnt = learnt + l + " ";
             }
             //}
             if (!eq.isEmpty())
                 eqClauses.add(eq);
             learnt = learnt + "]";
+
+            // add intermediate nodes
+            if (treeLearning_ && global){
+                List<Integer> eq2 = new ArrayList<>();
+                Set<String> binary = new HashSet<String>();
+                binary.add("ZIPWITH-PLUS");
+                binary.add("ZIPWITH-MINUS");
+                binary.add("ZIPWITH-MUL");
+                binary.add("ZIPWITH-MIN");
+                binary.add("ZIPWITH-MAX");
+                binary.add("TAKE");
+                binary.add("DROP");
+                binary.retainAll(functions);
+
+                if (intermediateLearning_.containsKey(node_id) && !binary.isEmpty()){
+                    Pair pp = intermediateLearning_.get(node_id);
+                    learnt = learnt + "[(" + pp.t0 + ") " + pp.t1 + " ]";
+                    assert (nameNodes_.containsKey(pp));
+                    eq2.add(nameNodes_.get(pp));
+                }
+            }
         }
         if (!eqClauses.isEmpty()) {
+            //if (sketches_.size() < 171) {
             //System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
             if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
             else if (global) learnCoreSimple(core);
             else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
-
+            //}
         }
 
 //        long e = LibUtils.tick();
@@ -312,17 +351,23 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             for (int i = 0;  i < r.size(); i++){
                 assert (mapnew2old_.containsKey(nodes.get(i)));
                 int node_id = mapnew2old_.get(nodes.get(i));
+                //System.out.println("node id = " + node_id + " s = " + r.get(i) + " ast id = " + ast_.t0.children.get(0).id);
                 Pair<Integer, String> id = new Pair<>(node_id, r.get(i));
-                if (nodes.get(i) == 0)
+                if (node_id == ast_.t0.children.get(0).id)
                     root = true;
                 assert (nameNodes_.containsKey(id));
                 clause.t0.push(-nameNodes_.get(id));
                 clause.t1.add(id);
             }
 
+            //System.out.println("root = " + root);
+
             if (!root){
                 SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
             } else {
+
+//                System.out.println("clause = " + clause.t0);
+//                System.out.println("trail = " + cpTrailSAT_.get(cpTrailSAT_.size() - 1));
 
                 if (!clause.t0.contains(cpTrailSAT_.get(cpTrailSAT_.size() - 1))) {
                     // partial assignment
@@ -333,6 +378,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                             break;
                         }
                     }
+                    //System.out.println("contains = " + contains);
                     if (contains) {
                         // learnt clause is relevant to this sketch
                         // find the relevant part of the trail
@@ -1428,6 +1474,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private Pair<Node, Node> translate(int line) {
 
 //        long s = LibUtils.tick();
+        intermediateLearning_.clear();
+//        intermediateNode_.clear();
+        treeLearning_ = false;
 
         Node current = null;
         Object startNode = grammar_.start();
@@ -1481,6 +1530,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 if (!c.function.equals("")) {
                     if (c.function.startsWith("line")){
                         String[] parts = c.function.split("line");
+                        //intermediateLearning_.add(new Trio<>(node.id,c.id,c.function));
+                        intermediateLearning_.put(node.id,new Pair<Integer,String>(c.id,c.function));
+                        //intermediateNode_.add(node.id);
                         // Assumes only 1 digit
                         int index = Character.getNumericValue(parts[1].charAt(0));
                         ast_node.addChild(ast.get(index));
@@ -1506,13 +1558,18 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         assert(!ast.isEmpty());
         root.addChild(ast.get(ast.size()-1));
         //System.out.println("P' = " + root);
-        if (current != null) {
-//            System.out.println("current' = " + current.id);
-//            System.out.println("current' = " + current.function);
-        }
 
         mapnew2old_.clear();
         mapold2new_.clear();
+
+        Set<String> binary = new HashSet<String>();
+        binary.add("ZIPWITH-PLUS");
+        binary.add("ZIPWITH-MINUS");
+        binary.add("ZIPWITH-MUL");
+        binary.add("ZIPWITH-MIN");
+        binary.add("ZIPWITH-MAX");
+        binary.add("TAKE");
+        binary.add("DROP");
 
         List<Node> bfs = new ArrayList<>();
         bfs.add(root);
@@ -1522,6 +1579,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             for (int i = 0; i < node.children.size(); i++) {
                 Node child = node.children.get(i);
                 //System.out.println("child = " + child);
+                if (binary.contains(child.function))
+                    treeLearning_ = true;
                 Pair p = new Pair<>(i+1,node.id);
                 assert (map2ktree_.containsKey(p));
 
@@ -1749,7 +1808,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     assignmentsCache_.clear();
                     sketches_.put(sketch, true);
 
-                    if (learning_) {
+                    if (learning_ ) {
                         List<Integer> next_skt = new ArrayList<>();
                         currentSketch_.clear();
                         for (int i = 0; i < highTrail_.size(); i++) {
@@ -1760,8 +1819,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                             currentSketch_.add(pp);
                         }
 
-//                        backtrackStep1(0, false);
-//                        step_ = 1;
+                        backtrackStep1(0, false);
+                        step_ = 1;
 
                         SATUtils.getInstance().cleanLearnts();
                         if (!currentSketchClause_.isEmpty()) {
@@ -1782,8 +1841,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     System.out.println("Sketch #iterations = " + iterations_);
                     iterations_ = 0;
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
-                    Z3Utils.getInstance().cleanCache();
-                    //System.out.println("#constraints = " + SATUtils.getInstance().getSolver().nConstraints());
+                    treeSketch_ = "";
                 } else {
                     if (iterations_ > ITERATION_LIMIT){
                         // go to next sketch
@@ -1927,6 +1985,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //
                             cpTrailSAT_.clear();
                             trailSAT_.copyTo(cpTrailSAT_);
+
+                            if (!treeSketch_.equals("")){
+                                if (!ast.toString().equals(treeSketch_)){
+                                    Z3Utils.getInstance().cleanCache();
+                                }
+                            }
+                            treeSketch_ = ast.toString();
+
                             return ast;
                         }
 
