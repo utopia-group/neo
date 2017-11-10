@@ -1,6 +1,7 @@
 package org.genesys.utils;
 
 import org.genesys.ml.Utils;
+import org.sat4j.core.Vec;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.constraints.MixedDataStructureDanielWL;
 import org.sat4j.minisat.core.DataStructureFactory;
@@ -11,10 +12,7 @@ import org.sat4j.minisat.orders.RSATPhaseSelectionStrategy;
 import org.sat4j.minisat.orders.VarOrderHeap;
 import org.sat4j.minisat.restarts.Glucose21Restarts;
 import org.sat4j.minisat.restarts.MiniSATRestarts;
-import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.IConstr;
-import org.sat4j.specs.Lbool;
-import org.sat4j.specs.TimeoutException;
+import org.sat4j.specs.*;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -30,11 +28,14 @@ import org.genesys.models.Pair;
 public class SATUtils {
 
     /* making propagate faster */
-    public enum ClauseType {TYPEIH, ASSIGNMENT, SKTASSIGNMENT, EQCLASS, GLOBAL, LEARNT};
+    public enum ClauseType {TYPEIH, ASSIGNMENT, SKTASSIGNMENT, EQCLASS, GLOBAL, LEARNT, LOCAL};
     private Set<IConstr> assignments_ = new HashSet<>();
     private HashMap<IConstr, VecInt> assignment2clause_ = new HashMap<>();
-    private Set<IConstr> eqlearnts_ = new HashSet<>();
+    private Vec<IConstr> eqlearnts_ = new Vec<>();
     private List<Pair<VecInt, List<Pair<Integer,String>>>> allEqLearnts_ = new ArrayList<>();
+
+    //private Set<IConstr> local_ = new HashSet<>();
+    private IVec<IConstr> local_ = new Vec<>();
 
     private static SATUtils instance = null;
 
@@ -111,8 +112,8 @@ public class SATUtils {
     }
 
     public void cleanEqLearnts(){
-        for (IConstr ctr : eqlearnts_){
-            solver_.removeConstr(ctr);
+        for (int i = 0; i < eqlearnts_.size(); i++){
+            solver_.removeConstr(eqlearnts_.get(i));
         }
         eqlearnts_.clear();
     }
@@ -301,13 +302,17 @@ public class SATUtils {
 //                    System.out.println("GLOBAL = " + globalClauses_);
                 }
 
+                if (ct.equals(ClauseType.LOCAL)){
+                    local_.push(c);
+                }
+
                 if (ct.equals(ClauseType.ASSIGNMENT)) {
                     assignment2clause_.put(c,clause);
                     assignments_.add(c);
                 }
 
                 if (ct.equals(ClauseType.EQCLASS)) {
-                    eqlearnts_.add(c);
+                    eqlearnts_.push(c);
                 }
 
                 if (ct.equals(ClauseType.SKTASSIGNMENT)) {
@@ -373,6 +378,26 @@ public class SATUtils {
             solver_.removeConstr(c.t0);
         }
         learnts_.clear();
+    }
+
+    public void cleanLocals(){
+
+        for (int i = 0; i < local_.size(); i++){
+            solver_.removeConstr(local_.get(i));
+        }
+        local_.clear();
+
+//        Vec<IConstr> half = new Vec<>();
+//
+//        for (int i  = 0; i < local_.size()/2; i++){
+//            solver_.removeConstr(local_.get(i));
+//        }
+//
+//        for (int i = local_.size()/2; i < local_.size(); i++){
+//            half.push(local_.get(i));
+//        }
+//        local_.clear();
+//        half.copyTo(local_);
     }
 
     public void removeClause(IConstr c){

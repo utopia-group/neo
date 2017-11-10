@@ -367,7 +367,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         GeneratePermutations(s,result,0, current);
         for (List<String> r : result){
             Pair<VecInt, List<Pair<Integer,String>>> clause = new Pair<>(new VecInt(),new ArrayList<>());
-            boolean root = false;
+            boolean root = true;
             for (int i = 0;  i < r.size(); i++){
                 assert (mapnew2old_.containsKey(nodes.get(i)));
                 int node_id = mapnew2old_.get(nodes.get(i));
@@ -380,6 +380,22 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 clause.t0.push(-nameNodes_.get(id));
                 clause.t1.add(id);
             }
+
+            //SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.LOCAL);
+            //clauses.add(clause);
+
+            if (clause.t0.size() <= 2){
+                SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
+            } else {
+                SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.LOCAL);
+                //clauses.add(clause);
+            }
+
+            /*
+
+            //root = false;
+            if (clause.t0.size() <= 3)
+                root = false;
 
             if (!root){
                 //System.out.println("learning = " + clause.t1);
@@ -424,6 +440,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                     clauses.add(clause);
                 }
             }
+            */
         }
 
         if (!clauses.isEmpty())
@@ -1831,7 +1848,14 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                        backtrackStep1(0, false);
 //                        step_ = 1;
 
-                        SATUtils.getInstance().cleanLearnts();
+                        if (SATUtils.getInstance().getSolver().nConstraints() > 600000) {
+                            backtrackStep1(0, false);
+                            step_ = 1;
+                            SATUtils.getInstance().cleanLearnts();
+                            SATUtils.getInstance().cleanLocals();
+                            //SATUtils.getInstance().cleanEqLearnts();
+                        }
+
                         if (!currentSketchClause_.isEmpty()) {
                             SATUtils.getInstance().addClause(currentSketchClause_, SATUtils.ClauseType.SKTASSIGNMENT);
                             currentSketchClause_.clear();
@@ -1839,19 +1863,26 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         for (Integer l : next_skt)
                             currentSketchClause_.push(l);
 
-                        SATUtils.getInstance().cleanEqLearnts();
+                        /*
                         boolean conflict = SATUtils.getInstance().addEqLearnts(currentSketch_, sketchNodes_);
                         if (conflict) {
                             unsat = true;
                             System.out.println("s NO SOLUTION");
                             break;
                         }
+                        Constr conf = satUtils_.propagate();
+                        if (conf != null) {
+                            backtrackStep1(0, false);
+                            step_ = 1;
+                        }
+                        */
+
                     }
                     System.out.println("Sketch #iterations = " + iterations_);
                     iterations_ = 0;
                     System.out.println("Sketch #" + sketches_.size() + ": " + sketch);
                     //Z3Utils.getInstance().cleanCache();
-                    //System.out.println("#constraints = " + SATUtils.getInstance().getSolver().nConstraints());
+                    System.out.println("#constraints = " + SATUtils.getInstance().getSolver().nConstraints());
                 } else {
                     if (iterations_ > ITERATION_LIMIT){
                         // go to next sketch
