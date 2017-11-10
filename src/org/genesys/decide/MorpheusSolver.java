@@ -264,6 +264,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         Set<Integer> seen = new HashSet<>();
         String learnt = "";
         boolean exists = false;
+
+        List<Pair<Integer, List<String>>> debug_core = new ArrayList<>();
+
         for (Pair<Integer,List<String>> p : core){
             List<Integer> eq = new ArrayList<>();
             List<Integer> eq2 = new ArrayList<>();
@@ -272,6 +275,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             int node_id = mapnew2old_.get(p.t0);
             if (seen.contains(node_id))
                 continue;
+            debug_core.add(p);
             learnt = learnt + "[(" + node_id + ") ";
             seen.add(node_id);
             for (String l : p.t1) {
@@ -297,6 +301,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         assert (nameNodes_.containsKey(pp));
                         assert (pp.t1.toString().startsWith("line"));
                         eq2.add(nameNodes_.get(pp));
+                        Pair<Integer,List<String>> rr = new Pair<Integer,List<String>>((Integer)pp.t0,new ArrayList<String>());
+                        rr.t1.add((String)pp.t1);
+                        debug_core.add(rr);
+                        mapnew2old_.put((Integer)pp.t0,(Integer)pp.t0);
                     }
                 }
             }
@@ -315,7 +323,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         if (!eqClauses.isEmpty()) {
             //System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
             if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
-            else if (global) learnCoreSimple(core);
+            else if (global) learnCoreSimple(debug_core);
             else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
 
         }
@@ -374,6 +382,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             }
 
             if (!root){
+                //System.out.println("learning = " + clause.t1);
                 SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
             } else {
 
