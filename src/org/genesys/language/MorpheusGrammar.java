@@ -7,6 +7,8 @@ import org.genesys.type.*;
 import org.genesys.utils.MorpheusUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by yufeng on 9/6/17.
@@ -101,7 +103,9 @@ public class MorpheusGrammar implements Grammar<AbstractType> {
             negColList.add(negInt.toString());
             negSets.add(negInt);
         }
-        cols.addAll(negSets);
+        //cols.addAll(negSets);
+        cols = Stream.concat(negSets.stream(), cols.stream())
+                .collect(Collectors.toList());
         for (Set<Integer> ss : cols) {
             colListRawData.add(new ArrayList<>(ss));
             for (int listSize = 1; listSize < 10; listSize++) {
