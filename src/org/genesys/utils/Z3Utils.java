@@ -37,7 +37,7 @@ public class Z3Utils {
 
     private Map<BoolExpr, BoolExpr> cstMap_ = new HashMap<>();
 
-    private List<Pair<Integer, List<String>>> conflicts_ = new ArrayList<>();
+    private Set<Pair<Integer, List<String>>> conflicts_ = new HashSet<>();
 
     private Map<Pair<String, String>, List<String>> eq_map = new HashMap<>();
 
@@ -242,7 +242,9 @@ public class Z3Utils {
                         String type = nodeTypeMap.get(nodeId);
                         assert type.contains("input") : type;
                         Pair<Integer, List<String>> conflict = new Pair<>(nodeId, Arrays.asList(type));
-                        if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
+                        if (!conflicts_.contains(conflict)) {
+                            conflicts_.add(conflict);
+                        }
                     }
                     continue;
                 }
@@ -250,17 +252,34 @@ public class Z3Utils {
                 String type = nodeTypeMap.get(nodeId);
                 Pair<String, String> queryKey = new Pair<>(core_str, type);
                 assert eq_map.containsKey(queryKey);
-                List<String> eq_vec = eq_map.get(queryKey);
+                List<String> eq_vec = new ArrayList<>(eq_map.get(queryKey));
+                assert !eq_vec.isEmpty() : queryKey;
                 Pair<Integer, List<String>> conflict = new Pair<>(nodeId, eq_vec);
-                if (!conflicts_.contains(conflict)) conflicts_.add(conflict);
+                if (!conflicts_.contains(conflict)) mergeConflict(conflict);
             }
         }
-        if(!peCores.isEmpty())
+        if (!peCores.isEmpty())
             coreCache_.add(peCores);
     }
 
     public void clearConflict() {
         conflicts_.clear();
+    }
+
+    private void mergeConflict(Pair<Integer, List<String>> conflict) {
+        boolean fresh = true;
+        //If it's new, add it.
+        for (Pair<Integer, List<String>> old : conflicts_) {
+            if (old.t0.equals(conflict.t0)) {
+                //otherwise, compute the intersection
+                fresh = false;
+                old.t1.retainAll(conflict.t1);
+                break;
+            }
+        }
+        if (fresh) {
+            conflicts_.add(conflict);
+        }
     }
 
     private Set<Set<String>> coreCache_ = new HashSet<>();
@@ -283,7 +302,7 @@ public class Z3Utils {
     }
 
     public List<Pair<Integer, List<String>>> getConflicts() {
-        return conflicts_;
+        return new ArrayList<>(conflicts_);
     }
 
     public Solver getSolverCore() {
@@ -321,7 +340,8 @@ public class Z3Utils {
                         eq_vec.add(comp.getName());
                     }
                 }
-                eq_map.put(new Pair<>(key, type), eq_vec);
+                if(!eq_vec.isEmpty())
+                    eq_map.put(new Pair<>(key, type), eq_vec);
             }
 
         }
