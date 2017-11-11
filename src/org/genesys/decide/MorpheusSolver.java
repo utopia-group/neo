@@ -160,6 +160,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         binaryComponent_.add("ZIPWITH-MAX");
         binaryComponent_.add("TAKE");
         binaryComponent_.add("DROP");
+        binaryComponent_.add("inner_join");
     }
 
     public MorpheusSolver(Grammar g, int depth, Decider decider, boolean learning) {
@@ -181,6 +182,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         binaryComponent_.add("ZIPWITH-MAX");
         binaryComponent_.add("TAKE");
         binaryComponent_.add("DROP");
+        binaryComponent_.add("inner_join");
     }
 
 
@@ -290,7 +292,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         l.equals("ZIPWITH-MIN") ||
                         l.equals("ZIPWITH-MAX") ||
                         l.equals("TAKE") ||
-                        l.equals("DROP")
+                        l.equals("DROP") ||
+                        l.equals("inner_join")
                         ){
                     exists = true;
                 }
@@ -1848,10 +1851,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                        backtrackStep1(0, false);
 //                        step_ = 1;
 
+                        SATUtils.getInstance().cleanLearnts();
+
                         if (SATUtils.getInstance().getSolver().nConstraints() > 600000) {
                             backtrackStep1(0, false);
                             step_ = 1;
-                            SATUtils.getInstance().cleanLearnts();
+                            //SATUtils.getInstance().cleanLearnts();
                             SATUtils.getInstance().cleanLocals();
                             //SATUtils.getInstance().cleanEqLearnts();
                         }
