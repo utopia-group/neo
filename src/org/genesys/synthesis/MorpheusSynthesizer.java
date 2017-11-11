@@ -121,7 +121,8 @@ public class MorpheusSynthesizer implements Synthesizer {
 //            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
-            isSatisfiable = checker_.check(problem_, ast, curr);
+            if(solver_.isPartial())
+                isSatisfiable = checker_.check(problem_, ast, curr);
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
 
