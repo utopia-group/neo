@@ -30,8 +30,8 @@ public class Spread implements Unop {
     public Object apply(Object obj) {
         assert obj instanceof DataFrame;
         DataFrame df = (DataFrame) obj;
-        assert df.getNcol() > key;
-        assert df.getNcol() > value;
+//        assert df.getNcol() > key;
+//        assert df.getNcol() > value;
         String keyCol = df.getNames().get(key);
         String valCol = df.getNames().get(value);
         DataFrame res = ReshapeKt.spread(df, keyCol, valCol, null, false);

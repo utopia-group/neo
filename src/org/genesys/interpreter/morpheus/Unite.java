@@ -37,8 +37,8 @@ public class Unite implements Unop {
     public Object apply(Object obj) {
         assert obj instanceof DataFrame;
         DataFrame df = (DataFrame) obj;
-        assert df.getNames().size() > lhs;
-        assert df.getNames().size() > rhs;
+//        assert df.getNames().size() > lhs;
+//        assert df.getNames().size() > rhs;
         String lhsCol = df.getNames().get(lhs);
         String rhsCol = df.getNames().get(rhs);
         List<String> colList = new ArrayList<>();
