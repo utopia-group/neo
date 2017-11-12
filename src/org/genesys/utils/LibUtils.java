@@ -173,4 +173,36 @@ public class LibUtils {
 
         return clone;
     }
+
+    public static BitSet fromBitString(final String s) {
+        return BitSet.valueOf(new long[]{Long.parseLong(s, 2)});
+    }
+
+    public static String toBitString(BitSet bs) {
+        if(bs.isEmpty()) return "00000";
+        return Long.toString(bs.toLongArray()[0], 2);
+    }
+
+    public static void main(String[] args) {
+        BitSet mask = LibUtils.fromBitString("0000");
+        BitSet b1 = LibUtils.fromBitString("1010");
+
+        BitSet c1 = LibUtils.fromBitString("1100");
+        BitSet c2 = LibUtils.fromBitString("0110");
+        BitSet c3 = LibUtils.fromBitString("0011");
+        System.out.println(mask);
+        System.out.println(b1);
+        System.out.println(c1);
+        System.out.println(c2);
+        System.out.println(c3);
+        c1.and(b1);
+        System.out.println("new c1:" + toBitString(c1));
+        c2.and(b1);
+        System.out.println("new c2:" + toBitString(c2));
+        mask.or(c1);
+        System.out.println("mask1:" + toBitString(mask));
+        mask.or(c2);
+        System.out.println("mask2:" + toBitString(mask) + " " + mask);
+    }
+
 }

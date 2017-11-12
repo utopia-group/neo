@@ -30,6 +30,8 @@ public class Component {
         return type;
     }
 
+    public String getBit() { return bit; }
+
     public List<String> getConstraint() {
         return constraint;
     }
@@ -43,6 +45,8 @@ public class Component {
 
     /* Is this a function? */
     private boolean high;
+
+    private String bit;
 
     private List<String> constraint;
 

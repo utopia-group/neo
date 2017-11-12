@@ -2,6 +2,7 @@
   "id":13,
   "name":"COUNT",
   "type":"int",
+  "bit":"00100",
   "constraint":
   [
     "(declare-const IN0_LEN_SPEC Int)(assert (> IN0_LEN_SPEC 1))",
