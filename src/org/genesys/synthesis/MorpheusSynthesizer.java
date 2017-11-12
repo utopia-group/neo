@@ -140,6 +140,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                     if (!conflictsType.isEmpty()) {
                         if (coreCache_.contains(conflictsType.toString()) || (conflictsType.size() == 1)) {
                             astPair = solver_.getModel(null, true);
+                            if (astPair == null) break;
                             ast = astPair.t0;
                             curr = astPair.t1;
                         } else {
