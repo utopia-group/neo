@@ -263,8 +263,10 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                     clauseToNodeMap_.put(o.toString(), currAssigns);
                 }
             } else {
-                for (BoolExpr o : cstCache_.get(key)) {
-                    clauseToNodeMap_.put(o.toString(), worker.id);
+                if (worker.function.contains("input")) {
+                    for (BoolExpr o : cstCache_.get(key)) {
+                        clauseToNodeMap_.put(o.toString(), worker.id);
+                    }
                 }
             }
             return cstCache_.get(key);
