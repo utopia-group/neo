@@ -384,7 +384,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 clause.t1.add(id);
             }
 
-            //SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.LOCAL);
+            //SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
             //clauses.add(clause);
 
             if (clause.t0.size() <= 2){
@@ -1836,6 +1836,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
                     assignmentsCache_.clear();
                     sketches_.put(sketch, true);
+                    SATUtils.getInstance().cleanVariables();
 
                     if (learning_) {
                         List<Integer> next_skt = new ArrayList<>();

@@ -14,11 +14,13 @@ import org.sat4j.minisat.restarts.Glucose21Restarts;
 import org.sat4j.minisat.restarts.MiniSATRestarts;
 import org.sat4j.specs.*;
 
+import java.util.Deque;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.genesys.models.Pair;
 
@@ -49,6 +51,9 @@ public class SATUtils {
 
     private List<Pair<IConstr,Integer>> learnts_ = new ArrayList<>();
 
+    private Deque<Integer> freeVariables_ = new LinkedList<>();
+    private ArrayList<Integer> usedVariables_ = new ArrayList<>();
+
     private int globalClauses_ = 0;
 
     public void createSolver() {
@@ -68,7 +73,7 @@ public class SATUtils {
 //            variablesOccurs.add(false);
         //solver_.newVar(vars);
         // FIXME: just creating a lot of variables in advance
-        solver_.newVar(1000000);
+        solver_.newVar(200000);
 
         nbVars = vars;
 
@@ -168,19 +173,38 @@ public class SATUtils {
         return conflict;
     }
 
+    public void cleanVariables(){
+        for (Integer i : usedVariables_){
+            freeVariables_.push(i);
+        }
+        usedVariables_.clear();
+    }
+
 
     public boolean learnCoreGlobal(List<List<Integer>> core){
         boolean conflict = false;
 
         // create k auxiliary variables
         List<Integer> aux = new ArrayList<>();
-        //for (int i = solver_.nVars()+1; i <= solver_.nVars()+core.size(); i++)
-        for (int i = nbVars+1; i <= nbVars+core.size(); i++)
-            aux.add(i);
-        nbVars = nbVars+core.size();
+
+//        for (int i = nbVars+1; i <= nbVars+core.size(); i++)
+//            aux.add(i);
+
+        for (int i = 1; i <= core.size(); i++){
+            if (!freeVariables_.isEmpty()){
+                int v = freeVariables_.poll();
+                aux.add(v);
+                usedVariables_.add(v);
+            } else {
+                aux.add(++nbVars);
+                usedVariables_.add(nbVars);
+            }
+        }
+
+        //nbVars = nbVars+core.size();
         assert (aux.size() == core.size());
 
-        assert (nbVars < 1000000);
+        assert (nbVars < 200000);
 
         // FIXME: problem with increasing the number of variables in SAT4J
 //        solver_.newVar(solver_.nVars() + core.size());
