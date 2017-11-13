@@ -227,7 +227,7 @@ public class Z3Utils {
 //                    System.out.println("PE core=======" + cstMap_.get(e));
 
                     if (MorpheusSynthesizer.learning_ && (folComp.size() > 0)) {
-                        if (core.contains("V_COL") || core.contains("V_HEAD")) {
+                        if (core.contains("V_COL")) {
                             Pair<Integer, List<String>> firstOne = folComp.get(0);
                             Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
 
