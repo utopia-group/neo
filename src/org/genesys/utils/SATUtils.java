@@ -241,12 +241,23 @@ public class SATUtils {
         // create k auxiliary variables
         List<Integer> aux = new ArrayList<>();
         //for (int i = solver_.nVars()+1; i <= solver_.nVars()+core.size(); i++)
-        for (int i = nbVars+1; i <= nbVars+core.size(); i++)
-            aux.add(i);
-        nbVars = nbVars+core.size();
+
+        for (int i = 1; i <= core.size(); i++){
+            if (!freeVariables_.isEmpty()){
+                int v = freeVariables_.poll();
+                aux.add(v);
+                usedVariables_.add(v);
+            } else {
+                aux.add(++nbVars);
+                usedVariables_.add(nbVars);
+            }
+        }
+
+        //nbVars = nbVars+core.size();
         assert (aux.size() == core.size());
 
-        assert (nbVars < 1000000);
+        assert (nbVars < 200000);
+
 
         // FIXME: problem with increasing the number of variables in SAT4J
 //        solver_.newVar(solver_.nVars() + core.size());
