@@ -225,14 +225,30 @@ public class Z3Utils {
                 else {
                     List<Pair<Integer, List<String>>> folComp = (List<Pair<Integer, List<String>>>) nodeObj;
 //                    System.out.println("PE core=======" + cstMap_.get(e));
+
+                    if (MorpheusSynthesizer.learning_ && (folComp.size() > 0)) {
+                        if (core.contains("V_COL") || core.contains("V_HEAD")) {
+                            Pair<Integer, List<String>> firstOne = folComp.get(0);
+                            Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
+
+                            if (firstOne.t1.contains("select")) {
+                                conflicts_.clear();
+                                conflicts_.add(lastOne);
+                                conflicts_.add(firstOne);
+                                break;
+                            }
+                        }
+
+                        if (core.contains("V_ON")) {
+                            Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
+                            conflicts_.clear();
+                            conflicts_.add(lastOne);
+                            break;
+                        }
+                    }
+
                     peCores.add(core);
 
-                    if (MorpheusSynthesizer.learning_ && core.contains("V_ON") && (folComp.size() > 0)) {
-                        Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
-                        conflicts_.clear();
-                        conflicts_.add(lastOne);
-                        break;
-                    }
                     conflicts_.addAll(folComp);
                     continue;
                 }
@@ -340,7 +356,7 @@ public class Z3Utils {
                         eq_vec.add(comp.getName());
                     }
                 }
-                if(!eq_vec.isEmpty())
+                if (!eq_vec.isEmpty())
                     eq_map.put(new Pair<>(key, type), eq_vec);
             }
 
