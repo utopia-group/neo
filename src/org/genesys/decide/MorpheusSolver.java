@@ -199,8 +199,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             if (block || !partial_) {
                 if (step_ == 4) {
                     assert (core == null);
-                    //conflict &= blockModelNeo();
-                    conflict &= blockModel();
+                    conflict &= blockModelNeo();
+                    //conflict &= blockModel();
                 }
                 else conflict &= blockModel();
                 
