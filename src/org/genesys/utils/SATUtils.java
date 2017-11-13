@@ -73,7 +73,7 @@ public class SATUtils {
 //            variablesOccurs.add(false);
         //solver_.newVar(vars);
         // FIXME: just creating a lot of variables in advance
-        solver_.newVar(200000);
+        solver_.newVar(1000000);
 
         nbVars = vars;
 
@@ -204,7 +204,7 @@ public class SATUtils {
         //nbVars = nbVars+core.size();
         assert (aux.size() == core.size());
 
-        assert (nbVars < 200000);
+        assert (nbVars < 1000000);
 
         // FIXME: problem with increasing the number of variables in SAT4J
 //        solver_.newVar(solver_.nVars() + core.size());
@@ -256,7 +256,7 @@ public class SATUtils {
         //nbVars = nbVars+core.size();
         assert (aux.size() == core.size());
 
-        assert (nbVars < 200000);
+        assert (nbVars < 1000000);
 
 
         // FIXME: problem with increasing the number of variables in SAT4J
