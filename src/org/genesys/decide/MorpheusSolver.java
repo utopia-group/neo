@@ -160,6 +160,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         binaryComponent_.add("ZIPWITH-MAX");
         binaryComponent_.add("TAKE");
         binaryComponent_.add("DROP");
+        binaryComponent_.add("ACCESS");
         binaryComponent_.add("inner_join");
     }
 
@@ -182,6 +183,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         binaryComponent_.add("ZIPWITH-MAX");
         binaryComponent_.add("TAKE");
         binaryComponent_.add("DROP");
+        binaryComponent_.add("ACCESS");
         binaryComponent_.add("inner_join");
     }
 
@@ -297,6 +299,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                         l.equals("ZIPWITH-MAX") ||
                         l.equals("TAKE") ||
                         l.equals("DROP") ||
+                        l.equals("ACCESS") ||
                         l.equals("inner_join")
                         ){
                     exists = true;
@@ -328,10 +331,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
 
         if (!eqClauses.isEmpty()) {
-            //System.out.println("Learning: " + "(" + learntLine_ +  ")" + learnt);
-            if (core.size() == 1) conflict = SATUtils.getInstance().learnCoreGlobal(eqClauses);
-            else if (global) learnCoreSimple(debug_core);
-            else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
+
+            if (core.size() == 1 || global) conflict = learnCoreSimple(debug_core);
+            else conflict = learnCoreLocal(debug_core, learntLine_);
+            //else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
 
         }
 
@@ -357,7 +360,48 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         }
     }
 
+    public boolean learnCoreLocal(List<Pair<Integer, List<String>>> core, int line) {
+
+        boolean conflict = false;
+
+        List<Integer> nodes = new ArrayList<>();
+        List<List<String>> s = new ArrayList<>();
+        for (Pair<Integer, List<String>> p : core) {
+            s.add(p.t1);
+            nodes.add(p.t0);
+        }
+
+        List<List<String>> result = new ArrayList<>();
+        List<String> current = new ArrayList<>();
+
+        List<Pair<VecInt, List<Pair<Integer, String>>>> clauses = new ArrayList<>();
+
+        GeneratePermutations(s, result, 0, current);
+        for (List<String> r : result) {
+            Pair<VecInt, List<Pair<Integer, String>>> clause = new Pair<>(new VecInt(), new ArrayList<>());
+            boolean root = true;
+            for (int i = 0; i < r.size(); i++) {
+                assert (mapnew2old_.containsKey(nodes.get(i)));
+                int node_id = mapnew2old_.get(nodes.get(i));
+                Pair<Integer, String> id = new Pair<>(node_id, r.get(i));
+                // FIXME: Yu is giving me constants that do not exist
+                if (!nameNodes_.containsKey(id))
+                    continue;
+                assert (nameNodes_.containsKey(id));
+                clause.t0.push(-nameNodes_.get(id));
+                clause.t1.add(id);
+            }
+
+
+            conflict &= SATUtils.getInstance().addLearnt(clause.t0, line);
+        }
+
+        return conflict;
+    }
+
     public boolean learnCoreSimple(List<Pair<Integer, List<String>>> core) {
+
+        boolean conflict = false;
 
         List<Integer> nodes = new ArrayList<>();
         List<List<String>> s = new ArrayList<>();
@@ -392,9 +436,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             //clauses.add(clause);
 
             if (clause.t0.size() <= 2){
-                SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
+                conflict &= SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
             } else {
-                SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.LOCAL);
+                conflict &= SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.LOCAL);
                 //clauses.add(clause);
             }
 
@@ -450,10 +494,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             */
         }
 
-        if (!clauses.isEmpty())
-            SATUtils.getInstance().updateEqLearnts(clauses);
+//        if (!clauses.isEmpty())
+//            SATUtils.getInstance().updateEqLearnts(clauses);
 
-        return true;
+        return conflict;
     }
 
 
@@ -1080,6 +1124,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             Pair<Integer, String> pair2 = new Pair<Integer, String>(node.id, p.function);
             varNodes_.put(pair, ++nbVariables_);
             nameNodes_.put(pair2,nbVariables_);
+//            System.out.println("pair2 = " + pair2);
             if (p.higher) {
                 if (!higherGrouping_.containsKey(p.function)) {
                     higherGrouping_.put(p.function, new ArrayList<>());
@@ -1910,7 +1955,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                        step_ = 1;
 
                         SATUtils.getInstance().cleanLearnts();
-                        SATUtils.getInstance().cleanVariables();
+                        //SATUtils.getInstance().cleanVariables();
 
                         if (SATUtils.getInstance().getSolver().nConstraints() > 600000) {
                             backtrackStep1(0, false);

@@ -73,8 +73,8 @@ public class SATUtils {
 //            variablesOccurs.add(false);
         //solver_.newVar(vars);
         // FIXME: just creating a lot of variables in advance
-        solver_.newVar(1000000);
-
+        solver_.newVar(vars);
+        //solver_.newVar(1000000);
         nbVars = vars;
 
 //        nbVars = vars;
