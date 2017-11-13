@@ -2,6 +2,7 @@
   "id":23,
   "name":"REVERSE",
   "type":"list",
+  "bit":"11111",
   "constraint":
   [
     "(declare-const IN0_LEN_SPEC Int)(declare-const OUT_LEN_SPEC Int)(assert (= IN0_LEN_SPEC OUT_LEN_SPEC))",

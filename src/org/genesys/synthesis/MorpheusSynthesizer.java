@@ -121,8 +121,13 @@ public class MorpheusSynthesizer implements Synthesizer {
 //            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
-            if(solver_.isPartial())
+            // This trick does not work well in Morpheus!
+            if (solver_.isPartial())
                 isSatisfiable = checker_.check(problem_, ast, curr);
+            else {
+                if (checker_ instanceof MorpheusChecker)
+                    isSatisfiable = checker_.check(problem_, ast, curr);
+            }
             long end = LibUtils.tick();
             totalDeduction += LibUtils.computeTime(start, end);
 
@@ -135,6 +140,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                     if (!conflictsType.isEmpty()) {
                         if (coreCache_.contains(conflictsType.toString()) || (conflictsType.size() == 1)) {
                             astPair = solver_.getModel(null, true);
+                            if (astPair == null) break;
                             ast = astPair.t0;
                             curr = astPair.t1;
                         } else {

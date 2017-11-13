@@ -78,7 +78,10 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
         /* Generate SMT formula for current AST node. */
         Queue<Node> queue = new LinkedList<>();
         List<BoolExpr> cstList = new ArrayList<>();
-
+        //FIXME: The analysis is not working well.
+//        Node rootNode = node.children.get(0);
+//        BitSet bit = getCompBits(rootNode);
+//        if (bit.isEmpty()) return true;
         queue.add(node);
         while (!queue.isEmpty()) {
             Node worker = queue.remove();
@@ -148,7 +151,6 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
 //        }
         return sat;
     }
-
 
     private List<BoolExpr> genNodeSpec(Node worker, Component comp) {
 //        System.out.println("current workder: " + worker.id + " " + worker);
@@ -332,5 +334,34 @@ public class DeepCoderChecker implements Checker<Problem, List<Pair<Integer, Lis
             clauses.addAll(getCurrentAssignment(child));
         }
         return clauses;
+    }
+
+    //0: len; 1: first; 2: last; 3: max; 4: min
+    private BitSet getCompBits(Node ast) {
+//        System.out.println("checking ast bit:" + ast);
+        String compName = ast.function;
+        Component component = components_.get(compName);
+        String compBit = component.getBit();
+        if (compName.startsWith("MAP")) {
+            compBit = "10000";
+        }
+        BitSet compBitSet = LibUtils.fromBitString(compBit);
+        BitSet mask = LibUtils.fromBitString("00000");
+
+        if (ast.children.isEmpty()) return compBitSet;
+
+        for (Node child : ast.children) {
+            String childName = child.function;
+            BitSet childBitSet = LibUtils.fromBitString("11111");
+            if (components_.containsKey(childName)) {
+                childBitSet = getCompBits(child);
+                childBitSet.and(compBitSet);
+            } else {
+                childBitSet.and(compBitSet);
+            }
+            mask.or(childBitSet);
+        }
+
+        return (BitSet) mask.clone();
     }
 }
