@@ -175,7 +175,8 @@ public class SATUtils {
 
     public void cleanVariables(){
         for (Integer i : usedVariables_){
-            freeVariables_.push(i);
+            if (solver_.truthValue(i) == Lbool.UNDEFINED)
+                freeVariables_.push(i);
         }
         usedVariables_.clear();
     }

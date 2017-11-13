@@ -197,7 +197,11 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             boolean conflict = false;
 
             if (block || !partial_) {
-                if (step_ == 4) conflict &= blockModelNeo();
+                if (step_ == 4) {
+                    assert (core == null);
+                    //conflict &= blockModelNeo();
+                    conflict &= blockModel();
+                }
                 else conflict &= blockModel();
                 
                 if (blockLearnFlag_) {
@@ -460,8 +464,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             initDataStructures();
         } else {
             boolean conflict = false;
-            if (step_ == 4) conflict = blockModelNeo();
-            else conflict = blockModel();
+            //if (step_ == 4) conflict = blockModelNeo();
+            //else
+            conflict = blockModel();
 
             if (blockLearnFlag_) {
                 // I need to learn a clause that blocks the previous ast up to currentLine
@@ -493,8 +498,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             initDataStructures();
         } else {
             boolean conflict = false;
-            if (step_ == 4) conflict = blockModelNeo();
-            else conflict = blockModel();
+            //if (step_ == 4) conflict = blockModelNeo();
+            conflict = blockModel();
 
             if (blockLearnFlag_) {
                 // I need to learn a clause that blocks the previous ast up to currentLine
@@ -1351,7 +1356,16 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private boolean blockModelNeo() {
 
         // TODO: ongoing work for backtracking less
-        return blockModel();
+        //return blockModel();
+        boolean unsat = false;
+        unsat = undoLast();
+        if (unsat)
+            System.out.println("s UNSATISFIABLE : backtracking block model");
+
+        //System.out.println("#constraints = " + satUtils_.getSolver().nConstraints());
+        return unsat;
+
+
 //        boolean unsat = false;
 //
 //        //unsat = backtrackStep2(level_-1, true, false);
@@ -1491,6 +1505,50 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //        backtrackTime2_ += LibUtils.computeTime(s,e);
 //        backtrackTime_ += LibUtils.computeTime(s,e);
 
+        return conflict;
+    }
+
+    private boolean undoLast() {
+
+        boolean conflict = false;
+
+        VecInt cc = new VecInt();
+        for (int i = 0; i < trailSAT_.size()-1; i++){
+            cc.push(trailSAT_.get(i));
+        }
+
+        if (!assignmentsCache_.containsKey(cc.toString())){
+            assignmentsCache_.put(cc.toString(),new HashSet());
+        }
+        assignmentsCache_.get(cc.toString()).add(trailSAT_.get(trailSAT_.size()-1));
+
+        // undo just the last decision?
+        currentChild_--;
+        if (currentChild_ < 0){
+            currentChild_ = 0;
+            currentLine_--;
+            if (currentLine_ < 0){
+                currentLine_ = 0;
+                step_ = 2;
+                backtrackStep2(highTrail_.size(), false, false);
+            } else {
+                int lvl = findLevel(currentLine_);
+                backtrackStep2(lvl, false, false);
+                step_ = backtrackStep(lvl);
+                if (step_ != 3){
+                    currentLine_ = 0;
+                    currentChild_ = 0;
+                }
+            }
+        } else {
+            int lvl = findLevel(currentLine_);
+            backtrackStep2(lvl, false, false);
+            step_ = backtrackStep(lvl);
+            if (step_ != 3){
+                currentLine_ = 0;
+                currentChild_ = 0;
+            }
+        }
         return conflict;
     }
 
@@ -1836,7 +1894,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
                     assignmentsCache_.clear();
                     sketches_.put(sketch, true);
-                    SATUtils.getInstance().cleanVariables();
 
                     if (learning_) {
                         List<Integer> next_skt = new ArrayList<>();
@@ -1853,6 +1910,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                        step_ = 1;
 
                         SATUtils.getInstance().cleanLearnts();
+                        SATUtils.getInstance().cleanVariables();
 
                         if (SATUtils.getInstance().getSolver().nConstraints() > 600000) {
                             backtrackStep1(0, false);
