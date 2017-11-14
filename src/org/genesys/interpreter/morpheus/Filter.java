@@ -28,6 +28,8 @@ public class Filter implements Unop {
 
     private Object rhs;
 
+    private static Map<String, Set<String>> eqCache_ = new HashMap<>();
+
     public Filter(Binop bin, int l, Object r) {
         binop = bin;
         lhs = l;
@@ -214,37 +216,41 @@ public class Filter implements Unop {
 
 
         Set<String> eqClasses = new HashSet<>();
-        for (String str : MorpheusGrammar.numList) {
-            Double num = Double.valueOf(str);
-            Number val;
-            if (num.doubleValue() % 1 == 0)
-                val = num.intValue();
-            else {
-                val = num.doubleValue();
-            }
-            if (str.equals(rhs.toString())) {
-                eqClasses.add(str);
-                continue;
-            }
-            DataFrame eqRes = df.filter((df1, df2) -> {
-                if (opStr.equals("l(a,b).(> a b)")) {
-                    return ColumnsKt.gt(df.get(colName), val);
-                } else if (opStr.equals("l(a,b).(< a b)")) {
-                    return ColumnsKt.lt(df.get(colName), val);
-                } else if (opStr.equals("l(a,b).(== a b)")) {
-                    return ColumnsKt.eq(df.get(colName), val);
-                } else if (opStr.equals("l(a,b).(!= a b)")) {
-                    return ColumnsKt.neq(df.get(colName), val);
-                } else {
-                    throw new UnsupportedOperationException("Unsupported OP:" + opStr);
+        if(!eqCache_.containsKey(ast.toString())) {
+            for (String str : MorpheusGrammar.numList) {
+                Double num = Double.valueOf(str);
+                Number val;
+                if (num.doubleValue() % 1 == 0)
+                    val = num.intValue();
+                else {
+                    val = num.doubleValue();
                 }
-            });
-            if (eqRes.getNrow() == res.getNrow()) {
-                eqClasses.add(str);
+                if (str.equals(rhs.toString())) {
+                    eqClasses.add(str);
+                    continue;
+                }
+                DataFrame eqRes = df.filter((df1, df2) -> {
+                    if (opStr.equals("l(a,b).(> a b)")) {
+                        return ColumnsKt.gt(df.get(colName), val);
+                    } else if (opStr.equals("l(a,b).(< a b)")) {
+                        return ColumnsKt.lt(df.get(colName), val);
+                    } else if (opStr.equals("l(a,b).(== a b)")) {
+                        return ColumnsKt.eq(df.get(colName), val);
+                    } else if (opStr.equals("l(a,b).(!= a b)")) {
+                        return ColumnsKt.neq(df.get(colName), val);
+                    } else {
+                        throw new UnsupportedOperationException("Unsupported OP:" + opStr);
+                    }
+                });
+                if (eqRes.getNrow() == res.getNrow()) {
+                    eqClasses.add(str);
+                }
             }
+            eqCache_.put(ast.toString(), eqClasses);
+        } else {
+            eqClasses = eqCache_.get(ast.toString());
         }
         Z3Utils.getInstance().updateEqClassesInPE("ROW", eqClasses);
-
         //Working on learning for filter.
         if ((res.getNrow() == df.getNrow()) && MorpheusSynthesizer.learning_) {
 
