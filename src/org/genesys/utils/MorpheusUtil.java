@@ -19,11 +19,17 @@ public class MorpheusUtil {
 
     private int counter_ = 0;
 
+    private List<DataFrame> inputs;
+
     public static MorpheusUtil getInstance() {
         if (instance == null) {
             instance = new MorpheusUtil();
         }
         return instance;
+    }
+
+    public void setInputs(List<DataFrame> ins) {
+        inputs = ins;
     }
 
     public String getMorpheusString() {
@@ -52,6 +58,22 @@ public class MorpheusUtil {
         List<Set<Integer>> res = new ArrayList<>();
         getSubsets(superSet, k, 0, new HashSet<Integer>(), res);
         return res;
+    }
+
+    public List<Set<Integer>> getSubsetsByListSize(int listSize, int k, boolean isPos) {
+        List<Integer> data = new ArrayList<>();
+        for (int i = 0; i < listSize; i++)
+            data.add(i);
+
+        List<Set<Integer>> posSet = getSubsets(data, k);
+        if (isPos) return posSet;
+        else {
+            List<Set<Integer>> negSet = new ArrayList<>();
+            for (Set<Integer> pos : posSet) {
+                negSet.add(negateSet(pos));
+            }
+            return negSet;
+        }
     }
 
     public Set<Integer> negateSet(Set<Integer> orgSet) {
@@ -115,6 +137,16 @@ public class MorpheusUtil {
         }
         List<Integer> sublist = new ArrayList<>();
         boolean isNeg = selectors.iterator().next() < 0;
+        if (isNeg) {
+            for (int j : negSet) {
+                if (!data.contains(j)) return new ArrayList<>();
+            }
+        } else {
+            for (int j : selectors) {
+                if (!data.contains(j)) return new ArrayList<>();
+            }
+        }
+
         for (int i = 0; i < data.size(); i++) {
             if (!isNeg) {
                 if (selectors.contains(i))
@@ -230,9 +262,22 @@ public class MorpheusUtil {
         }
     }
 
+    //Given a collist, compute its HEAD with respect to the inputs
+    public int getDiffHead(Set<String> cols) {
+        Set<String> set = new HashSet<>(cols);
+        for (DataFrame input : inputs) {
+            Set headIn = getHeader(input);
+            Set contentIn = getContent(input);
+            set.removeAll(headIn);
+            set.removeAll(contentIn);
+        }
+        return set.size();
+    }
+
     public static void main(String[] args) {
         MorpheusUtil util_ = MorpheusUtil.getInstance();
-        Set<Integer> sel = new HashSet<>(Arrays.asList(1, 3, 5));
+        Set<Integer> sel = new HashSet<>(Arrays.asList(1, 3, 6));
+//        Set<Integer> sel = new HashSet<>(Arrays.asList(1, 3, 5));
         Set<Integer> sel2 = new HashSet<>(Arrays.asList(-5, -99));
         Set<Integer> sel3 = new HashSet<>(Arrays.asList(-1, -3));
         Set<Integer> sel4 = new HashSet<>(Arrays.asList(0, 2));
@@ -270,6 +315,8 @@ public class MorpheusUtil {
         assert util_.getFirst(o3) == 9;
         assert util_.getLast(o3) == 9;
 
+        System.out.println(MorpheusUtil.getInstance().getSubsetsByListSize(4, 2, true));
+        System.out.println(MorpheusUtil.getInstance().getSubsetsByListSize(4, 2, false));
     }
 
 }

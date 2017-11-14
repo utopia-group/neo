@@ -10,6 +10,8 @@ import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
+import org.genesys.utils.MorpheusUtil;
+import org.genesys.utils.Z3Utils;
 
 import java.util.*;
 
@@ -17,6 +19,8 @@ import java.util.*;
  * Created by yufeng on 9/3/17.
  */
 public class Select implements Unop {
+
+    private MorpheusUtil util_ = MorpheusUtil.getInstance();
 
     public Object apply(Object obj) {
         assert obj != null;
@@ -160,6 +164,73 @@ public class Select implements Unop {
                 res = Extensions.select(df, argNegs);
             }
 
+            int outSize = res.getNcol();
+            int inSize = df.getNcol();
+            List<String> eqClasses = new ArrayList<>();
+            // negative:
+            if ((df.getNcol() - outSize) == 1) {
+                //only consider negative 1
+                List<Set<Integer>> neg1List = util_.getSubsetsByListSize(inSize, 1, false);
+                for (Set<Integer> s : neg1List)
+                    eqClasses.add(s.toString());
+            }
+            if ((df.getNcol() - outSize) == 2) {
+                //only consider negative 2
+                List<Set<Integer>> neg2List = util_.getSubsetsByListSize(inSize, 2, false);
+                for (Set<Integer> s : neg2List)
+                    eqClasses.add(s.toString());
+
+            }
+
+            // positive:
+            if (outSize == 1) {
+                //size 1 postive
+                List<Set<Integer>> pos1List = util_.getSubsetsByListSize(inSize, 1, true);
+                for (Set<Integer> s : pos1List)
+                    eqClasses.add(s.toString());
+
+            } else if (outSize == 2) {
+                //size 2 positive
+                List<Set<Integer>> pos2List = util_.getSubsetsByListSize(inSize, 2, true);
+                for (Set<Integer> s : pos2List)
+                    eqClasses.add(s.toString());
+            }
+
+            //Compute eq_classes for HEAD.
+            List<Set<Integer>> headList = new ArrayList<>();
+            headList.addAll(util_.getSubsetsByListSize(inSize, 1, true));
+            headList.addAll(util_.getSubsetsByListSize(inSize, 1, false));
+            headList.addAll(util_.getSubsetsByListSize(inSize, 2, true));
+            headList.addAll(util_.getSubsetsByListSize(inSize, 2, false));
+            List<Integer> data = new ArrayList<>();
+            for (int i = 0; i < inSize; i++) data.add(i);
+            List<Integer> orgSel = util_.sel(new HashSet<>(cols), data);
+            Set<String> orgStrs = new HashSet<>();
+
+            for (int idx : orgSel) {
+                orgStrs.add(df.getNames().get(idx));
+            }
+            int diffOrg = util_.getDiffHead(orgStrs);
+
+            for (Set<Integer> myList : headList) {
+                List<Integer> actual = util_.sel(myList, data);
+                Set<String> colStrs = new HashSet<>();
+                for (int idx : actual) {
+                    colStrs.add(df.getNames().get(idx));
+                }
+                int diff = util_.getDiffHead(colStrs);
+                if(diff == diffOrg)
+                    eqClasses.add(myList.toString());
+
+//                System.out.println( cols + "------> " + myList);
+
+            }
+
+            for (String clz : eqClasses)
+                Z3Utils.getInstance().updateEqClassesInPE(clz);
+
+
+//            Extensions.print(res);
             for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                 //current node.
                 partialConflictMap.put(ast.id, Arrays.asList(ast.function));

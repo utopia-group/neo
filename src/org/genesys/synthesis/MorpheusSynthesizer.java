@@ -138,7 +138,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                     List<Pair<Integer, List<String>>> conflicts = z3.getConflicts();
                     long start2 = LibUtils.tick();
                     if (!conflictsType.isEmpty()) {
-                        if (coreCache_.contains(conflictsType.toString()) || (conflictsType.size() == 1)) {
+                        if (coreCache_.contains(conflictsType.toString())) {
                             astPair = solver_.getModel(null, true);
                             if (astPair == null) break;
                             ast = astPair.t0;
@@ -155,7 +155,7 @@ public class MorpheusSynthesizer implements Synthesizer {
                             ast = astPair.t0;
                             curr = astPair.t1;
                         } else {
-                            astPair = solver_.getCoreModel(conflicts, true, true);
+                            astPair = solver_.getCoreModel(conflicts, true, z3.isGlobal());
                             ast = astPair.t0;
                             curr = astPair.t1;
                         }

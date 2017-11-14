@@ -1,9 +1,6 @@
 package org.genesys.interpreter.morpheus;
 
-import krangl.ColumnsKt;
-import krangl.DataFrame;
-import krangl.Extensions;
-import krangl.StringCol;
+import krangl.*;
 import org.genesys.interpreter.Binop;
 import org.genesys.interpreter.Unop;
 import org.genesys.language.MorpheusGrammar;
@@ -12,8 +9,13 @@ import org.genesys.models.Pair;
 import org.genesys.synthesis.MorpheusSynthesizer;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.Z3Utils;
 
 import java.util.*;
+
+import static krangl.ColumnsKt.count;
+import static krangl.ColumnsKt.min;
+import static krangl.ColumnsKt.sum;
 
 /**
  * Created by yufeng on 9/3/17.
@@ -210,6 +212,55 @@ public class Filter implements Unop {
             }
         });
 
+
+        List<String> eqClasses = new ArrayList<>();
+        for (String str : MorpheusGrammar.numList) {
+            Double num = Double.valueOf(str);
+            Number val;
+            if (num.doubleValue() % 1 == 0)
+                val = num.intValue();
+            else {
+                val = num.doubleValue();
+            }
+            if (str.equals(rhs.toString())) {
+                eqClasses.add(str);
+                Z3Utils.getInstance().updateEqClassesInPE(str);
+                continue;
+            }
+            DataFrame eqRes = df.filter((df1, df2) -> {
+                if (opStr.equals("l(a,b).(> a b)")) {
+                    return ColumnsKt.gt(df.get(colName), val);
+                } else if (opStr.equals("l(a,b).(< a b)")) {
+                    return ColumnsKt.lt(df.get(colName), val);
+                } else if (opStr.equals("l(a,b).(== a b)")) {
+                    return ColumnsKt.eq(df.get(colName), val);
+                } else if (opStr.equals("l(a,b).(!= a b)")) {
+                    return ColumnsKt.neq(df.get(colName), val);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported OP:" + opStr);
+                }
+            });
+            if (eqRes.getNrow() == res.getNrow()) {
+                eqClasses.add(str);
+                Z3Utils.getInstance().updateEqClassesInPE(str);
+            }
+        }
+
+        //Working on learning for filter.
+        if ((res.getNrow() == df.getNrow()) && MorpheusSynthesizer.learning_) {
+
+            for (Map<Integer, List<String>> partialConflictMap : conflictList) {
+                //current node.
+                partialConflictMap.put(ast.id, Arrays.asList(ast.function));
+                //arg0
+                partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
+                partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
+                partialConflictMap.put(frdChild.id, eqClasses);
+            }
+            return new Pair<>(null, conflictList);
+        }
+
         for (Map<Integer, List<String>> partialConflictMap : conflictList) {
             //current node.
             partialConflictMap.put(ast.id, Arrays.asList(ast.function));
@@ -218,10 +269,6 @@ public class Filter implements Unop {
             partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
             partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
             partialConflictMap.put(frdChild.id, Arrays.asList(frdChild.function));
-        }
-        //Working on learning for filter.
-        if ((res.getNrow() == df.getNrow()) && MorpheusSynthesizer.learning_) {
-            return new Pair<>(null, conflictList);
         }
         return new Pair<>(res, conflictList);
     }

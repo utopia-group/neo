@@ -73,6 +73,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
     @Override
     public boolean check(Problem specification, Node node, Node curr) {
         core_.clear();
+        z3_.clearEqClassesInPE();
         Example example = specification.getExamples().get(0);
         Object output = example.getOutput();
         assert output instanceof DataFrame;
@@ -279,6 +280,7 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
         int contentNum;
 
         if (worker.function.contains("input")) {
+            util_.setInputs(inputs);
             headNum = 0;
             contentNum = 0;
         } else {

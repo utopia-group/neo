@@ -41,6 +41,11 @@ public class Z3Utils {
 
     private Map<Pair<String, String>, List<String>> eq_map = new HashMap<>();
 
+    //Tracking eq_classes during partial evaluation, written by the interpreter.
+    private Set<String> eq_class_pe = new HashSet<>();
+
+    private boolean global = true;
+
     protected Z3Utils() {
         ctx_ = new Context();
         ctx_core = new Context();
@@ -211,6 +216,7 @@ public class Z3Utils {
     public void printUnsatCore(Map<String, Object> clauseToNodeMap, Map<String, String> clauseToSpecMap_, Collection<Component> components) {
 //        System.out.println("UNSAT_core===========:" + solver_.getUnsatCore().length);
         clearConflict();
+        global = true;
         Set<String> peCores = new HashSet<>();
         for (BoolExpr e : solver_.getUnsatCore()) {
             String core = cstMap_.get(e).toString();
@@ -227,26 +233,53 @@ public class Z3Utils {
 //                    System.out.println("PE core=======" + cstMap_.get(e));
 
                     if (MorpheusSynthesizer.learning_ && (folComp.size() > 0)) {
+                        Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
+
                         if (core.contains("V_COL")) {
                             Pair<Integer, List<String>> firstOne = folComp.get(0);
-                            Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
 
                             if (firstOne.t1.contains("select")) {
-                                conflicts_.clear();
-                                conflicts_.add(lastOne);
-                                conflicts_.add(firstOne);
+                                folComp.remove(lastOne);
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_pe));
+                                folComp.add(newLast);
+                                conflicts_.addAll(folComp);
+                                global = false;
+                                break;
+                            }
+                        }
+
+                        if (core.contains("V_HEAD")) {
+                            Pair<Integer, List<String>> firstOne = folComp.get(0);
+
+                            if (firstOne.t1.contains("select")) {
+                                folComp.remove(lastOne);
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_pe));
+                                folComp.add(newLast);
+                                conflicts_.addAll(folComp);
+                                global = false;
+                                break;
+                            }
+                        }
+
+                        if (core.contains("V_ROW")) {
+                            Pair<Integer, List<String>> firstOne = folComp.get(0);
+
+                            if (firstOne.t1.contains("filter")) {
+                                folComp.remove(lastOne);
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_pe));
+                                folComp.add(newLast);
+                                conflicts_.addAll(folComp);
+                                global = false;
                                 break;
                             }
                         }
 
                         if (core.contains("V_ON")) {
-                            Pair<Integer, List<String>> lastOne = folComp.get(folComp.size() - 1);
                             conflicts_.clear();
                             conflicts_.add(lastOne);
                             break;
                         }
                     }
-
                     peCores.add(core);
 
                     conflicts_.addAll(folComp);
@@ -308,6 +341,7 @@ public class Z3Utils {
 
     public void cleanCache() {
         coreCache_.clear();
+        global = true;
     }
 
     public boolean hasCache(Set<String> peSet) {
@@ -327,6 +361,18 @@ public class Z3Utils {
 
     public Context getCoreCtx() {
         return ctx_core;
+    }
+
+    public void updateEqClassesInPE(String comp) {
+        eq_class_pe.add(comp);
+    }
+
+    public void clearEqClassesInPE() {
+        eq_class_pe.clear();
+    }
+
+    public boolean isGlobal() {
+        return global;
     }
 
     public void initEqMap(Collection<Component> components) {
