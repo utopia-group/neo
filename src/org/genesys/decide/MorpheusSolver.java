@@ -333,7 +333,9 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         if (!eqClauses.isEmpty()) {
 
             if (core.size() == 1 || global) conflict = learnCoreSimple(debug_core);
-            else conflict = learnCoreLocal(debug_core, learntLine_);
+            else {
+               conflict = learnCoreLocal(debug_core, learntLine_);
+            }
             //else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
 
         }
@@ -380,20 +382,23 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         for (List<String> r : result) {
             Pair<VecInt, List<Pair<Integer, String>>> clause = new Pair<>(new VecInt(), new ArrayList<>());
             boolean root = true;
+            boolean ignore = false;
             for (int i = 0; i < r.size(); i++) {
                 assert (mapnew2old_.containsKey(nodes.get(i)));
                 int node_id = mapnew2old_.get(nodes.get(i));
                 Pair<Integer, String> id = new Pair<>(node_id, r.get(i));
                 // FIXME: Yu is giving me constants that do not exist
-                if (!nameNodes_.containsKey(id))
-                    continue;
+                if (!nameNodes_.containsKey(id)) {
+                    ignore = true;
+                    break;
+                    //continue;
+                }
                 assert (nameNodes_.containsKey(id));
                 clause.t0.push(-nameNodes_.get(id));
                 clause.t1.add(id);
             }
 
-
-            conflict &= SATUtils.getInstance().addLearnt(clause.t0, line);
+            if (!ignore) conflict &= SATUtils.getInstance().addLearnt(clause.t0, line);
         }
 
         return conflict;
@@ -1362,7 +1367,6 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             node.level = ++level_;
 
             //System.out.println("NEO decision = " + decisionNeo.function + " @" +level_ + " node ID = " + node.id + " SAT decision= " + decisionSAT + " assume= " + satUtils_.posLit(decisionSAT));
-
 
             Pair<Integer,Integer> p = new Pair<Integer,Integer>(currentLine_,currentChild_);
             Pair<Node, Pair<Integer,Integer>> p2 = new Pair<Node, Pair<Integer,Integer>>(node, p);
