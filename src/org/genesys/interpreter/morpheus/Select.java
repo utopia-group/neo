@@ -166,7 +166,8 @@ public class Select implements Unop {
 
             int outSize = res.getNcol();
             int inSize = df.getNcol();
-            List<String> eqClasses = new ArrayList<>();
+            Set<String> eqClasses = new HashSet<>();
+//            Extensions.print(df);
             // negative:
             if ((df.getNcol() - outSize) == 1) {
                 //only consider negative 1
@@ -195,8 +196,11 @@ public class Select implements Unop {
                 for (Set<Integer> s : pos2List)
                     eqClasses.add(s.toString());
             }
+            Z3Utils.getInstance().updateEqClassesInPE("COL", eqClasses);
+
 
             //Compute eq_classes for HEAD.
+            Set<String> eqClassesHead = new HashSet<>();
             List<Set<Integer>> headList = new ArrayList<>();
             headList.addAll(util_.getSubsetsByListSize(inSize, 1, true));
             headList.addAll(util_.getSubsetsByListSize(inSize, 1, false));
@@ -212,6 +216,7 @@ public class Select implements Unop {
             }
             int diffOrg = util_.getDiffHead(orgStrs);
 
+//            System.out.println(cols + "===orgDiff:" + diffOrg);
             for (Set<Integer> myList : headList) {
                 List<Integer> actual = util_.sel(myList, data);
                 Set<String> colStrs = new HashSet<>();
@@ -219,16 +224,15 @@ public class Select implements Unop {
                     colStrs.add(df.getNames().get(idx));
                 }
                 int diff = util_.getDiffHead(colStrs);
+//                System.out.println(myList + " actual: " + actual + " list:" + colStrs + " diff:" + diff);
+
                 if(diff == diffOrg)
-                    eqClasses.add(myList.toString());
+                    eqClassesHead.add(myList.toString());
 
 //                System.out.println( cols + "------> " + myList);
 
             }
-
-            for (String clz : eqClasses)
-                Z3Utils.getInstance().updateEqClassesInPE(clz);
-
+            Z3Utils.getInstance().updateEqClassesInPE("HEAD", eqClassesHead);
 
 //            Extensions.print(res);
             for (Map<Integer, List<String>> partialConflictMap : conflictList) {

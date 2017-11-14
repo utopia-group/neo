@@ -213,7 +213,7 @@ public class Filter implements Unop {
         });
 
 
-        List<String> eqClasses = new ArrayList<>();
+        Set<String> eqClasses = new HashSet<>();
         for (String str : MorpheusGrammar.numList) {
             Double num = Double.valueOf(str);
             Number val;
@@ -224,7 +224,6 @@ public class Filter implements Unop {
             }
             if (str.equals(rhs.toString())) {
                 eqClasses.add(str);
-                Z3Utils.getInstance().updateEqClassesInPE(str);
                 continue;
             }
             DataFrame eqRes = df.filter((df1, df2) -> {
@@ -242,9 +241,9 @@ public class Filter implements Unop {
             });
             if (eqRes.getNrow() == res.getNrow()) {
                 eqClasses.add(str);
-                Z3Utils.getInstance().updateEqClassesInPE(str);
             }
         }
+        Z3Utils.getInstance().updateEqClassesInPE("ROW", eqClasses);
 
         //Working on learning for filter.
         if ((res.getNrow() == df.getNrow()) && MorpheusSynthesizer.learning_) {
@@ -256,7 +255,7 @@ public class Filter implements Unop {
                 partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
                 partialConflictMap.put(sndChild.id, Arrays.asList(sndChild.function));
                 partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
-                partialConflictMap.put(frdChild.id, eqClasses);
+                partialConflictMap.put(frdChild.id, new ArrayList<>(eqClasses));
             }
             return new Pair<>(null, conflictList);
         }

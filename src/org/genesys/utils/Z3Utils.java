@@ -42,7 +42,7 @@ public class Z3Utils {
     private Map<Pair<String, String>, List<String>> eq_map = new HashMap<>();
 
     //Tracking eq_classes during partial evaluation, written by the interpreter.
-    private Set<String> eq_class_pe = new HashSet<>();
+    private Map<String, Set<String>> eq_class_map = new HashMap<>();
 
     private boolean global = true;
 
@@ -240,7 +240,7 @@ public class Z3Utils {
 
                             if (firstOne.t1.contains("select")) {
                                 folComp.remove(lastOne);
-                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_pe));
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_map.get("COL")));
                                 folComp.add(newLast);
                                 conflicts_.addAll(folComp);
                                 global = false;
@@ -253,7 +253,7 @@ public class Z3Utils {
 
                             if (firstOne.t1.contains("select")) {
                                 folComp.remove(lastOne);
-                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_pe));
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_map.get("HEAD")));
                                 folComp.add(newLast);
                                 conflicts_.addAll(folComp);
                                 global = false;
@@ -266,7 +266,7 @@ public class Z3Utils {
 
                             if (firstOne.t1.contains("filter")) {
                                 folComp.remove(lastOne);
-                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_pe));
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_map.get("ROW")));
                                 folComp.add(newLast);
                                 conflicts_.addAll(folComp);
                                 global = false;
@@ -363,12 +363,12 @@ public class Z3Utils {
         return ctx_core;
     }
 
-    public void updateEqClassesInPE(String comp) {
-        eq_class_pe.add(comp);
+    public void updateEqClassesInPE(String cst, Set<String> comps) {
+        eq_class_map.put(cst, comps);
     }
 
     public void clearEqClassesInPE() {
-        eq_class_pe.clear();
+        eq_class_map.clear();
     }
 
     public boolean isGlobal() {

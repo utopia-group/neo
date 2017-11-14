@@ -118,7 +118,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) partial++;
             else concrete++;
 
-//            System.out.println("Checking Program: " + ast);
+            System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
             // This trick does not work well in Morpheus!
@@ -152,9 +152,11 @@ public class MorpheusSynthesizer implements Synthesizer {
                     } else {
                         if (conflicts.isEmpty()) {
                             astPair = solver_.getModel(null, true);
+                            if (astPair == null) break;
                             ast = astPair.t0;
                             curr = astPair.t1;
                         } else {
+                            System.out.println("Learn clauses:" + conflicts);
                             astPair = solver_.getCoreModel(conflicts, true, z3.isGlobal());
                             ast = astPair.t0;
                             curr = astPair.t1;
