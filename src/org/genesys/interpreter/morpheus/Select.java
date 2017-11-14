@@ -165,7 +165,7 @@ public class Select implements Unop {
             }
 
             int outSize = res.getNcol();
-            int inSize = df.getNcol();
+            int inSize = df.getNcol() < 6 ? df.getNcol() : 6;
             Set<String> eqClasses = new HashSet<>();
 //            Extensions.print(df);
             // negative:
@@ -226,7 +226,7 @@ public class Select implements Unop {
                 int diff = util_.getDiffHead(colStrs);
 //                System.out.println(myList + " actual: " + actual + " list:" + colStrs + " diff:" + diff);
 
-                if(diff == diffOrg)
+                if (diff == diffOrg)
                     eqClassesHead.add(myList.toString());
 
 //                System.out.println( cols + "------> " + myList);
