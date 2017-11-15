@@ -332,7 +332,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         if (!eqClauses.isEmpty()) {
 
-            if (core.size() == 1 || global) conflict = learnCoreSimple(debug_core);
+            if (core.size() <= 3 || global) conflict = learnCoreSimple(debug_core);
             else {
                conflict = learnCoreLocal(debug_core, learntLine_);
             }
