@@ -273,12 +273,6 @@ public class Z3Utils {
                                 break;
                             }
                         }
-
-                        if (core.contains("V_ON")) {
-                            conflicts_.clear();
-                            conflicts_.add(lastOne);
-                            break;
-                        }
                     }
                     peCores.add(core);
 
