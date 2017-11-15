@@ -4,17 +4,17 @@
             "input": [
                 {
                     "content": [
-                        "base_1d4",20,100,
-                        "base_1d4",40,200,
-                        "base_1d5",40,300,
-                        "base_1d5",80,400,
-                        "dplyr_1d4",2,500,
-                        "dplyr_1d4",4,600,
-                        "dplyr_1d5",8,700,
-                        "dplyr_1d5",12,800
+                        "base_1d4",20,100,"A",
+                        "base_1d4",40,200,"B",
+                        "base_1d5",40,300,"C",
+                        "base_1d5",80,400,"D",
+                        "dplyr_1d4",2,500,"E",
+                        "dplyr_1d4",4,600,"F",
+                        "dplyr_1d5",8,700,"G",
+                        "dplyr_1d5",12,800,"H"
                     ], 
                     "header": [
-                        "expr","time","ext"
+                        "expr","time","ext", "misc"
                     ]
                 }
             ], 
