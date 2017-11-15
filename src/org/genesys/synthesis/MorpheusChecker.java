@@ -119,7 +119,13 @@ public class MorpheusChecker implements Checker<Problem, List<List<Pair<Integer,
                         if (worker.children.size() > 1)
                             currId = worker.children.get(1).id;
 //                        System.out.println("type on node: " + worker);
-                        Pair<Object, List<Map<Integer, List<String>>>> validRes = validator_.validate(worker, example.getInput());
+                        Pair<Object, List<Map<Integer, List<String>>>> validRes = null;
+                        try {
+                            validRes = validator_.validate(worker, example.getInput());
+                        } catch (Exception e) {
+                            System.out.println("ERROR from the R interpreter!!!");
+                            return false;
+                        }
                         Object judge = validRes.t0;
                         long end2 = LibUtils.tick();
                         MorpheusSynthesizer.typeinhabit += LibUtils.computeTime(start2, end2);
