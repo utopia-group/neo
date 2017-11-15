@@ -82,7 +82,7 @@ public class Spread implements Unop {
         int v = (int) arg2.t0;
         int nCol = df.getNcol();
 
-//        System.out.println("Spread--------------");
+//        System.out.println("Spread--------------" + (df.getNcol() <= k) + " " + (df.getNcol() <= v) + " " + (k >= v));
 //        System.out.println("input+++++" + df);
 
         if (conflictList.isEmpty())
@@ -119,15 +119,19 @@ public class Spread implements Unop {
                 total.addAll(conflicts2);
             }
 
-            for (int j = 0; j < 5; j++) {
-                List<Map<Integer, List<String>>> bakList = new ArrayList<>();
-                Map<Integer, List<String>> eqMap = new HashMap<>();
-                eqMap.put(ast.id, Arrays.asList(ast.function));
-                eqMap.put(fstChild.id, Arrays.asList(fstChild.function));
-                eqMap.put(sndChild.id, Arrays.asList(String.valueOf(j)));
-                eqMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
-                bakList.add(eqMap);
-                total.addAll(bakList);
+            for (int outerIdx = 0; outerIdx < 6; outerIdx++) {
+                for (int innerIdx = 0; innerIdx < 6; innerIdx++) {
+                    if (outerIdx >= innerIdx) {
+                        List<Map<Integer, List<String>>> bakList = new ArrayList<>();
+                        Map<Integer, List<String>> eqMap = new HashMap<>();
+                        eqMap.put(ast.id, Arrays.asList(ast.function));
+//                eqMap.put(fstChild.id, Arrays.asList(fstChild.function));
+                        eqMap.put(sndChild.id, Arrays.asList(String.valueOf(outerIdx)));
+                        eqMap.put(thdChild.id, Arrays.asList(String.valueOf(innerIdx)));
+                        bakList.add(eqMap);
+                        total.addAll(bakList);
+                    }
+                }
             }
             return new Pair<>(null, total);
         } else {
