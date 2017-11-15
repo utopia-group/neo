@@ -4,18 +4,17 @@
             "input": [
                 {
                     "content": [
-                        "base_1d4",20,
-                        "base_1d4",40,
-                        "base_1d5",40,
-                        "base_1d5",80,
-                        "dplyr_1d4",2,
-                        "dplyr_1d4",4,
-                        "dplyr_1d5",8,
-                        "dplyr_1d5",12
+                        "base_1d4",20,100,
+                        "base_1d4",40,200,
+                        "base_1d5",40,300,
+                        "base_1d5",80,400,
+                        "dplyr_1d4",2,500,
+                        "dplyr_1d4",4,600,
+                        "dplyr_1d5",8,700,
+                        "dplyr_1d5",12,800
                     ], 
                     "header": [
-                        "expr", 
-                        "time"
+                        "expr","time","ext"
                     ]
                 }
             ], 
@@ -25,7 +24,7 @@
                 "1d5",60,10,6
                 ], 
                 "header": [
-                "size","base","dplyr","ratio"
+                "col2","base","dplyr","ratio"
                 ]
             }
         }
