@@ -95,6 +95,8 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private HashMap<String, Boolean> cacheAST_ = new HashMap<>();
     private HashMap<String, Boolean> sketches_ = new HashMap<>();
 
+    private HashSet<String> cacheCore_ = new HashSet<>();
+
     private HashMap<Integer,Pair<Integer,String>> intermediateLearning_ = new HashMap<Integer,Pair<Integer,String>>();
     private boolean treeLearning_ = false;
 
@@ -332,9 +334,12 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         if (!eqClauses.isEmpty()) {
 
-            if (core.size() <= 3 || global) conflict = learnCoreSimple(debug_core);
-            else {
-               conflict = learnCoreLocal(debug_core, learntLine_);
+            if (!cacheCore_.contains(debug_core.toString())) {
+                cacheCore_.add(debug_core.toString());
+                if (core.size() <= 3 || global) conflict = learnCoreSimple(debug_core);
+                else {
+                    conflict = learnCoreLocal(debug_core, learntLine_);
+                }
             }
             //else conflict = SATUtils.getInstance().learnCoreLocal(eqClauses, learntLine_);
 
@@ -1959,6 +1964,7 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 //                        step_ = 1;
 
                         SATUtils.getInstance().cleanLearnts();
+                        cacheCore_.clear();
                         //SATUtils.getInstance().cleanVariables();
 
                         if (SATUtils.getInstance().getSolver().nConstraints() > 600000) {
