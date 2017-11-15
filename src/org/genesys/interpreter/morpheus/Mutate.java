@@ -173,11 +173,11 @@ public class Mutate implements Unop {
                 total.addAll(bakList4);
             }
 
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 6; j++) {
                 List<Map<Integer, List<String>>> bakList = LibUtils.deepClone(conflictList);
                 for (Map<Integer, List<String>> partialConflictMap : bakList) {
                     partialConflictMap.put(ast.id, Arrays.asList(ast.function));
-                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
+//                    partialConflictMap.put(fstChild.id, Arrays.asList(fstChild.function));
                     partialConflictMap.put(thdChild.id, Arrays.asList(String.valueOf(j)));
                     partialConflictMap.put(frdChild.id, Arrays.asList(String.valueOf(j)));
                 }
