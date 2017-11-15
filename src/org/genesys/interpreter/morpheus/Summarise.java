@@ -8,6 +8,7 @@ import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 import org.genesys.utils.MorpheusUtil;
+import org.genesys.utils.Z3Utils;
 
 import java.util.*;
 
@@ -152,6 +153,15 @@ public class Summarise implements Unop {
             //arg2
             partialConflictMap.put(thdChild.id, Arrays.asList(thdChild.function));
         }
+
+        Set<String> eqClasses = new HashSet<>();
+        int inSize = df.getNcol() < 6 ? df.getNcol() : 6;
+        for (int i = 0; i < inSize; i++) {
+            eqClasses.add(String.valueOf(i));
+        }
+        assert !eqClasses.isEmpty();
+        Z3Utils.getInstance().updateEqClassesInPE("HEAD", eqClasses);
+
         return new Pair<>(res, conflictList);
 
     }

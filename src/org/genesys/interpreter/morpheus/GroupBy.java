@@ -2,12 +2,15 @@ package org.genesys.interpreter.morpheus;
 
 import krangl.DataFrame;
 import krangl.Extensions;
+import krangl.GroupedDataFrame;
 import org.genesys.interpreter.Unop;
 import org.genesys.language.MorpheusGrammar;
 import org.genesys.models.Node;
 import org.genesys.models.Pair;
 import org.genesys.type.Maybe;
 import org.genesys.utils.LibUtils;
+import org.genesys.utils.MorpheusUtil;
+import org.genesys.utils.Z3Utils;
 
 import java.util.*;
 
@@ -15,6 +18,10 @@ import java.util.*;
  * Created by yufeng on 9/3/17.
  */
 public class GroupBy implements Unop {
+
+    private MorpheusUtil util_ = MorpheusUtil.getInstance();
+
+    private static Map<String, Set<String>> eqCache_ = new HashMap<>();
 
     public Object apply(Object obj) {
         assert obj != null;
@@ -127,6 +134,71 @@ public class GroupBy implements Unop {
             }
             assert colArgs.length > 0;
             DataFrame res = df.groupBy(colArgs);
+
+
+            Set<String> eqClasses = new HashSet<>();
+            int inSize = df.getNcol() < 6 ? df.getNcol() : 6;
+            Integer myIdx = (Integer) cols.get(0);
+            // negative:
+            if (myIdx < 0) {
+                if (cols.size() == 1) {
+                    //only consider negative 1
+                    List<Set<Integer>> neg1List = util_.getSubsetsByListSize(inSize, 1, false);
+                    for (Set<Integer> s : neg1List)
+                        eqClasses.add(s.toString());
+                } else {
+                    //only consider negative 2
+                    List<Set<Integer>> neg2List = util_.getSubsetsByListSize(inSize, 2, false);
+                    for (Set<Integer> s : neg2List)
+                        eqClasses.add(s.toString());
+
+                }
+            } else {
+                // positive:
+                if (cols.size() == 1) {
+                    //size 1 postive
+                    List<Set<Integer>> pos1List = util_.getSubsetsByListSize(inSize, 1, true);
+                    for (Set<Integer> s : pos1List)
+                        eqClasses.add(s.toString());
+
+                } else if (cols.size() == 2) {
+                    //size 2 positive
+                    List<Set<Integer>> pos2List = util_.getSubsetsByListSize(inSize, 2, true);
+                    for (Set<Integer> s : pos2List)
+                        eqClasses.add(s.toString());
+                }
+            }
+            assert !eqClasses.isEmpty();
+            Z3Utils.getInstance().updateEqClassesInPE("ONTO", eqClasses);
+//
+//
+//            Set<String> eqGroupClasses = new HashSet<>();
+//            if(!eqCache_.containsKey(ast.toString())) {
+//                GroupedDataFrame gdf = (GroupedDataFrame) res;
+//                List<Set<Integer>> pos1List = util_.getSubsetsByListSize(inSize, 1, true);
+//                List<Set<Integer>> pos2List = util_.getSubsetsByListSize(inSize, 2, true);
+//                List<Set<Integer>> groupList = new ArrayList<>();
+//                groupList.addAll(pos1List);
+//                groupList.addAll(pos2List);
+//                for (Set<Integer> colll : groupList) {
+//                    List<Integer> llist = new ArrayList<>(colll);
+//                    String[] myArgs = new String[llist.size()];
+//                    for (int colIdx = 0; colIdx < llist.size(); colIdx++) {
+//                        String arg = df.getNames().get(llist.get(colIdx));
+//                        myArgs[colIdx] = arg;
+//                    }
+//                    GroupedDataFrame eqFrame = (GroupedDataFrame) df.groupBy(myArgs);
+//                    if (eqFrame.getGroups$krangl_main().size() == gdf.getGroups$krangl_main().size()) {
+//                        eqGroupClasses.add(colll.toString());
+//                    }
+//                }
+//                assert !eqGroupClasses.isEmpty();
+//                eqCache_.put(ast.toString(), eqGroupClasses);
+//            } else {
+//                eqGroupClasses = eqCache_.get(ast.toString());
+//            }
+//            Z3Utils.getInstance().updateEqClassesInPE("GROUP", eqGroupClasses);
+
             for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                 //current node.
                 partialConflictMap.put(ast.id, Arrays.asList(ast.function));

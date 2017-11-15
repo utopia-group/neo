@@ -259,6 +259,20 @@ public class Z3Utils {
                                 global = false;
                                 break;
                             }
+
+                            if (firstOne.t1.contains("summarise")) {
+                                assert folComp.size() > 1;
+                                Pair<Integer, List<String>> lastTwo = folComp.get(folComp.size() - 2);
+                                //Col
+                                folComp.remove(lastOne);
+                                //aggr.
+                                folComp.remove(lastTwo);
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_map.get("HEAD")));
+                                folComp.add(newLast);
+                                conflicts_.addAll(folComp);
+                                global = false;
+                                break;
+                            }
                         }
 
                         if (core.contains("V_ROW")) {
@@ -272,7 +286,45 @@ public class Z3Utils {
                                 global = false;
                                 break;
                             }
+
+                            if (firstOne.t1.contains("mutate")) {
+                                Pair<Integer, List<String>> lastTwo = folComp.get(folComp.size() - 2);
+                                //Col
+                                folComp.remove(lastOne);
+                                //aggr.
+                                folComp.remove(lastTwo);
+                                folComp.remove(lastOne);
+                                conflicts_.addAll(folComp);
+                                global = false;
+                                break;
+                            }
                         }
+
+                        if (core.contains("V_ON")) {
+                            Pair<Integer, List<String>> firstOne = folComp.get(0);
+
+                            if (firstOne.t1.contains("group_by")) {
+                                folComp.remove(lastOne);
+                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_map.get("ONTO")));
+                                folComp.add(newLast);
+                                conflicts_.addAll(folComp);
+                                global = false;
+                                break;
+                            }
+                        }
+
+//                        if (core.contains("V_GROUP")) {
+//                            Pair<Integer, List<String>> firstOne = folComp.get(0);
+//
+//                            if (firstOne.t1.contains("group_by")) {
+//                                folComp.remove(lastOne);
+//                                Pair<Integer, List<String>> newLast = new Pair<>(lastOne.t0, new ArrayList<>(eq_class_map.get("GROUP")));
+//                                folComp.add(newLast);
+//                                conflicts_.addAll(folComp);
+//                                global = false;
+//                                break;
+//                            }
+//                        }
                     }
                     peCores.add(core);
 
@@ -340,7 +392,9 @@ public class Z3Utils {
 
     public boolean hasCache(Set<String> peSet) {
         for (Set<String> s : coreCache_) {
-            if (peSet.containsAll(s)) return true;
+            if (peSet.containsAll(s)) {
+                return true;
+            }
         }
         return false;
     }
