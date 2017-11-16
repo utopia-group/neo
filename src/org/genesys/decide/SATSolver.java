@@ -60,6 +60,8 @@ public class SATSolver<C, T> implements AbstractSolver<C, T> {
         return null;
     }
 
+    @Override
+    public ArrayList<Double> getLearnStats() {return null; };
 
     @Override
     public T getModel(C core, boolean block) {

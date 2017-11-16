@@ -53,6 +53,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
     private double decideFirst_ = 0.0;
     private double decideInputs_ = 0.0;
 
+    private int nbGlobalLearnts_ = 0;
+    private int nbLocalLearnts_ = 0;
+    private ArrayList<Double> statsLearnts_ = new ArrayList<>();
+
     private List<Pair<Integer,String>> currentSketch_ = new ArrayList<>();
 
     private HashMap<String,Set<Integer>> assignmentsCache_ = new HashMap<>();
@@ -164,6 +168,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         binaryComponent_.add("DROP");
         binaryComponent_.add("ACCESS");
         binaryComponent_.add("inner_join");
+
+        statsLearnts_.add(0.0); // global
+        statsLearnts_.add(0.0); // local
+        statsLearnts_.add(0.0); // avg size of global
+        statsLearnts_.add(0.0); // avg size of local
+        statsLearnts_.add(0.0); // units
+        statsLearnts_.add(0.0); // binary
+        statsLearnts_.add(0.0); // ternary
+
     }
 
     public MorpheusSolver(Grammar g, int depth, Decider decider, boolean learning) {
@@ -187,6 +200,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
         binaryComponent_.add("DROP");
         binaryComponent_.add("ACCESS");
         binaryComponent_.add("inner_join");
+
+        statsLearnts_.add(0.0); // global
+        statsLearnts_.add(0.0); // local
+        statsLearnts_.add(0.0); // avg size of global
+        statsLearnts_.add(0.0); // avg size of local
+        statsLearnts_.add(0.0); // units
+        statsLearnts_.add(0.0); // binary
+        statsLearnts_.add(0.0); // ternary
+
     }
 
 
@@ -239,6 +261,10 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
 
         Pair<Node,Node> node = search();
         return node;
+    }
+
+    public ArrayList<Double> getLearnStats(){
+        return statsLearnts_;
     }
 
     public boolean learnCoreSet(List<List<Pair<Integer, List<String>>>> core, boolean global) {
@@ -403,7 +429,15 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
                 clause.t1.add(id);
             }
 
-            if (!ignore) conflict &= SATUtils.getInstance().addLearnt(clause.t0, line);
+            if (!ignore) {
+
+                statsLearnts_.set(1,statsLearnts_.get(1)+1);
+                double avg = (nbLocalLearnts_ * statsLearnts_.get(3) + clause.t0.size())/(nbLocalLearnts_+1);
+                statsLearnts_.set(3,avg);
+                nbLocalLearnts_++;
+
+                conflict &= SATUtils.getInstance().addLearnt(clause.t0, line);
+            }
         }
 
         return conflict;
@@ -445,9 +479,28 @@ public class MorpheusSolver implements AbstractSolver<BoolExpr, Pair<Node,Node>>
             //SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
             //clauses.add(clause);
 
+            if (clause.t0.size() == 1)
+                statsLearnts_.set(4,statsLearnts_.get(4)+1);
+            else if (clause.t0.size() == 2)
+                statsLearnts_.set(5,statsLearnts_.get(5)+1);
+            else if (clause.t0.size() == 3)
+                statsLearnts_.set(6,statsLearnts_.get(6)+1);
+
             if (clause.t0.size() <= 2){
+
+                statsLearnts_.set(0,statsLearnts_.get(0)+1);
+                double avg = (nbGlobalLearnts_ * statsLearnts_.get(2) + clause.t0.size())/(nbGlobalLearnts_+1);
+                statsLearnts_.set(2,avg);
+                nbGlobalLearnts_++;
+
                 conflict &= SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.GLOBAL);
             } else {
+
+                statsLearnts_.set(0,statsLearnts_.get(0)+1);
+                double avg = (nbGlobalLearnts_ * statsLearnts_.get(2) + clause.t0.size())/(nbGlobalLearnts_+1);
+                statsLearnts_.set(2,avg);
+                nbGlobalLearnts_++;
+
                 conflict &= SATUtils.getInstance().addClause(clause.t0, SATUtils.ClauseType.LOCAL);
                 //clauses.add(clause);
             }
