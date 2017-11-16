@@ -119,13 +119,15 @@ public class Mutate implements Unop {
 
         if (nCol <= lhs || nCol <= rhs || (df.getCols().get(lhs) instanceof StringCol) || (df.getCols().get(rhs) instanceof StringCol) || lhs == rhs) {
             List<String> blackList = new ArrayList<>();
-            for (int i = 0; i < nCol; i++) {
+            int maxSize = nCol < 6 ? nCol : 6;
+            for (int i = 0; i < maxSize; i++) {
                 if (df.getCols().get(i) instanceof StringCol) {
                     blackList.add(String.valueOf(i));
                 }
             }
             if (MorpheusGrammar.colMap.get(nCol) != null)
                 blackList.addAll(MorpheusGrammar.colMap.get(nCol));
+
             List<Map<Integer, List<String>>> total = new ArrayList<>();
 
             if (!blackList.isEmpty()) {
@@ -191,7 +193,7 @@ public class Mutate implements Unop {
         List<String> zeros = MorpheusUtil.getInstance().zeroColumn(df);
 
 
-        if(!zeros.isEmpty()) {
+        if (!zeros.isEmpty()) {
             for (Map<Integer, List<String>> partialConflictMap : conflictList) {
                 //current node.
                 partialConflictMap.put(ast.id, Arrays.asList(ast.function));

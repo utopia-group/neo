@@ -88,7 +88,8 @@ public class Separate implements Unop {
             conflictList.add(new HashMap<>());
 
         List<String> noStrList = new ArrayList<>();
-        for (int i = 0; i < nCol; i++) {
+        int maxSize = nCol < 6 ? nCol : 6;
+        for (int i = 0; i < maxSize; i++) {
             if (!(df.getCols().get(i) instanceof StringCol)) {
                 noStrList.add(String.valueOf(i));
             }
