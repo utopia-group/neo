@@ -118,7 +118,7 @@ public class MorpheusSynthesizer implements Synthesizer {
             if (solver_.isPartial()) partial++;
             else concrete++;
 
-//            System.out.println("Checking Program: " + ast);
+            //System.out.println("Checking Program: " + ast);
             long start = LibUtils.tick();
             boolean isSatisfiable = true;
             // This trick does not work well in Morpheus!
@@ -220,6 +220,7 @@ public class MorpheusSynthesizer implements Synthesizer {
         System.out.println("Total=:" + total);
         System.out.println("Prune partial=:" + prune_partial + " %=:" + prune_partial * 100.0 / partial);
         System.out.println("Prune concrete=:" + prune_concrete + " %=:" + prune_concrete * 100.0 / concrete);
+        System.out.println("Learnts=:" + solver_.getLearnStats());
 
         System.out.println("SMT:" + smt1);
         System.out.println("Type:" + typeinhabit);

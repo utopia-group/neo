@@ -108,6 +108,9 @@ public class NeoSolver implements AbstractSolver<BoolExpr, Node> {
     @Override
     public void cacheAST(String program, boolean block) {};
 
+    @Override
+    public ArrayList<Double> getLearnStats() {return null; };
+
     public boolean learnCore(List<Pair<Integer, List<String>>> core) {
         boolean conflict = false;
 
