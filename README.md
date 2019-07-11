@@ -1,3 +1,7 @@
+# Program Synthesis using Conflict-Driven Learning
+
+ Yu Feng, Ruben Martins, Osbert Bastani, Isil Dillig. Program Synthesis using Conflict-Driven Learning. PLDI'18.
+
 # Command-line options
 
 - app: source of the benchmark in json.
@@ -40,6 +44,3 @@ pip install tensorflow
  a text file ./model/tmp/python_path.txt and include the path. For example,
  to use /usr/local/bin/python, include "/usr/local/bin/" in this file.
  
- # Reference
- 
- Yu Feng, Ruben Martins, Osbert Bastani, Isil Dillig. Program Synthesis using Conflict-Driven Learning. PLDI'18.
